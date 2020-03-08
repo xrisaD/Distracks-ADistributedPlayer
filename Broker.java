@@ -1,6 +1,6 @@
 import java.util.List;
 
-public class Broker {
+public class Broker extends Node{
 
 	private List<Consumer> registeredUsers;
 

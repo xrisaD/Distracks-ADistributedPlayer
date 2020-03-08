@@ -2,7 +2,6 @@ import java.util.List;
 
 public class Publisher extends Node {
 
-	public Publisher(){}
 
 	public void getBrokerList() { }
 
@@ -11,5 +10,8 @@ public class Publisher extends Node {
 	public void push(ArtistName artist,Value value) { }
 
 	public void notifyFailure(Broker broker) { }
+	
+	//constructor
+	public Publisher(){}
 
 }

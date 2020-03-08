@@ -1,6 +1,6 @@
 import java.util.List;
 
-public class Consumer {
+public class Consumer extends Node{
 
 	public Consumer(){}
 
