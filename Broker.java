@@ -2,20 +2,39 @@ import java.util.List;
 
 public class Broker {
 
-	public List<Consumer> registeredUsers;
+	private List<Consumer> registeredUsers;
 
-	public List<Publisher> registeredPublishers;
-
-	public Broker(){}
-
+	private List<Publisher> registeredPublishers;
+	
 	public void calculateKeys() { }
 
-	public Publisher acceptConnection(Publisher publisher) { }
+	public Publisher acceptConnection(Publisher publisher) { return null;}
 
-	public Consumer acceptConnection(Consumer consumer) { }
+	public Consumer acceptConnection(Consumer consumer) { return null; }
 
 	public void notifyPublisher(String notification) { }
 
 	public void pull(ArtistName artist) { }
+	
+	
+	//constructor
+	public Broker(){}
+	//setters and getters
+	public List<Consumer> getRegisteredUsers() {
+		return registeredUsers;
+	}
+
+	public void setRegisteredUsers(List<Consumer> registeredUsers) {
+		this.registeredUsers = registeredUsers;
+	}
+
+	public List<Publisher> getRegisteredPublishers() {
+		return registeredPublishers;
+	}
+
+	public void setRegisteredPublishers(List<Publisher> registeredPublishers) {
+		this.registeredPublishers = registeredPublishers;
+	}
+	
 
 }
