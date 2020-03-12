@@ -35,6 +35,12 @@ public class Broker extends Node{
 	public void setRegisteredPublishers(List<Publisher> registeredPublishers) {
 		this.registeredPublishers = registeredPublishers;
 	}
-	
+
+	public void run() {
+
+	}
+	public static void main(String[] args){
+		new Broker().run();
+	}
 
 }

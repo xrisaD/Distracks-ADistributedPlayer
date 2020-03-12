@@ -12,6 +12,12 @@ public class MusicFile {
 		this.albumInfo=albumInfo;
 		this.genre=genre;
 	}
+	public MusicFile(){
+		this.trackName=null;
+		this.artistName="";
+		this.albumInfo=null;
+		this.genre=null;
+	}
 	//setters and getters
 	public String getTrackName() {
 		return trackName;
