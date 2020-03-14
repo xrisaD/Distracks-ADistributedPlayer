@@ -1,12 +1,13 @@
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.net.*;
 import java.util.ArrayList;
 import java.util.Hashtable;
 
 
-public class Publisher extends Node {
+public class Publisher extends Node implements Serializable {
 
 	private String ip;
 	private int port;
@@ -31,6 +32,9 @@ public class Publisher extends Node {
 
 	}
 
+	/**
+	 * Server starts for Brokers
+	 */
 	public void startServer() {
 		ServerSocket providerSocket = null;
 		Socket connection = null;
@@ -61,10 +65,11 @@ public class Publisher extends Node {
 			System.out.print("Usage: java Publisher ip port");
 		}
 	}
-	public class ServerConnectionHandler extends Thread{
-		ServerSocket providerSocket;
-		public ServerConnectionHandler(ServerSocket providerSocket){
-			this.providerSocket = providerSocket;
+
+	public class PublisherHandler extends Thread{
+		Socket socket;
+		public PublisherHandler(Socket socket){
+			this.socket = socket;
 		}
 		@Override
 		public void run(){ //Protocol
