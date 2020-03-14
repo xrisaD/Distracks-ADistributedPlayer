@@ -1,3 +1,4 @@
+import javax.management.RuntimeErrorException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -31,6 +32,24 @@ public class Publisher extends Node implements Serializable {
 
 
 	}
+	//Getters setters
+
+
+	public String getIp() {
+		return ip;
+	}
+
+	public void setIp(String ip) {
+		this.ip = ip;
+	}
+
+	public int getPort() {
+		return port;
+	}
+
+	public void setPort(int port) {
+		this.port = port;
+	}
 
 	/**
 	 * Server starts for Brokers
@@ -41,6 +60,7 @@ public class Publisher extends Node implements Serializable {
 		try {
 			providerSocket = new ServerSocket(this.port, 10);
 			while (true) {
+				System.out.println("Publisher listening on port " + getPort());
 				connection = providerSocket.accept();
 				//We start a thread
 
@@ -58,11 +78,48 @@ public class Publisher extends Node implements Serializable {
 			}
 		}
 	}
+
+	/**
+	 * 	Connects to the broker on @param ip and @param port and sends the publisher object through the socket
+	 */
+	public void notifyBroker(String ip , int port){
+		Socket socket = null;
+		ObjectOutputStream out = null;
+		try{
+			//Connecting to the broker
+			System.out.printf("Connecting to broker on port %d , ip %s%n" , port , ip);
+			socket = new Socket(ip,port);
+			System.out.printf("Connected to broker on port %d , ip %s%n" , port , ip);
+			out = new ObjectOutputStream(socket.getOutputStream());
+			out.writeObject(this);
+		}
+		catch(Exception e){
+			e.printStackTrace();
+			System.out.println(e.getMessage());
+			System.out.printf("Failure on notify broker on publisher port = %d ip = %s %n" , getPort() , getIp());
+		}
+		finally{
+			try {
+				//socket.close();
+				out.close();
+			}
+			catch(Exception e){
+				System.out.println("Error while closing streams");
+				throw new RuntimeException(e);
+			}
+		}
+
+	}
 	public static void main(String[] args){
 		try{
-			new Publisher(args[0],Integer.parseInt(args[1]),args[2]).startServer();
+			Publisher p = new Publisher(args[0],Integer.parseInt(args[1]),args[2]);
+			//p.startServer();
+			p.notifyBroker("127.0.0.1" , 3560);
+
 		}catch (Exception e) {
-			System.out.print("Usage: java Publisher ip port");
+			System.out.println("Usage: java Publisher ip port");
+			System.out.println(e.getMessage());
+			e.printStackTrace();
 		}
 	}
 

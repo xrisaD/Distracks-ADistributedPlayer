@@ -3,12 +3,14 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class Broker {
 
-	private List<Consumer> registeredUsers;
-	private List<Publisher> registeredPublishers;
+	private List<Consumer> registeredUsers = Collections.synchronizedList(new ArrayList<Consumer>());
+	private List<Publisher> registeredPublishers = Collections.synchronizedList(new ArrayList<Publisher>());
 	private String ip;
 	private int port;
 	//file contains ip and ports of all the brokers
@@ -18,12 +20,18 @@ public class Broker {
 	public void calculateKeys() { }
 
 	public Publisher acceptConnection(Publisher publisher) {
-		
+		registeredPublishers.add(publisher);
+		return publisher;
 	}
 
-	public Consumer acceptConnection(Consumer consumer) { return null; }
+	public Consumer acceptConnection(Consumer consumer) {
+		registeredUsers.add(consumer);
+		return consumer;
+	}
 
-	public void notifyPublisher(String notification) { }
+	public void notifyPublisher(String notification) {
+
+	}
 
 	public void pull(ArtistName artist) { }
 	
@@ -51,6 +59,22 @@ public class Broker {
 		this.registeredPublishers = registeredPublishers;
 	}
 
+	public String getIp() {
+		return ip;
+	}
+
+	public void setIp(String ip) {
+		this.ip = ip;
+	}
+
+	public int getPort() {
+		return port;
+	}
+
+	public void setPort(int port) {
+		this.port = port;
+	}
+
 	/**
 	 * start a server for Consumers and Publisher
 	 */
@@ -59,6 +83,7 @@ public class Broker {
 		Socket connection = null;
 		try {
 			providerSocket = new ServerSocket(this.port, 10);
+			System.out.println("Broker listening on port " + getPort());
 			while (true) {
 				//accept a connection
 				connection = providerSocket.accept();
@@ -82,9 +107,12 @@ public class Broker {
 
 	public static void main(String[] args){
 		try{
-			new Broker(args[0],Integer.parseInt(args[1]),args[2]).startServer();
+			Broker b = new Broker(args[0],Integer.parseInt(args[1]),args[2]);
+			b.startServer();
 		}catch (Exception e) {
-			System.out.print("Usage: java Publisher ip port");
+			System.out.println("Usage: java Broker ip port");
+			System.out.println(e.getMessage());
+			e.printStackTrace();
 		}
 	}
 
@@ -98,6 +126,9 @@ public class Broker {
 			ObjectInputStream in = null;
 			ObjectOutputStream out = null;
 			try{
+				in = new ObjectInputStream(socket.getInputStream());
+				//out = new ObjectOutputStream(socket.getOutputStream());
+
 				Object x = in.readObject();
 				if (x instanceof Publisher) {
 					//message from Broker
@@ -106,9 +137,10 @@ public class Broker {
 					if(p!=null){
 						System.out.println("Broker accept Connection with Publisher!");
 					}
-
 				}else if(x instanceof Consumer){
 					//message from Consumer
+					System.out.println("Broker got connection on port from consumer");
+
 				}
 
 
