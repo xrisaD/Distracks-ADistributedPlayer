@@ -33,7 +33,9 @@ public class Publisher extends Node implements Serializable {
 
 	}
 	//Getters setters
-
+	public Hashtable<ArtistName, ArrayList<Value>> getArtistToValue(){
+		return artistToValue;
+	}
 
 	public String getIp() {
 		return ip;
