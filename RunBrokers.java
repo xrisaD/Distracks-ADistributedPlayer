@@ -51,8 +51,17 @@ public class RunBrokers {
                 System.out.println("Bye");
                 break;
             }
+            else if(line.trim().toLowerCase().equals("start_publisher")) {
+                //Starting a publisher
+                String[] args1 = String.format("%s %d %s" , ip , port , fileName).split("\\s");
+                Publisher.main(args1);
+                port++;
+                //System.out.println("[RUNBROKERS] EXEC : " + command);
+            }
             else{
-                System.out.println("Type exit to exit");
+                System.out.print("exit             | exit the program\n" +
+                                   "start_publisher  | start a publisher\n"
+                );
             }
         }
 
