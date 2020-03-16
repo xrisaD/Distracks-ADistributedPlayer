@@ -12,7 +12,7 @@ public class Publisher extends Node implements Serializable {
 	private String ip;
 	private int port;
 
-	private Hashtable<ArtistName, ArrayList<Value>> artistToValue;
+	private Hashtable<ArtistName, ArrayList<Value>> artistToValue = new Hashtable<>();
 
 	public void getBrokerList() { }
 
@@ -30,11 +30,10 @@ public class Publisher extends Node implements Serializable {
 		//initialize HashTable
 	}
 	//Adds artists with no songs
-	public Publisher(String ip, int port, String fileName , ArrayList<String> artists){
+	public Publisher(String ip, int port,ArrayList<String> artists){
 		this(ip , port);
-		for(String artist : artists)
-		{
-			artistToValue.put(new ArtistName(artist) , null);
+		for(String artist : artists) {
+			artistToValue.put(new ArtistName(artist) , new ArrayList<>());
 		}
 
 	}
@@ -108,9 +107,9 @@ public class Publisher extends Node implements Serializable {
 			out.writeObject(message);
 		}
 		catch(Exception e){
+			System.out.printf("[PUBLISHER %d] Failure on notifybroker Broker(ip = %s port = %d  %n)" , getPort() , ip , port);
 			e.printStackTrace();
 			System.out.println(e.getMessage());
-			System.out.printf("[PUBLISHER %d] Failure on notifybroker Broker(ip = %s port = %d  %n)" , getPort() , ip , port);
 		}
 		finally{
 			try {
@@ -126,12 +125,20 @@ public class Publisher extends Node implements Serializable {
 	}
 	public static void main(String[] args){
 		try{
-			Publisher p = new Publisher(args[0],Integer.parseInt(args[1]));
+			//Parsing the list of artist names from command line
+			ArrayList<String> artists = new ArrayList<>();
+			for(int i = 3 ; i < args.length ; i++){
+				artists.add(args[i]);
+			}
+
+			Publisher p = new Publisher(args[0],Integer.parseInt(args[1]) , artists);
 			//p.startServer();
 
 
 			File myObj = new File(args[2]);
+
 			Scanner myReader = new Scanner(myObj);
+			//Notifying all brokers
 			while (myReader.hasNextLine()) {
 				//Parsing a broker
 				String data = myReader.nextLine();
