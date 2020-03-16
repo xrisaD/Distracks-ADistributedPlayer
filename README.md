@@ -18,3 +18,29 @@
  3b) O Broker βρίσκει απο την μνήμη του την ακολουθία με τα κομμάτια του Artist που έχουν ήδη μεταφερθεί σε άλλους Consumer
  4b) 
  
+ # Πρωτόκολλο επικοινωνας με broker
+ Request:
+ ### Request Obj("notify ip port Artistname * k") 
+ Πληροφορεί τον broker πως υπρχει ο Publisher με ip = ip , port = port και εναι υπευθυνος για τους artist που αναγράφονται στο μήνυμα 
+ 
+ Π.χ. notify 127.0.0.1 5006 Chon Megadeth 
+ Με την παραπάνω εντολή ενημερώνεται ο broker πως υπάρχει ενας Publisher με  127.0.0.1 πορτ 5006 kai einai upeuthunos gia tous artis chon kai megadeth
+ 
+  ### Request - Obj("pull Artistname Songname") Reply - Obj("error 404") | Obj("error 402 brokerIp brokerPort") | Obj("ok 200 nChunks") , Obj(Chunk) * nChunks
+  
+  Ενας κομβος ζηταει απο τον broker το tragoudi songname apo ton artist name.
+  Error 404 - Δεν υπάρχει το τραγούδι η ο artist σε κανεναν broker / publisher
+  Error 402 - Ο μπροκερ στον οποιον εγινε αιτηση δεν ειναι υπεθυνος για αυτον τον αρτιστ και η ερωτηση προτείνεται να ανακατευθυνθεί στον broker <brokerIp , brokerPort>
+  
+  ok 200 - Το κομμάτι υπρχει στον broker και μετα απο το πρώτο αντικείμενο της απάντησης ακολουθούν nChunks αντικείμενα το καθένα εκ των οποίων εναι ένα mp3 αρχείο
+   ### Request - Obj("status") - Reply - Obj("ArtistName * k")
+   
+   Ενας κμβος κάνει αίτηση για την κατάσταση του broker και του επιστρέφεται έαν string που περιέχει τα ονόματα των artist για τα οποία εναι υπεύθυνος
+   
+   
+  
+  
+ 
+ 
+ 
+ 
