@@ -30,14 +30,17 @@ public class Broker {
 
 	}
 	public int findResponsibleBroker(int md5){
+		System.out.println("HashValues : " + hashValues);
+		System.out.println("Md5 = " + md5);
 		if( md5 > hashValues.get(hashValues.size() - 1)){
 			return hashValues.get(0);
 		}
 		int index = Collections.binarySearch(hashValues, md5);
+		System.out.println("Index = " + index);
 		if(index>0){
 			return hashValues.get(index);
 		}else{
-			return hashValues.get(-index);
+			return hashValues.get(-index - 1);
 		}
 	}
 	/*
@@ -156,7 +159,7 @@ public class Broker {
 			b.saveBrokersData(args[3]);
 			b.startServer();
 		}catch (Exception e) {
-			System.out.println("Usage: java Broker ip port");
+			System.out.println("Usage: java Broker ip port hashValue brokersFile");
 			System.out.println(e.getMessage());
 			e.printStackTrace();
 		}
@@ -188,12 +191,29 @@ public class Broker {
 							artistToPublisher.put(new ArtistName(artistName),new Component(ip,port));
 						}
 					}
-				}//TODO: else if args[0].toLowerCase().equals("pull"))
+
+				}
+				//information querying about broker's state
+				//Retuns the names of the artists for whom the broker is responsible
+				if(args[0].toLowerCase().equals("status")){
+					out = new ObjectOutputStream(socket.getOutputStream());
+					String reply = "";
+					for(ArtistName key : artistToPublisher.keySet()) {
+						reply += key.getArtistName();
+					}
+					out.writeObject(reply);
+				}
+				// TODO: else if args[0].toLowerCase().equals("pull"))
 
 
 				//Response to Broker' request for an Artist
-
-
+                /**
+				System.out.printf("[BROKER %s % d] STATUS ----------------- %n" , getIp() , getPort() );
+				System.out.println(artistToPublisher);
+				System.out.println(hashValueToBroker);
+				System.out.println(hashValueToBroker);
+				System.out.printf("[BROKER %s % d] ----------------- %n" , getIp() , getPort() );
+                **/
 
 			}catch (ClassNotFoundException c) {
 				System.out.println("Class not found");
@@ -201,6 +221,16 @@ public class Broker {
 				return;
 			} catch (IOException ioException) {
 				ioException.printStackTrace();
+			}
+			finally {
+				try {
+					if (in != null) in.close();
+					if (out != null) out.close();
+					if(socket != null) socket.close();
+				}
+				catch(Exception e){
+					throw new RuntimeException(e);
+				}
 			}
 
 		}
