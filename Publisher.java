@@ -102,8 +102,9 @@ public class Publisher extends Node implements Serializable {
 			//Creating notify message
 			String message = String.format("notify %s %d" , getIp() , getPort());
 			for(ArtistName name : artistToValue.keySet()){
-				message += name.getArtistName();
+				message += " " + name.getArtistName();
 			}
+			System.out.printf("[PUBLISHER %d] Sending message \"%s\" to broker on port %d , ip %s%n" ,getPort(), message , port , ip);
 			out.writeObject(message);
 		}
 		catch(Exception e){
