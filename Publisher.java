@@ -191,24 +191,23 @@ public class Publisher extends Node implements Serializable {
 			}
 
 			Publisher p = new Publisher(args[0],Integer.parseInt(args[1]) , artists);
-			p.startServer();
-
-
 			File myObj = new File(args[2]);
 
 			Scanner myReader = new Scanner(myObj);
 			//Notifying all brokers
 
-//			while (myReader.hasNextLine()) {
-//				//Parsing a broker
-//				String data = myReader.nextLine();
-//				String[] arrOfStr = data.split("\\s");
-//				String ip = arrOfStr[0];
-//				int port = Integer.parseInt(arrOfStr[1]);
-//				int hashValue = Integer.parseInt(arrOfStr[2]);
-//
-//				p.sendChunkToBroker(ip , port);
-//			}
+			while (myReader.hasNextLine()) {
+				//Parsing a broker
+				String data = myReader.nextLine();
+				String[] arrOfStr = data.split("\\s");
+				String ip = arrOfStr[0];
+				int port = Integer.parseInt(arrOfStr[1]);
+				int hashValue = Integer.parseInt(arrOfStr[2]);
+
+				p.notifyBroker(ip , port);
+			}
+
+			p.startServer();
 
 		}catch (Exception e) {
 			System.out.println("Usage: java Publisher ip port");
