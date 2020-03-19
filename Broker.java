@@ -176,33 +176,48 @@ public class Broker {
 			ObjectOutputStream out = null;
 			try{
 				in = new ObjectInputStream(socket.getInputStream());
-				//out = new ObjectOutputStream(socket.getOutputStream());
 
-				String message = (String)in.readObject();
-				String[] args = message.split("\\s");
+				out = new ObjectOutputStream(socket.getOutputStream());
 
-				if(args[0].toLowerCase().equals("notify")){
-					//message from Publisher
-					String ip = args[1];
-					int port = Integer.parseInt(args[2]);
-					for(int i=3; i<args.length; i++){
-						String artistName = args[i];
-						if(isResponsible(artistName)){
-							artistToPublisher.put(new ArtistName(artistName),new Component(ip,port));
+				Object test=in.readObject();
+
+				if(test instanceof MusicFile){
+					System.out.println("in music");
+					MusicFile message = (MusicFile) test;
+					byte[] temp=message.getMusicFileExtract();
+					System.out.println(message);
+					try (FileOutputStream stream = new FileOutputStream("C:\\Users\\tinoa\\Desktop\\Back.mp3")) {
+						stream.write(message.getMusicFileExtract());
+					}
+				}else if(test instanceof String){
+					String message = (String)test;
+					String[] args = message.split("\\s");
+
+					if(args[0].toLowerCase().equals("notify")){
+						//message from Publisher
+						String ip = args[1];
+						int port = Integer.parseInt(args[2]);
+						for(int i=3; i<args.length; i++){
+							String artistName = args[i];
+							if(isResponsible(artistName)){
+								artistToPublisher.put(new ArtistName(artistName),new Component(ip,port));
+							}
 						}
-					}
 
-				}
-				//information querying about broker's state
-				//Retuns the names of the artists for whom the broker is responsible
-				if(args[0].toLowerCase().equals("status")){
-					out = new ObjectOutputStream(socket.getOutputStream());
-					String reply = "";
-					for(ArtistName key : artistToPublisher.keySet()) {
-						reply += key.getArtistName();
 					}
-					out.writeObject(reply);
+					//information querying about broker's state
+					//Retuns the names of the artists for whom the broker is responsible
+					if(args[0].toLowerCase().equals("status")){
+						out = new ObjectOutputStream(socket.getOutputStream());
+						String reply = "";
+						for(ArtistName key : artistToPublisher.keySet()) {
+							reply += key.getArtistName();
+						}
+						out.writeObject(reply);
+					}
 				}
+
+
 				// TODO: else if args[0].toLowerCase().equals("pull"))
 
 

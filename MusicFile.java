@@ -11,6 +11,7 @@ public class MusicFile {
 		this.artistName=artistName;
 		this.albumInfo=albumInfo;
 		this.genre=genre;
+		this.musicFileExtract=musicFileExtract;
 	}
 	public MusicFile(){
 		this.trackName=null;

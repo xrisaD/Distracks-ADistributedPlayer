@@ -124,6 +124,61 @@ public class Publisher extends Node implements Serializable {
 		}
 
 	}
+	public void sendChunkToBroker(String ip , int port){
+		System.out.printf("Publisher(%s,%d) sending song to Broker(%s,%d)\n" , getIp(),getPort() , ip , port);
+		Socket socket = null;
+		ObjectOutputStream out = null;
+		try{
+			//Connecting to the broker
+			System.out.printf("[PUBLISHER %d] Connecting to broker on port %d , ip %s%n" , getPort() , port , ip);
+			socket = new Socket(ip,port);
+			System.out.printf("[PUBLISHER %d] Connected to broker on port %d , ip %s%n" ,getPort() , port , ip);
+			out = new ObjectOutputStream(socket.getOutputStream());
+			//Creating notify message
+			int sizeOfFiles = 1024 * 512;// 1MB
+
+			File mp3= new File("C:\\Users\\tinoa\\Desktop\\Backbeat.mp3");
+			byte[] buffer = read(mp3);
+			MusicFile mp3File = new MusicFile("a","b","c","d",buffer);
+			out.writeObject(mp3File);
+		}
+		catch(Exception e){
+			System.out.printf("[PUBLISHER %d] Failure on notifybroker Broker(ip = %s port = %d  %n)" , getPort() , ip , port);
+			e.printStackTrace();
+			System.out.println(e.getMessage());
+		}
+		finally{
+			try {
+				//socket.close();
+				out.close();
+			}
+			catch(Exception e){
+				System.out.println("Error while closing streams");
+				throw new RuntimeException(e);
+			}
+		}
+
+	}
+
+	public byte[] read(File file) throws IOException {
+
+		byte[] buffer = new byte[(int) file.length()];
+		InputStream ios = null;
+		try {
+			ios = new FileInputStream(file);
+			if (ios.read(buffer) == -1) {
+				throw new IOException(
+						"EOF reached while trying to read the whole file");
+			}
+		} finally {
+			try {
+				if (ios != null)
+					ios.close();
+			} catch (IOException e) {
+			}
+		}
+		return buffer;
+	}
 	public static void main(String[] args){
 		try{
 			//Parsing the list of artist names from command line
@@ -148,7 +203,7 @@ public class Publisher extends Node implements Serializable {
 				int port = Integer.parseInt(arrOfStr[1]);
 				int hashValue = Integer.parseInt(arrOfStr[2]);
 
-				p.notifyBroker(ip , port);
+				p.sendChunkToBroker(ip , port);
 			}
 
 		}catch (Exception e) {
