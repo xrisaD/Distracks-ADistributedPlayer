@@ -21,7 +21,7 @@ public class Publisher extends Node implements Serializable {
 	public void push(ArtistName artist,Value value) { }
 
 	public void notifyFailure(Broker broker) { }
-	
+
 	//constructor
 	public Publisher(String ip, int port){
 		this.ip = ip;
@@ -72,7 +72,8 @@ public class Publisher extends Node implements Serializable {
 				//We start a thread
 
 				//this thread will do the communication
-
+				PublisherHandler ph = new PublisherHandler(connection);
+				ph.start();
 
 			}
 		} catch (IOException e) {
@@ -90,7 +91,7 @@ public class Publisher extends Node implements Serializable {
 	 * 	Connects to the broker on @param ip and @param port and sends the publisher object through the socket
 	 */
 	public void notifyBroker(String ip , int port){
-	    System.out.printf("Publisher(%s,%d) notifying Broker(%s,%d)\n" , getIp(),getPort() , ip , port);
+		System.out.printf("Publisher(%s,%d) notifying Broker(%s,%d)\n" , getIp(),getPort() , ip , port);
 		Socket socket = null;
 		ObjectOutputStream out = null;
 		try{
@@ -124,6 +125,7 @@ public class Publisher extends Node implements Serializable {
 		}
 
 	}
+
 	public void sendChunkToBroker(String ip , int port){
 		System.out.printf("Publisher(%s,%d) sending song to Broker(%s,%d)\n" , getIp(),getPort() , ip , port);
 		Socket socket = null;
@@ -179,6 +181,7 @@ public class Publisher extends Node implements Serializable {
 		}
 		return buffer;
 	}
+
 	public static void main(String[] args){
 		try{
 			//Parsing the list of artist names from command line
@@ -188,23 +191,24 @@ public class Publisher extends Node implements Serializable {
 			}
 
 			Publisher p = new Publisher(args[0],Integer.parseInt(args[1]) , artists);
-			//p.startServer();
+			p.startServer();
 
 
 			File myObj = new File(args[2]);
 
 			Scanner myReader = new Scanner(myObj);
 			//Notifying all brokers
-			while (myReader.hasNextLine()) {
-				//Parsing a broker
-				String data = myReader.nextLine();
-				String[] arrOfStr = data.split("\\s");
-				String ip = arrOfStr[0];
-				int port = Integer.parseInt(arrOfStr[1]);
-				int hashValue = Integer.parseInt(arrOfStr[2]);
 
-				p.sendChunkToBroker(ip , port);
-			}
+//			while (myReader.hasNextLine()) {
+//				//Parsing a broker
+//				String data = myReader.nextLine();
+//				String[] arrOfStr = data.split("\\s");
+//				String ip = arrOfStr[0];
+//				int port = Integer.parseInt(arrOfStr[1]);
+//				int hashValue = Integer.parseInt(arrOfStr[2]);
+//
+//				p.sendChunkToBroker(ip , port);
+//			}
 
 		}catch (Exception e) {
 			System.out.println("Usage: java Publisher ip port");
@@ -226,8 +230,18 @@ public class Publisher extends Node implements Serializable {
 				//Take Broker's request
 				//Broker's request is a ArtistName
 
-				ArtistName aName = null;
-				aName= (ArtistName) in.readObject();
+				in = new ObjectInputStream(socket.getInputStream());
+
+				String aName= (String) in.readObject();
+				String[] args = aName.split("\\s");
+
+				if(args[0].toLowerCase().equals("checkArtist")){
+					//message from Publisher
+					String ip = args[1];
+					int port = Integer.parseInt(args[2]);
+					String artist = args[4];
+					sendChunkToBroker(ip,port);
+				}
 
 				//Response to Broker' request for an Artist
 

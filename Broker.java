@@ -204,31 +204,53 @@ public class Broker {
 							}
 						}
 
-					}
-					//information querying about broker's state
-					//Retuns the names of the artists for whom the broker is responsible
-					if(args[0].toLowerCase().equals("status")){
-						out = new ObjectOutputStream(socket.getOutputStream());
+					}else if(args[0].toLowerCase().equals("status")){ 				//information querying about broker's state
+						out = new ObjectOutputStream(socket.getOutputStream()); 	//Retuns the names of the artists for whom the broker is responsible
 						String reply = "";
 						for(ArtistName key : artistToPublisher.keySet()) {
 							reply += key.getArtistName();
 						}
 						out.writeObject(reply);
+					}else if (args[0].toLowerCase().equals("pull")){
+						ArtistName artistName=new ArtistName(args[3]);
+						if(isResponsible(artistName.getArtistName())){
+							for(Map.Entry<ArtistName,Component>  art : artistToPublisher.entrySet()){
+								if (art.getKey().getArtistName().equals(artistName.getArtistName())){
+									System.out.println("OK 200 "+artistName);
+									String str = "checkArtist "+ip+" " +port+" "+artistName.getArtistName();
+									out.writeObject(str);
+								}
+							}
+						}else{
+							boolean flag=false;
+							String str;
+							for(Broker br : brokers){
+								if(br.isResponsible(artistName.getArtistName())){
+									System.out.println("error 402, correct broker has IP: "+ br.getIp()+" and Port: " + br.getPort());
+									String strin = "checkArtist "+ip+" " +port+" "+artistName.getArtistName();
+									out.writeObject(strin);
+									flag=true;
+									break;
+								}
+							}
+							if(flag==false){
+								System.out.println("ERROR 404 "+ artistName+ " doesn't exist");
+								out.writeObject("No artist found!");
+							}
+
+						}
 					}
 				}
 
 
-				// TODO: else if args[0].toLowerCase().equals("pull"))
-
-
 				//Response to Broker' request for an Artist
-                /**
-				System.out.printf("[BROKER %s % d] STATUS ----------------- %n" , getIp() , getPort() );
-				System.out.println(artistToPublisher);
-				System.out.println(hashValueToBroker);
-				System.out.println(hashValueToBroker);
-				System.out.printf("[BROKER %s % d] ----------------- %n" , getIp() , getPort() );
-                **/
+				/**
+				 System.out.printf("[BROKER %s % d] STATUS ----------------- %n" , getIp() , getPort() );
+				 System.out.println(artistToPublisher);
+				 System.out.println(hashValueToBroker);
+				 System.out.println(hashValueToBroker);
+				 System.out.printf("[BROKER %s % d] ----------------- %n" , getIp() , getPort() );
+				 **/
 
 			}catch (ClassNotFoundException c) {
 				System.out.println("Class not found");
