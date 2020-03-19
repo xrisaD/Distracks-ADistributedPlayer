@@ -1,4 +1,6 @@
-public class MusicFile {
+import java.io.Serializable;
+
+public class MusicFile implements Serializable {
 	private String trackName;
 	private String artistName;
 	private String albumInfo;
