@@ -1,11 +1,9 @@
-import jdk.nashorn.internal.objects.NativeError;
 
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
 
 public class Broker {
 
@@ -77,8 +75,9 @@ public class Broker {
 		}
 	}
 
-	public void pull(ArtistName artist) { }
+	public void pull(ArtistName artist) {
 
+	}
 
 	//constructor
 	public Broker(String ip, int port, int hashValue){

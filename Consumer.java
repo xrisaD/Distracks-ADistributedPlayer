@@ -7,11 +7,11 @@ public class Consumer extends Node implements Serializable {
 	private ArrayList<Component> knownBrokers = new ArrayList<>();
 	public Consumer(){}
 
-	public void register(Broker broker,ArtistName artist) { }
+	public void register(Broker broker, ArtistName artist) { }
 
-	public void disconnect(Broker broker,ArtistName artist) { }
+	public void disconnect(Broker broker, ArtistName artist) { }
 
-	public void playData(ArtistName artist,Value value) {
+	public void playData(ArtistName artist, Value value) {
 		Socket s = null;
 		ObjectInputStream in = null;
 		ObjectOutputStream out = null;

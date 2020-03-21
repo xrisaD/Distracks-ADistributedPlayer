@@ -239,6 +239,7 @@ public class Publisher extends Node implements Serializable {
 					String ip = args[1];
 					int port = Integer.parseInt(args[2]);
 					String artist = args[4];
+
 					sendChunkToBroker(ip,port);
 				}
 
