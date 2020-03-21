@@ -4,10 +4,11 @@ import java.nio.file.*;
 import com.mpatric.mp3agic.*;
 class MP3Cutter{
 	private File mp3ToCut;
+	public MP3Cutter(){}
 	public MP3Cutter(File f){
 		this.mp3ToCut=f;
 	}
-	public static void splitFile(File f) throws IOException {
+	public static int splitFile(File f) throws IOException {
 		int partCounter = 1;//I like to name parts from 001, 002, 003, ...
 		//you can change it to 0 if you want 000, 001, ...
 
@@ -31,29 +32,33 @@ class MP3Cutter{
 					out.write(buffer, 0, bytesAmount);
 				}
 			}
+			return partCounter;
 		}
 	}
-	public static void walk( String path,String song) {
+	public static String walk( String path,String song) {
 
 		File root = new File( path );
 		File[] list = root.listFiles();
 
-		if (list == null) return;
+		if (list==null) {return "Error";}
 
 		for ( File f : list ) {
 			if ( f.isDirectory() ) {
 				walk( f.getAbsolutePath(),song);
 				System.out.println( "Dir:" + f.getAbsoluteFile() );
-			}
-			else {
+			}else {
 				if(f.getName().startsWith("._")) continue;
 				if(!f.getName().endsWith(".mp3")) continue;
-				String fileName=f.getAbsolutePath();
+				if(f.getName().toLowerCase().equals(song.toLowerCase())){
+					String fileName=f.getAbsolutePath();
+					System.out.println( "File:" + f.getAbsoluteFile() );
+					return fileName;
+				}
 
-
-				System.out.println( "File:" + f.getAbsoluteFile() );
+				
 			}
 		}
+		return "Error";
 	}
 	public static void mergeFiles(List<File> files, File into)
 			throws IOException {
@@ -87,7 +92,7 @@ class MP3Cutter{
 		mergeFiles(new File(oneOfFiles), new File(into));
 	}
 
-	public static File ID3(File f) throws InvalidDataException, IOException, UnsupportedTagException {
+	public static void ID3(File f) throws InvalidDataException, IOException, UnsupportedTagException {
 		Mp3File mp3file = new Mp3File(f);
 		System.out.println("Length of this mp3 is: " + mp3file + " seconds");
 		System.out.println("Bitrate: " + mp3file.getBitrate() + " kbps " + (mp3file.isVbr() ? "(VBR)" : "(CBR)"));
@@ -132,11 +137,12 @@ class MP3Cutter{
 			System.out.println("Encoder: " + id3v2Tag.getEncoder());
 
 		}
+		//return ;
 	}
 
 	public static void main(String[] args) throws IOException {
 
-		walk("C:\\Users\\tinoa\\Downloads\\dataset1\\dataset1\\" );
+		walk("C:\\Users\\Jero\\Desktop\\DistributedSystemsAssignment\\songs\\Horror","Horroriffic.mp3");
 
 		//splitFile(new File("C:\\Users\\tinoa\\Desktop\\testmp3\\test.mp3"));
 		//Path currentRelativePath = Paths.get("");
