@@ -114,8 +114,13 @@ public class Broker {
 			 String[] arrOfStr = reply.split("\\s");
 			 //if everithing is ok
 			if(arrOfStr[0].equals("200")){
-				//TODO: send data to consumer
-				
+				int numOfChunks = Integer.parseInt(arrOfStr[1]);
+				//whatever you receive from Publisher send it to Consumer
+				outToConsumer.writeObject(reply);
+				for(int i=0; i<numOfChunks; i++){
+					 MusicFile chunk = (MusicFile)in.readObject();
+					outToConsumer.writeObject(chunk);
+				}
 			}
 			//404 : something went wrong
 			else{
