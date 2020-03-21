@@ -31,9 +31,15 @@ public class Broker {
 
 
 	}
+
+	/**
+	 *
+	 * @param md5 hash value
+	 * @return hash value to repsonsible broker
+	 */
 	public int findResponsibleBroker(int md5){
-		System.out.println("HashValues : " + hashValues);
-		System.out.println("Md5 = " + md5);
+		//System.out.println("HashValues : " + hashValues);
+		//System.out.println("Md5 = " + md5);
 		if( md5 > hashValues.get(hashValues.size() - 1)){
 			return hashValues.get(0);
 		}
@@ -184,13 +190,18 @@ public class Broker {
 				out = new ObjectOutputStream(s.getOutputStream());
 				out.writeObject(messageToPublisher);
 
+				//wait from Publisher to send to Broker songs data
+				Object reply = in.readObject();
+				//TODO:read data or abort according to Publisher reply
 
-
+				
 			} catch (UnknownHostException e) {
 				e.printStackTrace();
 			} catch (IOException e) {
 				e.printStackTrace();
-			}finally{
+			} catch (ClassNotFoundException e) {
+				e.printStackTrace();
+			} finally{
 				try {
 					if(in!=null) in.close();
 					if(out!=null) out.close();
@@ -271,7 +282,14 @@ public class Broker {
 						}**/
 
 					}else{
-						boolean flag=false;
+						//find responsible Broker and send
+						int brokersHashValue = findResponsibleBroker(Utilities.getMd5(artistName.getArtistName()).hashCode());
+						//it can't be null, there is at least one Broker, ourself
+						Component broker = hashValueToBroker.get(brokersHashValue);
+						//send message to Consumer with the ip and the port with the responsible broker
+						//consumer will ask this Broker for the song
+						out.writeObject("error 402 " + broker.getIp() + " " + broker.getPort());
+						/**
 						String str;
 						for(Broker br : brokers){
 							if(br.isResponsible(artistName.getArtistName())){
@@ -285,7 +303,7 @@ public class Broker {
 						if(flag==false){
 							System.out.println("ERROR 404 "+ artistName+ " doesn't exist");
 							out.writeObject("No artist found!");
-						}
+						}**/
 
 					}
 				}
