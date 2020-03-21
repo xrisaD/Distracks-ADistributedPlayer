@@ -19,8 +19,6 @@ public class Broker {
 	private int hashValue;
 
 	public void calculateKeys() {
-
-
 	}
 
 	/**
@@ -75,33 +73,61 @@ public class Broker {
 		}
 	}
 
-	public void pull(ArtistName artist) {
-
+	public void  pull(ArtistName artist, String song, ObjectOutputStream  out) throws IOException {
+		//check if th broker is responsible for this artist
+		if(isResponsible(artist.getArtistName())){
+			//find Publisher for this artist
+			Component publiserWithThisArtist = artistToPublisher.get(artist);
+			//open connection with Publisher and request the specific song
+			if(publiserWithThisArtist != null) {
+				requestSongFromPublisher(publiserWithThisArtist, artist, song, out);
+			}else{//TODO:return error message,not available artist
+				out.writeObject("");
+			}
+		}else{
+			//find responsible Broker and send
+			int brokersHashValue = findResponsibleBroker(Utilities.getMd5(artist.getArtistName()).hashCode());
+			//it can't be null, there is at least one Broker, ourself
+			Component broker = hashValueToBroker.get(brokersHashValue);
+			//send message to Consumer with the ip and the port with the responsible broker
+			//consumer will ask this Broker for the song
+			out.writeObject("error 402 " + broker.getIp() + " " + broker.getPort());
+		}
 	}
 
-	//constructor
-	public Broker(String ip, int port, int hashValue){
-		this.ip = ip;
-		this.port = port;
-		this.hashValue = hashValue;
-	}
+	public void requestSongFromPublisher(Component c, ArtistName artistName , String song, ObjectOutputStream  outToConsumer) {
+		Socket s = null;
+		ObjectInputStream in = null;
+		ObjectOutputStream outToPublisher = null;
+		try {
+			s = new Socket(c.getIp(), c.getPort());
 
-	public String getIp() {
-		return ip;
-	}
+			//push artistName song
+			String messageToPublisher = "push " + artistName.getArtistName() + " " + song;
+			outToPublisher = new ObjectOutputStream(s.getOutputStream());
+			outToPublisher.writeObject(messageToPublisher);
 
-	public void setIp(String ip) {
-		this.ip = ip;
-	}
+			//wait from Publisher to send to Broker songs data
+			Object reply = in.readObject();
+			//TODO:read data or abort according to Publisher reply
 
-	public int getPort() {
-		return port;
-	}
 
-	public void setPort(int port) {
-		this.port = port;
+		} catch (UnknownHostException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		} finally{
+			try {
+				if(in!=null) in.close();
+				if(outToPublisher!=null) outToPublisher.close();
+				if(s!=null) s.close();
+			} catch (IOException ioException) {
+				ioException.printStackTrace();
+			}
+		}
 	}
-
 	/**
 	 * start a server for Consumers and Publisher
 	 */
@@ -181,39 +207,7 @@ public class Broker {
 		public BrokerHandler(Socket socket){
 			this.socket = socket;
 		}
-		public void requestSongFromPublisher(Component c, ArtistName artistName , String song) {
-			Socket s = null;
-			ObjectInputStream in = null;
-			ObjectOutputStream out = null;
-			try {
-				s = new Socket(c.getIp(), c.getPort());
 
-				//push artistName song
-				String messageToPublisher = "push " + artistName.getArtistName() + " " + song;
-				out = new ObjectOutputStream(s.getOutputStream());
-				out.writeObject(messageToPublisher);
-
-				//wait from Publisher to send to Broker songs data
-				Object reply = in.readObject();
-				//TODO:read data or abort according to Publisher reply
-
-				
-			} catch (UnknownHostException e) {
-				e.printStackTrace();
-			} catch (IOException e) {
-				e.printStackTrace();
-			} catch (ClassNotFoundException e) {
-				e.printStackTrace();
-			} finally{
-				try {
-					if(in!=null) in.close();
-					if(out!=null) out.close();
-					if(s!=null) s.close();
-				} catch (IOException ioException) {
-					ioException.printStackTrace();
-				}
-			}
-		}
 		@Override
 		public void run(){ //Protocol
 			ObjectInputStream in = null;
@@ -221,7 +215,6 @@ public class Broker {
 			try{
 				in = new ObjectInputStream(socket.getInputStream());
 				out = new ObjectOutputStream(socket.getOutputStream());
-
 
 				Object request = in.readObject();
 				System.out.printf("[Broker (%s,%d)] Got a messg" , getIp() , getPort()) ;
@@ -247,7 +240,7 @@ public class Broker {
 				}
 				//this  "else if" is useless, it's for debug purposes
 				else if(args[0].toLowerCase().equals("status")){ 				//information querying about broker's state
-					out = new ObjectOutputStream(socket.getOutputStream()); 	//Retuns the names of the artists for whom the broker is responsible
+					//Retuns the names of the artists for whom the broker is responsible
 					String reply = "";
 					for(ArtistName key : artistToPublisher.keySet()) {
 						reply += key.getArtistName();
@@ -257,52 +250,9 @@ public class Broker {
 				//pull means we got a request from Consumer for an astist's song
 				else if (args[0].toLowerCase().equals("pull")){
 					ArtistName artistName = new ArtistName(args[1]);
-					//check if th broker is responsible for this artist
-					if(isResponsible(artistName.getArtistName())){
-						//find Publisher for this artist
-						Component publiserWithThisArtist = artistToPublisher.get(artistName);
-						//open connection with Publisher and request the specific song
-						if(publiserWithThisArtist != null) {
-							requestSongFromPublisher(publiserWithThisArtist, artistName, args[2]);
-						}else{//TODO:return error message,not available artist
-
-						}
-						/**
-						for(Map.Entry<ArtistName,Component>  art : artistToPublisher.entrySet()){
-							if (art.getKey().getArtistName().equals(artistName.getArtistName())){
-								System.out.println("OK 200 "+artistName);
-								String str = "checkArtist "+ip+" " +port+" "+artistName.getArtistName();
-								out.writeObject(str);
-							}
-						}**/
-
-					}else{
-						//find responsible Broker and send
-						int brokersHashValue = findResponsibleBroker(Utilities.getMd5(artistName.getArtistName()).hashCode());
-						//it can't be null, there is at least one Broker, ourself
-						Component broker = hashValueToBroker.get(brokersHashValue);
-						//send message to Consumer with the ip and the port with the responsible broker
-						//consumer will ask this Broker for the song
-						out.writeObject("error 402 " + broker.getIp() + " " + broker.getPort());
-						/**
-						String str;
-						for(Broker br : brokers){
-							if(br.isResponsible(artistName.getArtistName())){
-								System.out.println("error 402, correct broker has IP: "+ br.getIp()+" and Port: " + br.getPort());
-								String strin = "checkArtist "+ip+" " +port+" "+artistName.getArtistName();
-								out.writeObject(strin);
-								flag=true;
-								break;
-							}
-						}
-						if(flag==false){
-							System.out.println("ERROR 404 "+ artistName+ " doesn't exist");
-							out.writeObject("No artist found!");
-						}**/
-
-					}
+					String song = args[2];
+					pull(artistName, song, out);
 				}
-
 
 				//Response to Broker' request for an Artist
 				/**
@@ -332,5 +282,29 @@ public class Broker {
 			}
 
 		}
+	}
+
+	//constructor
+	public Broker(String ip, int port, int hashValue){
+		this.ip = ip;
+		this.port = port;
+		this.hashValue = hashValue;
+	}
+
+	//getter and setters
+	public String getIp() {
+		return ip;
+	}
+
+	public void setIp(String ip) {
+		this.ip = ip;
+	}
+
+	public int getPort() {
+		return port;
+	}
+
+	public void setPort(int port) {
+		this.port = port;
 	}
 }
