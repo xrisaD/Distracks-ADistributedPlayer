@@ -13,4 +13,12 @@ public class ArtistName {
 	public void setArtistName(String artistName) {
 		this.artistName = artistName;
 	}
+
+	@Override
+	/**
+	 * Need this method for hash maps
+	 */
+	public int hashCode(){
+		return artistName.hashCode();
+	}
 }
