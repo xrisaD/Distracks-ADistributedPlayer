@@ -5,7 +5,9 @@ import java.net.*;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Scanner;
-
+import java.util.*;
+import java.nio.file.*;
+import com.mpatric.mp3agic.*;
 
 public class Publisher extends Node implements Serializable {
 
@@ -135,11 +137,12 @@ public class Publisher extends Node implements Serializable {
 			System.out.printf("[PUBLISHER %d] Connecting to broker on port %d , ip %s%n" , getPort() , port , ip);
 			socket = new Socket(ip,port);
 			System.out.printf("[PUBLISHER %d] Connected to broker on port %d , ip %s%n" ,getPort() , port , ip);
+			System.out.printf("DEN EBAINE EDW");
 			out = new ObjectOutputStream(socket.getOutputStream());
 			//Creating notify message
 			int sizeOfFiles = 1024 * 512;// 1MB
 
-			File mp3= new File("C:\\Users\\tinoa\\Desktop\\Backbeat.mp3");
+			File mp3= new File("C:\\Users\\Jero\\Desktop\\dataset1\\Horror\\Horroriffic");
 			byte[] buffer = read(mp3);
 			MusicFile mp3File = new MusicFile("a","b","c","d",buffer);
 			out.writeObject(mp3File);
@@ -192,7 +195,7 @@ public class Publisher extends Node implements Serializable {
 
 			Publisher p = new Publisher(args[0],Integer.parseInt(args[1]) , artists);
 			File myObj = new File(args[2]);
-
+			/**
 			Scanner myReader = new Scanner(myObj);
 			//Notifying all brokers
 
@@ -203,10 +206,9 @@ public class Publisher extends Node implements Serializable {
 				String ip = arrOfStr[0];
 				int port = Integer.parseInt(arrOfStr[1]);
 				int hashValue = Integer.parseInt(arrOfStr[2]);
-
 				p.notifyBroker(ip , port);
 			}
-
+			**/
 			p.startServer();
 
 		}catch (Exception e) {
@@ -230,11 +232,35 @@ public class Publisher extends Node implements Serializable {
 				//Broker's request is a ArtistName
 
 				in = new ObjectInputStream(socket.getInputStream());
+                out = new ObjectOutputStream(socket.getOutputStream());
+                String aName= (String) in.readObject();
+                String[] args = aName.split("\\s");
 
-				String aName= (String) in.readObject();
-				String[] args = aName.split("\\s");
-
-				if(args[0].toLowerCase().equals("checkArtist")){
+				//if(args[0].toLowerCase().equals("push")){
+					System.out.println("BHKE STO PUSH TOU PUBLISHER");
+                    String artist = args[1];
+                    String song = args[2];
+                    MP3Cutter Chunker= new MP3Cutter(new File("C:\\Users\\Jero\\Desktop\\dataset1\\Horror\\Horroriffic"));
+                    Path currentRelativePath = Paths.get("");
+					String result = Chunker.walk(currentRelativePath.toAbsolutePath().toString()+"\\songs", song);//stp result exoume to filename pou epistrefei h walk
+                    if(!result.equals("error")){//an h walk den epistrepsei error
+                    	File splitting=new File(result);
+                    	int chunks=Chunker.splitFile(splitting);
+                    	String title=splitting.getName();
+                    	if(chunks!=0){
+                    		int partCounter=0;
+                    		for(int flag=1;flag<=chunks;flag++){
+                    			int indexOfMp3 = title.indexOf(".mp3");
+								String newName = title.substring(0,indexOfMp3);
+								String filePartName = String.format("%s%03d.mp3", newName, partCounter++);
+								File mp3= new File(currentRelativePath.toAbsolutePath().toString()+"\\songs"+"\\"+filePartName);
+								byte[] buffer = read(mp3);
+								MusicFile mp3File = new MusicFile("a","b","c","d",buffer);
+								out.writeObject(mp3File);
+                    		}
+                    	}
+					}
+                /**}else if(args[0].toLowerCase().equals("checkArtist")){
 					//message from Publisher
 					String ip = args[1];
 					int port = Integer.parseInt(args[2]);
@@ -242,8 +268,17 @@ public class Publisher extends Node implements Serializable {
 
 					sendChunkToBroker(ip,port);
 				}
+				**/
+                        
+                    
 
-				//Response to Broker' request for an Artist
+                    
+                    //tha psaxnei gia to tragoudi, tha vlepei an o artist name einai o idios, id3  na kanei cross check, an to vrei na kanei split se chunks
+                    //while write object to kathe chunk se outstrea out.writeobject
+                    //message from Publisher
+           
+                
+                //Response to Broker' request for an Artist
 
 
 
@@ -254,7 +289,6 @@ public class Publisher extends Node implements Serializable {
 			} catch (IOException ioException) {
 				ioException.printStackTrace();
 			}
-
 		}
 	}
 }
