@@ -100,6 +100,7 @@ public class RunBrokers {
 
         //Destroying the created processes and exiting after user input
         for(Process p : brokers){
+            System.out.println("[RUNBROKERS] terminating a broker");
             p.destroy();
         }
         for(Process p : consumers){
@@ -108,6 +109,7 @@ public class RunBrokers {
         for(Process p : publishers){
             p.destroy();
         }
+        System.out.println("[RUNBROKERS] finished stuff");
 
 
     }
@@ -118,6 +120,8 @@ public class RunBrokers {
         ObjectInputStream in = null;
         try {
             s = new Socket(broker.getIp() , broker.getPort());
+            System.out.printf("[RUNBROKERS] Broker(%s,%d) connectionAvailable: %b %n" ,
+                    broker.getIp() , broker.getPort() , s.isConnected());
             out =  new ObjectOutputStream(s.getOutputStream());
             String query = "status";
             out.writeObject(query);
@@ -127,9 +131,12 @@ public class RunBrokers {
 
         }
         catch(Exception e){
-            result = "Unreachable";
+            result = "Unreachable exception : " + e.getMessage();
+            e.printStackTrace();
         }
         finally{
+            System.out.printf("[RUNBROKERS] closing connection with Broker(%s,%d)%n" ,
+                    broker.getIp() , broker.getPort());
             try {
                 if(in != null) in.close();
                 if(out != null) out.close();
@@ -156,7 +163,7 @@ public class RunBrokers {
                 BufferedReader br = new BufferedReader(isr);
                 String line=null;
                 while ( (line = br.readLine()) != null)
-                    System.out.println(line);
+                    System.err.println(line);
             } catch (IOException ioe) {
                 ioe.printStackTrace();
             }
