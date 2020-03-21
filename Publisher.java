@@ -245,7 +245,7 @@ public class Publisher extends Node implements Serializable {
 					String result = Chunker.walk(currentRelativePath.toAbsolutePath().toString()+"\\songs", song);//stp result exoume to filename pou epistrefei h walk
                     if(!result.equals("error")){//an h walk den epistrepsei error
                     	File splitting=new File(result);
-                    	int chunks=Chunker.splitFile(splitting);
+                    	int chunks = Chunker.splitFile(splitting);
                     	String title=splitting.getName();
                     	if(chunks!=0){
                     		int partCounter=0;

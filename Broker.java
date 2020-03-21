@@ -233,17 +233,6 @@ public class Broker {
 				Object request = in.readObject();
 				System.out.printf("[Broker (%s,%d)] GOT A MESSSAGE <%s> %n" , getIp() , getPort() , (String) request);
 
-			/**
-			if(test instanceof MusicFile){
-				System.out.println("in music");
-				MusicFile message = (MusicFile) test;
-				byte[] temp=message.getMusicFileExtract();
-				System.out.println(message);
-				try (FileOutputStream stream = new FileOutputStream("C:\\Users\\tinoa\\Desktop\\Back.mp3")) {
-					stream.write(message.getMusicFileExtract());
-				}
-			}else if(test instanceof String){*/
-
 				String message = (String)request;
 				String[] args = message.split("\\s");
 
