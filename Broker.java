@@ -81,8 +81,9 @@ public class Broker {
 			//open connection with Publisher and request the specific song
 			if(publiserWithThisArtist != null) {
 				requestSongFromPublisher(publiserWithThisArtist, artist, song, out);
-			}else{//TODO:return error message,not available artist
-				out.writeObject("");
+			}else{
+				//error 404 0: this means that this artistName is wrong, or this ArtistName is not available
+				out.writeObject("error 404 " + "0");
 			}
 		}else{
 			//find responsible Broker and send
@@ -110,7 +111,7 @@ public class Broker {
 			//wait from Publisher to send to Broker songs data
 			Object reply = in.readObject();
 			//TODO:read data or abort according to Publisher reply
-
+			
 
 		} catch (UnknownHostException e) {
 			e.printStackTrace();
