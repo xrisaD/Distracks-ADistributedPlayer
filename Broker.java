@@ -82,8 +82,8 @@ public class Broker {
 			if(publiserWithThisArtist != null) {
 				requestSongFromPublisher(publiserWithThisArtist, artist, song, out);
 			}else{
-				//error 404 0: this means that this artistName is wrong, or this ArtistName is not available
-				out.writeObject("error 404 " + "0");
+				//404 : something went wrong
+				out.writeObject("404");
 			}
 		}else{
 			//find responsible Broker and send
@@ -92,7 +92,7 @@ public class Broker {
 			Component broker = hashValueToBroker.get(brokersHashValue);
 			//send message to Consumer with the ip and the port with the responsible broker
 			//consumer will ask this Broker for the song
-			out.writeObject("error 402 " + broker.getIp() + " " + broker.getPort());
+			out.writeObject("402 " + broker.getIp() + " " + broker.getPort());
 		}
 	}
 
@@ -109,10 +109,18 @@ public class Broker {
 			outToPublisher.writeObject(messageToPublisher);
 
 			//wait from Publisher to send to Broker songs data
-			Object reply = in.readObject();
-			//TODO:read data or abort according to Publisher reply
-			
+			String reply = (String)in.readObject();
 
+			 String[] arrOfStr = reply.split("\\s");
+			 //if everithing is ok
+			if(arrOfStr[0].equals("200")){
+				//TODO: send data to consumer
+				
+			}
+			//404 : something went wrong
+			else{
+				outToConsumer.writeObject("404");
+			}
 		} catch (UnknownHostException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
