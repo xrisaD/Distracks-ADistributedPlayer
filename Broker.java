@@ -226,7 +226,7 @@ public class Broker {
 				out = new ObjectOutputStream(socket.getOutputStream());
 
 				Object request = in.readObject();
-				System.out.printf("[Broker (%s,%d)] Got a messg" , getIp() , getPort()) ;
+				System.out.printf("[Broker (%s,%d)] GOT A MESSSAGE <%s> %n" , getIp() , getPort() , (String) request);
 
 			/**
 			if(test instanceof MusicFile){

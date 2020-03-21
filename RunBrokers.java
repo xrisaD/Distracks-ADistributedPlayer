@@ -110,6 +110,8 @@ public class RunBrokers {
             p.destroy();
         }
         System.out.println("[RUNBROKERS] finished stuff");
+        //Exiting
+        Runtime.getRuntime().exit(0);
 
 
     }
@@ -158,14 +160,16 @@ public class RunBrokers {
         }
 
         public void run() {
+            Scanner sc = new Scanner(is);
+            String line = null;
             try {
-                InputStreamReader isr = new InputStreamReader(is);
-                BufferedReader br = new BufferedReader(isr);
-                String line=null;
-                while ( (line = br.readLine()) != null)
-                    System.err.println(line);
-            } catch (IOException ioe) {
-                ioe.printStackTrace();
+                while ((line = sc.nextLine()) != null) {
+                    System.out.println(line);
+                }
+            }
+            //Sometimes no such element exception occurs when a process is destroyed
+            catch(Exception e){
+                System.out.println("Stream gobbler " + this + " terminating");
             }
         }
     }
