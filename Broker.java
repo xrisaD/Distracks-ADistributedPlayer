@@ -1,11 +1,13 @@
+import jdk.nashorn.internal.objects.NativeError;
+
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.UnknownHostException;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class Broker {
-
 
 	//artistName->Publisher's ip and port
 	private Map<ArtistName, Component> artistToPublisher = Collections.synchronizedMap(new HashMap<ArtistName, Component>());
@@ -170,75 +172,121 @@ public class Broker {
 		public BrokerHandler(Socket socket){
 			this.socket = socket;
 		}
+		public void requestSongFromPublisher(Component c, ArtistName artistName , String song) {
+			Socket s = null;
+			ObjectInputStream in = null;
+			ObjectOutputStream out = null;
+			try {
+				s = new Socket(c.getIp(), c.getPort());
+
+				//push artistName song
+				String messageToPublisher = "push " + artistName.getArtistName() + " " + song;
+				out = new ObjectOutputStream(s.getOutputStream());
+				out.writeObject(messageToPublisher);
+
+
+
+			} catch (UnknownHostException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}finally{
+				try {
+					if(in!=null) in.close();
+					if(out!=null) out.close();
+					if(s!=null) s.close();
+				} catch (IOException ioException) {
+					ioException.printStackTrace();
+				}
+			}
+		}
 		@Override
 		public void run(){ //Protocol
 			ObjectInputStream in = null;
 			ObjectOutputStream out = null;
 			try{
 				in = new ObjectInputStream(socket.getInputStream());
-
 				out = new ObjectOutputStream(socket.getOutputStream());
 
-				Object test=in.readObject();
 
-				if(test instanceof MusicFile){
-					System.out.println("in music");
-					MusicFile message = (MusicFile) test;
-					byte[] temp=message.getMusicFileExtract();
-					System.out.println(message);
-					try (FileOutputStream stream = new FileOutputStream("C:\\Users\\tinoa\\Desktop\\Back.mp3")) {
-						stream.write(message.getMusicFileExtract());
+				Object request = in.readObject();
+				System.out.printf("[Broker (%s,%d)] Got a messg" , getIp() , getPort()) ;
+
+			/**
+			if(test instanceof MusicFile){
+				System.out.println("in music");
+				MusicFile message = (MusicFile) test;
+				byte[] temp=message.getMusicFileExtract();
+				System.out.println(message);
+				try (FileOutputStream stream = new FileOutputStream("C:\\Users\\tinoa\\Desktop\\Back.mp3")) {
+					stream.write(message.getMusicFileExtract());
+				}
+			}else if(test instanceof String){*/
+
+				String message = (String)request;
+				String[] args = message.split("\\s");
+
+				//Publisher notifies Broker about the artistNames he is responsible for
+				if(args[0].toLowerCase().equals("notify")){
+					//message from Publisher
+					String ip = args[1];
+					int port = Integer.parseInt(args[2]);
+					for(int i=3; i<args.length; i++){
+						String artistName = args[i];
+						if(isResponsible(artistName)){
+							artistToPublisher.put(new ArtistName(artistName),new Component(ip,port));
+						}
 					}
-				}else if(test instanceof String){
-					String message = (String)test;
-					String[] args = message.split("\\s");
 
-					if(args[0].toLowerCase().equals("notify")){
-						//message from Publisher
-						String ip = args[1];
-						int port = Integer.parseInt(args[2]);
-						for(int i=3; i<args.length; i++){
-							String artistName = args[i];
-							if(isResponsible(artistName)){
-								artistToPublisher.put(new ArtistName(artistName),new Component(ip,port));
-							}
-						}
-
-					}else if(args[0].toLowerCase().equals("status")){ 				//information querying about broker's state
-						out = new ObjectOutputStream(socket.getOutputStream()); 	//Retuns the names of the artists for whom the broker is responsible
-						String reply = "";
-						for(ArtistName key : artistToPublisher.keySet()) {
-							reply += key.getArtistName();
-						}
-						out.writeObject(reply);
-					}else if (args[0].toLowerCase().equals("pull")){
-						ArtistName artistName=new ArtistName(args[3]);
-						if(isResponsible(artistName.getArtistName())){
-							for(Map.Entry<ArtistName,Component>  art : artistToPublisher.entrySet()){
-								if (art.getKey().getArtistName().equals(artistName.getArtistName())){
-									System.out.println("OK 200 "+artistName);
-									String str = "checkArtist "+ip+" " +port+" "+artistName.getArtistName();
-									out.writeObject(str);
-								}
-							}
-						}else{
-							boolean flag=false;
-							String str;
-							for(Broker br : brokers){
-								if(br.isResponsible(artistName.getArtistName())){
-									System.out.println("error 402, correct broker has IP: "+ br.getIp()+" and Port: " + br.getPort());
-									String strin = "checkArtist "+ip+" " +port+" "+artistName.getArtistName();
-									out.writeObject(strin);
-									flag=true;
-									break;
-								}
-							}
-							if(flag==false){
-								System.out.println("ERROR 404 "+ artistName+ " doesn't exist");
-								out.writeObject("No artist found!");
-							}
+				}
+				//this  "else if" is useless, it's for debug purposes
+				else if(args[0].toLowerCase().equals("status")){ 				//information querying about broker's state
+					out = new ObjectOutputStream(socket.getOutputStream()); 	//Retuns the names of the artists for whom the broker is responsible
+					String reply = "";
+					for(ArtistName key : artistToPublisher.keySet()) {
+						reply += key.getArtistName();
+					}
+					out.writeObject(reply);
+				}
+				//pull means we got a request from Consumer for an astist's song
+				else if (args[0].toLowerCase().equals("pull")){
+					ArtistName artistName = new ArtistName(args[1]);
+					//check if th broker is responsible for this artist
+					if(isResponsible(artistName.getArtistName())){
+						//find Publisher for this artist
+						Component publiserWithThisArtist = artistToPublisher.get(artistName);
+						//open connection with Publisher and request the specific song
+						if(publiserWithThisArtist != null) {
+							requestSongFromPublisher(publiserWithThisArtist, artistName, args[2]);
+						}else{//TODO:return error message,not available artist
 
 						}
+						/**
+						for(Map.Entry<ArtistName,Component>  art : artistToPublisher.entrySet()){
+							if (art.getKey().getArtistName().equals(artistName.getArtistName())){
+								System.out.println("OK 200 "+artistName);
+								String str = "checkArtist "+ip+" " +port+" "+artistName.getArtistName();
+								out.writeObject(str);
+							}
+						}**/
+
+					}else{
+						boolean flag=false;
+						String str;
+						for(Broker br : brokers){
+							if(br.isResponsible(artistName.getArtistName())){
+								System.out.println("error 402, correct broker has IP: "+ br.getIp()+" and Port: " + br.getPort());
+								String strin = "checkArtist "+ip+" " +port+" "+artistName.getArtistName();
+								out.writeObject(strin);
+								flag=true;
+								break;
+							}
+						}
+						if(flag==false){
+							System.out.println("ERROR 404 "+ artistName+ " doesn't exist");
+							out.writeObject("No artist found!");
+						}
+
 					}
 				}
 
@@ -272,7 +320,4 @@ public class Broker {
 
 		}
 	}
-
-
-
 }

@@ -1,4 +1,3 @@
-import com.sun.source.tree.Scope;
 
 import java.io.*;
 import java.net.Socket;
@@ -27,7 +26,7 @@ public class RunBrokers {
 
         //Array list containing the processes created
         ArrayList<Process> brokers = new ArrayList<>();
-        ArrayList<Component> brokerAddr = new ArrayList<>();
+        ArrayList<Component> brokerAddr = new ArrayList<> ();
 
         ArrayList<Process> publishers = new ArrayList<>();
 
