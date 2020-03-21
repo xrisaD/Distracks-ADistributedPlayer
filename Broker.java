@@ -54,7 +54,8 @@ public class Broker {
 		return ( res == this.hashValue);
 	}
 
-	public void acceptConnection(String ip, int port) {
+
+	public void acceptConnection(Publisher p) {
 
 	}
 
@@ -62,8 +63,18 @@ public class Broker {
 		return consumer;
 	}
 
-	public void notifyPublisher(String notification) {
-		System.out.println(notification);
+	/*
+	 * accept connection with Publicher: notify Publisher
+	 */
+	public void notifyPublisher(String[] args) {
+		String ip = args[1];
+		int port = Integer.parseInt(args[2]);
+		for(int i=3; i<args.length; i++){
+			String artistName = args[i];
+			if(isResponsible(artistName)){
+				artistToPublisher.put(new ArtistName(artistName),new Component(ip,port));
+			}
+		}
 	}
 
 	public void pull(ArtistName artist) { }
@@ -233,15 +244,7 @@ public class Broker {
 				//Publisher notifies Broker about the artistNames he is responsible for
 				if(args[0].toLowerCase().equals("notify")){
 					//message from Publisher
-					String ip = args[1];
-					int port = Integer.parseInt(args[2]);
-					for(int i=3; i<args.length; i++){
-						String artistName = args[i];
-						if(isResponsible(artistName)){
-							artistToPublisher.put(new ArtistName(artistName),new Component(ip,port));
-						}
-					}
-
+					notifyPublisher(args);
 				}
 				//this  "else if" is useless, it's for debug purposes
 				else if(args[0].toLowerCase().equals("status")){ 				//information querying about broker's state
