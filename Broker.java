@@ -16,13 +16,6 @@ public class Broker {
 	//hashValues for all Brokers
 	private List<Integer> hashValues = Collections.synchronizedList(new ArrayList<Integer>());
 
-
-
-	private List<Component> registeredUsers = Collections.synchronizedList(new ArrayList<Component>());
-	private List<ArtistName> artists = Collections.synchronizedList(new ArrayList<ArtistName>());
-
-	private List<Broker> brokers = Collections.synchronizedList(new ArrayList<Broker>());
-
 	private String ip;
 	private int port;
 	private int hashValue;
