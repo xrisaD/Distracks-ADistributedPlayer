@@ -251,7 +251,6 @@ class MP3Cutter{
 		}
 		return MFD;
 	}
-	
 
 	public static void main(String[] args) throws IOException {
 		//Path current = Paths.get("documents.txt");
