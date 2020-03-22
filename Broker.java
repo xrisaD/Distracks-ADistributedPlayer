@@ -59,6 +59,21 @@ public class Broker {
 		return consumer;
 	}
 
+	public void replyWithMalformedRequest(ObjectOutputStream out) throws IOException{
+		Request.ReplyFromBroker reply = new Request.ReplyFromBroker();
+		reply.statusCode = Request.StatusCodes.MALFORMED_REQUEST;
+		out.writeObject(reply);
+	}
+	public void replyWithOK(ObjectOutputStream out) throws IOException{
+		Request.ReplyFromBroker reply = new Request.ReplyFromBroker();
+		reply.statusCode = Request.StatusCodes.OK;
+		out.writeObject(reply);
+	}
+	public void replyWithNotFound(ObjectOutputStream out) throws IOException{
+		Request.ReplyFromBroker reply = new Request.ReplyFromBroker();
+		reply.statusCode = Request.StatusCodes.OK;
+		out.writeObject(reply);
+	}
 	/*
 	 * accept connection with Publicher: notify Publisher
 	 */
@@ -76,14 +91,13 @@ public class Broker {
 		//check if th broker is responsible for this artist
 		if(isResponsible(artist.getArtistName())){
 			//find Publisher for this artist
-			Component publiserWithThisArtist = artistToPublisher.get(artist);
+			Component publisherWithThisArtist = artistToPublisher.get(artist);
 			//open connection with Publisher and request the specific song
-			if(publiserWithThisArtist != null) {
-				requestSongFromPublisher(publiserWithThisArtist, artist, song, out);
+			if(publisherWithThisArtist != null) {
+				requestSongFromPublisher(publisherWithThisArtist, artist, song, out);
 			}else{
-				Request.ReplyFromBroker reply = new Request.ReplyFromBroker();
-				reply.statusCode = Request.StatusCodes.NOT_FOUND;//404
-				out.writeObject(reply);
+				//404 : something went wrong
+				replyWithNotFound(out);
 			}
 		}else{
 			//find responsible Broker and send
@@ -93,6 +107,7 @@ public class Broker {
 			//send message to Consumer with the ip and the port with the responsible broker
 			//consumer will ask this Broker for the song
 			Request.ReplyFromBroker reply = new Request.ReplyFromBroker();
+
 			reply.statusCode = Request.StatusCodes.NOT_RESPONSIBLE;//300
 			reply.responsibleBrokerIp = broker.getIp();
 			reply.responsibleBrokerPort = broker.getPort();
@@ -100,26 +115,35 @@ public class Broker {
 		}
 	}
 
-	public void requestSongFromPublisher(Component c, ArtistName artistName , String song, ObjectOutputStream  outToConsumer) {
+	public void requestSongFromPublisher(Component c, ArtistName artistName
+								, String song, ObjectOutputStream  outToConsumer) {
 		Socket s = null;
 		ObjectInputStream in = null;
 		ObjectOutputStream outToPublisher = null;
 		try {
 			s = new Socket(c.getIp(), c.getPort());
 
-			//push artistName song
-			String messageToPublisher = "push " + artistName.getArtistName() + " " + song;
+			//Creating the request to the Publisher
+			Request.RequestToPublisher request = new Request.RequestToPublisher();
+			request.method = Request.Methods.PUSH;
+			request.artistName = artistName.getArtistName();
+			request.songName = song;
+
 			outToPublisher = new ObjectOutputStream(s.getOutputStream());
-			outToPublisher.writeObject(messageToPublisher);
+			outToPublisher.writeObject(request);
 
 			//wait from Publisher to send to Broker songs data
-			String reply = (String)in.readObject();
+			Request.ReplyFromPublisher reply = (Request.ReplyFromPublisher) in.readObject();
 
-			 String[] arrOfStr = reply.split("\\s");
 			 //if everithing is ok
-			if(arrOfStr[0].equals("200")){
-				int numOfChunks = Integer.parseInt(arrOfStr[1]);
+			if(reply.statusCode == Request.StatusCodes.OK)){
+				int numOfChunks = reply.numChunks;
 				//whatever you receive from Publisher send it to Consumer
+				//Reply to the consumer
+				Request.ReplyFromBroker replyToConsumer = new Request.ReplyFromBroker();
+				replyToConsumer.statusCode = Request.StatusCodes.OK;
+				replyToConsumer.numChunks = reply.numChunks;
+
 				outToConsumer.writeObject(reply);
 				for(int i=0; i<numOfChunks; i++){
 					 MusicFile chunk = (MusicFile)in.readObject();
@@ -242,24 +266,30 @@ public class Broker {
 
 				//Publisher notifies Broker about the artistNames he is responsible for
 				if(request.method == Request.Methods.NOTIFY){
-					//message from Publisher
-					if(request.publisherIp == null || request.publisherPort < 0  || request.artistNames == null){
-						Request.ReplyFromBroker reply = new Request.ReplyFromBroker();
-						reply.statusCode = Request.StatusCodes.MALFORMED_REQUEST;
-						out.writeObject(reply);
+					//message from
+					//Check that data is correct or send MALFORMED_REQUEST
+					if(request.publisherIp == null ||
+							request.publisherPort <= 0 ||
+							request.artistNames == null) {
+						replyWithMalformedRequest(out);
+
 					}
 					notifyPublisher(request.publisherIp, request.publisherPort, request.artistNames);
+					replyWithOK(out);
 				}
-				//this  "else if" is useless, it's for debug purposes
+				//this  "else if" is for debug purposes
 				else if(request.method == Request.Methods.STATUS){ 				//information querying about broker's state
-					//Retuns the names of the artists for whom the broker is responsible
-					String reply = "";
-					for(ArtistName key : artistToPublisher.keySet()) {
-						reply += key.getArtistName();
+					//Returns the names of the artists for whom the broker is responsible
+					Request.ReplyFromBroker reply = new Request.ReplyFromBroker();
+					ArrayList<String> artists = new ArrayList<>();
+					for (ArtistName a : artistToPublisher.keySet()){
+						artists.add(a.getArtistName());
 					}
+					reply.statusCode = Request.StatusCodes.OK;
+					reply.artists = artists;
 					out.writeObject(reply);
 				}
-				//pull means we got a request from Consumer for an astist's song
+				//pull means we got a request from Consumer for an artist's song
 				else if (request.method == Request.Methods.PULL){
 					ArtistName artistName = new ArtistName(request.pullArtistName);
 					String song = request.songName;
@@ -270,10 +300,9 @@ public class Broker {
 					}
 					pull(artistName, song, out);
 				}
+				//Unknown method so we return a reply informing of a malformed request
 				else{
-					Request.ReplyFromBroker reply = new Request.ReplyFromBroker();
-					reply.statusCode = Request.StatusCodes.MALFORMED_REQUEST;
-					out.writeObject(reply);
+					replyWithMalformedRequest(out);
 				}
 
 				//Response to Broker' request for an Artist
