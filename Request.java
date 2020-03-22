@@ -70,7 +70,7 @@ class Request {
         //Fields for the pull method
         int numChunks;
         String responsibleBrokerIp;
-        String responsibleBrokerPort;
+        int responsibleBrokerPort;
 
         //Fields for the status method
         ArrayList<String> artists;
