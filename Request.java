@@ -1,5 +1,11 @@
 import java.util.ArrayList;
 class Request {
+    class Methods{
+        public static final int PULL = 0;
+        public static final int NOTIFY = 1;
+        public static final int STATUS = 2;
+        public static final int SEARCH = 3;
+    }
     class StatusCodes {
         public static final int MALFORMED_REQUEST = 400;
         public static final int NOT_FOUND = 404;
@@ -7,6 +13,9 @@ class Request {
         public static final int OK = 200;
 
         public static final int NOT_RESPONSIBLE = 300;
+    }
+    static class RequestToPublisher{
+
     }
     static class RequestToBroker {
 
