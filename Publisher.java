@@ -120,8 +120,8 @@ public class Publisher extends Node implements Serializable {
 		}
 		finally{
 			try {
-				//socket.close();
-				out.close();
+				if (socket!=null)socket.close();
+				if(out!=null)out.close();
 			}
 			catch(Exception e){
 				System.out.println("Error while closing streams");
@@ -157,11 +157,8 @@ public class Publisher extends Node implements Serializable {
 			// arg[4]: file with Broker's information
 			Publisher p = new Publisher(args[0],Integer.parseInt(args[1]) , args[2], args[3],args[4]);
 
-
-			/**
-			Scanner myReader = new Scanner(myObj);
+			Scanner myReader = new Scanner(args[4]);
 			//Notifying all brokers
-
 			while (myReader.hasNextLine()) {
 				//Parsing a broker
 				String data = myReader.nextLine();
@@ -171,7 +168,7 @@ public class Publisher extends Node implements Serializable {
 				int hashValue = Integer.parseInt(arrOfStr[2]);
 				p.notifyBroker(ip , port);
 			}
-			**/
+
 			p.startServer();
 
 		}catch (Exception e) {
