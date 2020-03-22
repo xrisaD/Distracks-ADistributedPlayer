@@ -5,13 +5,14 @@ public class MusicFileMetaData implements Serializable {
     private String artistName;
     private String albumInfo;
     private String genre;
-
+    private String path;
     //constructor
-    public MusicFileMetaData(String trackName,String artistName,String albumInfo,String genre){
+    public MusicFileMetaData(String trackName,String artistName,String albumInfo,String genre,String path){
         this.trackName=trackName;
         this.artistName=artistName;
         this.albumInfo=albumInfo;
         this.genre=genre;
+        this.path=path;
     }
     public MusicFileMetaData(){
     }
@@ -40,4 +41,11 @@ public class MusicFileMetaData implements Serializable {
     public void setGenre(String genre) {
         this.genre = genre;
     }
+    public String getPath() {
+        return genre;
+    }
+    public void setParth(String path) {
+        this.path = path;
+    }
+
 }

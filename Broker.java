@@ -81,8 +81,9 @@ public class Broker {
 			if(publiserWithThisArtist != null) {
 				requestSongFromPublisher(publiserWithThisArtist, artist, song, out);
 			}else{
-				//404 : something went wrong
-				out.writeObject("404");
+				Request.ReplyFromBroker reply = new Request.ReplyFromBroker();
+				reply.statusCode = Request.StatusCodes.NOT_FOUND;//404
+				out.writeObject(reply);
 			}
 		}else{
 			//find responsible Broker and send
@@ -91,7 +92,11 @@ public class Broker {
 			Component broker = hashValueToBroker.get(brokersHashValue);
 			//send message to Consumer with the ip and the port with the responsible broker
 			//consumer will ask this Broker for the song
-			out.writeObject("402 " + broker.getIp() + " " + broker.getPort());
+			Request.ReplyFromBroker reply = new Request.ReplyFromBroker();
+			reply.statusCode = Request.StatusCodes.NOT_RESPONSIBLE;//300
+			reply.responsibleBrokerIp = broker.getIp();
+			reply.responsibleBrokerPort = broker.getPort();
+			out.writeObject(reply);
 		}
 	}
 
@@ -238,6 +243,11 @@ public class Broker {
 				//Publisher notifies Broker about the artistNames he is responsible for
 				if(request.method == Request.Methods.NOTIFY){
 					//message from Publisher
+					if(request.publisherIp == null || request.publisherPort < 0  || request.artistNames == null){
+						Request.ReplyFromBroker reply = new Request.ReplyFromBroker();
+						reply.statusCode = Request.StatusCodes.MALFORMED_REQUEST;
+						out.writeObject(reply);
+					}
 					notifyPublisher(request.publisherIp, request.publisherPort, request.artistNames);
 				}
 				//this  "else if" is useless, it's for debug purposes
@@ -253,7 +263,17 @@ public class Broker {
 				else if (request.method == Request.Methods.PULL){
 					ArtistName artistName = new ArtistName(request.pullArtistName);
 					String song = request.songName;
+					if(request.pullArtistName ==null || song==null){
+						Request.ReplyFromBroker reply = new Request.ReplyFromBroker();
+						reply.statusCode = Request.StatusCodes.MALFORMED_REQUEST;
+						out.writeObject(reply);
+					}
 					pull(artistName, song, out);
+				}
+				else{
+					Request.ReplyFromBroker reply = new Request.ReplyFromBroker();
+					reply.statusCode = Request.StatusCodes.MALFORMED_REQUEST;
+					out.writeObject(reply);
 				}
 
 				//Response to Broker' request for an Artist
