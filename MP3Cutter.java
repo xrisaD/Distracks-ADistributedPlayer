@@ -20,19 +20,15 @@ class MP3Cutter{
 	public static ArrayList<MusicFileMetaData> getSongsMetaData(String first, String last){
 		//A first letter, Z last letter, closed set
 		ArrayList <MusicFileMetaData> AllMetadata = new ArrayList<MusicFileMetaData>();
-		try (Stream<Path> walk = Files.walk(Paths.get("\\dataset"))) {
+		try (Stream<Path> walk = Files.walk(Paths.get("dataset"))) {
 			List<String> temp = walk.map(x -> x.toString()).filter(f -> (f.endsWith(".mp3"))).collect(Collectors.toList());
 			for(String s: temp){
 				if(!s.contains("._")){
-					try{
-						//create music file with meta data
-						MusicFileMetaData MFD = ID3(new File(s));
-						if((MFD.getArtistName().toLowerCase().compareTo(first)>=0) && (MFD.getArtistName().toLowerCase().compareTo(last)<=0)){
-							//if artistName is in this range, then this Publisher is responsible for this artist
-							AllMetadata.add(MFD);
-						}
-					} catch (Exception e) {
-						e.printStackTrace();
+					//create music file with meta data
+					MusicFileMetaData MFD = ID3(new File(s));
+					if((MFD.getArtistName().toLowerCase().compareTo(first)>=0) && (MFD.getArtistName().toLowerCase().compareTo(last)<=0)){
+						//if artistName is in this range, then this Publisher is responsible for this artist
+						AllMetadata.add(MFD);
 					}
 				}
 			}
@@ -107,8 +103,10 @@ class MP3Cutter{
 	public static List<File> listOfFilesToMerge(File oneOfFiles) {
 		String tmpName = oneOfFiles.getName();//{name}.{number}
 		String destFileName = tmpName.substring(0, tmpName.lastIndexOf('.'));//remove .{number}
+		String temp = tmpName.substring(0, tmpName.lastIndexOf('.')-2);
 		File[] files = oneOfFiles.getParentFile().listFiles(
-				(File dir, String name) -> name.matches(destFileName + "[.]\\d+"));
+				(File dir, String name) -> name.matches(temp + "\\d+.mp3"));
+
 		Arrays.sort(files);//ensuring order 001, 002, ..., 010, ...
 		return Arrays.asList(files);
 	}
@@ -130,7 +128,7 @@ class MP3Cutter{
 	public static MusicFileMetaData ID3(File f)  {
 		MusicFileMetaData MFD = new MusicFileMetaData();
 		String fileN = f.getName();
-		fileN = fileN.substring(fileN.lastIndexOf("\\"), fileN.lastIndexOf("."));
+		fileN = fileN.substring(fileN.lastIndexOf("\\")+1, fileN.lastIndexOf("."));
 
 		//handle metadata
 		try {
@@ -255,11 +253,11 @@ class MP3Cutter{
 	public static void main(String[] args) throws IOException {
 		//Path current = Paths.get("documents.txt");
 		//String file = current.toAbsolutePath().toString();
-		getSongsMetaData("b","j");
+		//getSongsMetaData("b","j");
 		//walk("C:\\Users\\Jero\\Desktop\\DistributedSystemsAssignment\\songs\\Horror","Horroriffic.mp3");
-		//splitFile(new File("C:\\Users\\tinoa\\Desktop\\testmp3\\test.mp3"));
-		//Path currentRelativePath = Paths.get("");
-		//mergeFiles(currentRelativePath.toAbsolutePath().toString()+"\\Kesha - TiK ToK.mp3.001",currentRelativePath.toAbsolutePath().toString()+"\\KappaKeepo.mp3");
+		Path currentRelativePath = Paths.get("");
+		splitFile(new File(currentRelativePath.toAbsolutePath().toString()+"\\dataset\\dataset1\\World\\Eye of Forgiveness.mp3"));
+		mergeFiles(currentRelativePath.toAbsolutePath().toString()+"\\dataset\\dataset1\\World\\Eye of Forgiveness001.mp3",currentRelativePath.toAbsolutePath().toString()+"\\Eye of Forgiveness.mp3");
 	}
 	
 }
