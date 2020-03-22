@@ -44,7 +44,7 @@ public class MusicFileMetaData implements Serializable {
     public String getPath() {
         return genre;
     }
-    public void setParth(String path) {
+    public void setPath(String path) {
         this.path = path;
     }
 
