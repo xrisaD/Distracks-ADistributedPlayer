@@ -235,16 +235,12 @@ public class Broker {
 				out = new ObjectOutputStream(socket.getOutputStream());
 				in = new ObjectInputStream(socket.getInputStream());
 
-				Object request = in.readObject();
-				System.out.printf("[Broker (%s,%d)] GOT A MESSSAGE <%s> %n" , getIp() , getPort() , (String) request);
-
-				String message = (String)request;
-				String[] args = message.split("\\s");
+				Request.RequestToBroker request = (Request.RequestToBroker) in.readObject();
+				System.out.printf("[Broker (%s,%d)] GOT A MESSSAGE <%s> %n" , getIp() , getPort() , request.toString());
 
 				//Publisher notifies Broker about the artistNames he is responsible for
-				if(args[0].toLowerCase().equals("notify")){
+				if(request.method == Request.Methods.NOTIFY){
 					//message from Publisher
-					System.out.print("NOTIFY BEFORE");
 					notifyPublisher(args);
 				}
 				//this  "else if" is useless, it's for debug purposes
