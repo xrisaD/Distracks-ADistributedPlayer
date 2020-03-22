@@ -63,6 +63,7 @@ public class Broker {
 	 * accept connection with Publicher: notify Publisher
 	 */
 	public void notifyPublisher(String[] args) {
+		System.out.println();
 		String ip = args[1];
 		int port = Integer.parseInt(args[2]);
 		for(int i=3; i<args.length; i++){
@@ -206,6 +207,9 @@ public class Broker {
 
 	public static void main(String[] args){
 		try{
+			//arg[0]:ip
+			//arg[1]:port
+			//arg[2]:hashValue
 			Broker b = new Broker(args[0],Integer.parseInt(args[1]),Integer.parseInt(args[2]));
 			b.saveBrokersData(args[3]);
 			b.startServer();
@@ -239,6 +243,7 @@ public class Broker {
 				//Publisher notifies Broker about the artistNames he is responsible for
 				if(args[0].toLowerCase().equals("notify")){
 					//message from Publisher
+					System.out.print("NOTIFY BEFORE");
 					notifyPublisher(args);
 				}
 				//this  "else if" is useless, it's for debug purposes

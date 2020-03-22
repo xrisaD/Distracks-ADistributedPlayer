@@ -152,16 +152,17 @@ public class Publisher extends Node implements Serializable {
 
 	public static void main(String[] args){
 		try{
-			// arg[0]: port arg[1]:ip
+			// arg[0]: ip arg[1]:port
 			// arg[2]: first letter of responsible artistname arg[3]: last letter of responsible artistname
 			// arg[4]: file with Broker's information
 			Publisher p = new Publisher(args[0],Integer.parseInt(args[1]) , args[2], args[3],args[4]);
 
-			Scanner myReader = new Scanner(args[4]);
+			Scanner myReader = new Scanner(new File(args[4]));
 			//Notifying all brokers
 			while (myReader.hasNextLine()) {
 				//Parsing a broker
 				String data = myReader.nextLine();
+				System.out.println("data "+data);
 				String[] arrOfStr = data.split("\\s");
 				String ip = arrOfStr[0];
 				int port = Integer.parseInt(arrOfStr[1]);
