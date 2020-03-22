@@ -17,7 +17,7 @@ class MP3Cutter{
 	public static List<MusicFile> splitFile(MusicFile mf){
 		return null;
 	}
-	public static MusicFileMetaData getSongsMetaData(String f, String l){
+	public static List<MusicFileMetaData> getSongsMetaData(String f, String l){
 		return null;
 	}
 

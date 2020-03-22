@@ -13,7 +13,7 @@ public class Consumer extends Node implements Serializable {
 
 	public void disconnect(Broker broker, ArtistName artist) { }
 
-	public void playData(ArtistName artist, Value value) throws Exception {
+	public void playData(ArtistName artist, String  songName) throws Exception {
 		Socket s = null;
 		ObjectInputStream in = null;
 		ObjectOutputStream out = null;
@@ -31,7 +31,7 @@ public class Consumer extends Node implements Serializable {
 				s = new Socket(ip, port);
 				out = new ObjectOutputStream(s.getOutputStream());
 				//Creating the request object
-				String request = String.format("pull %s %s", artist, value);
+				String request = String.format("pull %s %s", artist, songName);
 				//Writing the request object
 				out.writeObject(request);
 				//Waiting for the reply

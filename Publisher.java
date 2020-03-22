@@ -110,8 +110,8 @@ public class Publisher extends Node implements Serializable {
 
 			File mp3= new File("C:\\Users\\Jero\\Desktop\\dataset1\\Horror\\Horroriffic");
 			byte[] buffer = read(mp3);
-			MusicFile mp3File = new MusicFile("a","b","c","d",buffer);
-			out.writeObject(mp3File);
+			//MusicFile mp3File = new MusicFile("a","b","c","d",buffer);
+			//out.writeObject(mp3File);
 		}
 		catch(Exception e){
 			System.out.printf("[PUBLISHER %d] Failure on notifybroker Broker(ip = %s port = %d  %n)" , getPort() , ip , port);
@@ -222,7 +222,7 @@ public class Publisher extends Node implements Serializable {
 								File mp3 = new File(currentRelativePath.toAbsolutePath().toString() + "\\songs" + "\\" + filePartName);
 								byte[] buffer = read(mp3);
 								//MusicFile mp3File = new MusicFile("a", "b", "c", "d", buffer);
-								out.writeObject(mp3File);
+								//out.writeObject(mp3File);
 							}
 						}
 					}
