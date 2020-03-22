@@ -136,7 +136,7 @@ public class Broker {
 			Request.ReplyFromPublisher reply = (Request.ReplyFromPublisher) in.readObject();
 
 			 //if everithing is ok
-			if(reply.statusCode == Request.StatusCodes.OK)){
+			if(reply.statusCode == Request.StatusCodes.OK){
 				int numOfChunks = reply.numChunks;
 				//whatever you receive from Publisher send it to Consumer
 				//Reply to the consumer
