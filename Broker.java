@@ -63,6 +63,7 @@ public class Broker {
 	 * accept connection with Publicher: notify Publisher
 	 */
 	public void notifyPublisher(String[] args) {
+		System.out.println("IN NOTIFY");
 		System.out.println();
 		String ip = args[1];
 		int port = Integer.parseInt(args[2]);
@@ -231,8 +232,8 @@ public class Broker {
 			ObjectInputStream in = null;
 			ObjectOutputStream out = null;
 			try{
-				in = new ObjectInputStream(socket.getInputStream());
 				out = new ObjectOutputStream(socket.getOutputStream());
+				in = new ObjectInputStream(socket.getInputStream());
 
 				Object request = in.readObject();
 				System.out.printf("[Broker (%s,%d)] GOT A MESSSAGE <%s> %n" , getIp() , getPort() , (String) request);
