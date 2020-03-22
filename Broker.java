@@ -107,10 +107,10 @@ public class Broker {
 			//send message to Consumer with the ip and the port with the responsible broker
 			//consumer will ask this Broker for the song
 			Request.ReplyFromBroker reply = new Request.ReplyFromBroker();
-			reply.statusCode = Request.StatusCodes.NOT_RESPONSIBLE;
+
+			reply.statusCode = Request.StatusCodes.NOT_RESPONSIBLE;//300
 			reply.responsibleBrokerIp = broker.getIp();
 			reply.responsibleBrokerPort = broker.getPort();
-
 			out.writeObject(reply);
 		}
 	}
@@ -272,6 +272,7 @@ public class Broker {
 							request.publisherPort <= 0 ||
 							request.artistNames == null) {
 						replyWithMalformedRequest(out);
+
 					}
 					notifyPublisher(request.publisherIp, request.publisherPort, request.artistNames);
 					replyWithOK(out);
@@ -292,6 +293,11 @@ public class Broker {
 				else if (request.method == Request.Methods.PULL){
 					ArtistName artistName = new ArtistName(request.pullArtistName);
 					String song = request.songName;
+					if(request.pullArtistName ==null || song==null){
+						Request.ReplyFromBroker reply = new Request.ReplyFromBroker();
+						reply.statusCode = Request.StatusCodes.MALFORMED_REQUEST;
+						out.writeObject(reply);
+					}
 					pull(artistName, song, out);
 				}
 				//Unknown method so we return a reply informing of a malformed request
