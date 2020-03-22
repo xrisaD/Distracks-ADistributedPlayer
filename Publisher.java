@@ -11,7 +11,7 @@ import com.mpatric.mp3agic.*;
 
 public class Publisher extends Node implements Serializable {
 	//ArtistName -> MusicFileMetaDatas of this artist
-	private Hashtable<ArtistName, ArrayList<MusicFileMetaData>> artistToMusicFileMetaData = new Hashtable<>();
+	private Map<ArtistName, ArrayList<MusicFileMetaData>> artistToMusicFileMetaData = Collections.synchronizedMap(new HashMap<>());
 
 	private String ip;
 	private int port;
@@ -64,7 +64,6 @@ public class Publisher extends Node implements Serializable {
 		ObjectOutputStream out = null;
 		try{
 			//Connecting to the broker
-			System.out.printf("[PUBLISHER %d] Connecting to broker on port %d , ip %s%n" , getPort() , port , ip);
 			socket = new Socket(ip,port);
 			System.out.printf("[PUBLISHER %d] Connected to broker on port %d , ip %s%n" ,getPort() , port , ip);
 			out = new ObjectOutputStream(socket.getOutputStream());
@@ -201,8 +200,6 @@ public class Publisher extends Node implements Serializable {
 					String artist = args[1];
 					String song = args[2];
 
-
-
 					MP3Cutter Chunker = new MP3Cutter(new File("C:\\Users\\Jero\\Desktop\\dataset1\\Horror\\Horroriffic"));
 					Path currentRelativePath = Paths.get("");
 					String result = Chunker.walk(currentRelativePath.toAbsolutePath().toString() + "\\songs", song);//stp result exoume to filename pou epistrefei h walk
@@ -244,21 +241,20 @@ public class Publisher extends Node implements Serializable {
 		this.fileWithBrokers = fileWithBrokers;
 		//Read file with artists and music file info
 		//initialize HashTable
-
-		//theloume sunarthsh pou na ths dinoume to proto kai to teleftaio gramma twn artist k na mas epistrefei ta metadata gia kathe aristname
-
-
-	}
-	//Adds artists with no songs
-	public Publisher(String ip, int port, String first, String last, String fileWithBrokers,ArrayList<String> artists){
-		this(ip , port, first, last, fileWithBrokers);
-		for(String artist : artists) {
-			artistToMusicFileMetaData.put(new ArtistName(artist) , new ArrayList<>());
+		List<MusicFileMetaData> allMetaData= MP3Cutter.getSongsMetaData(first, last);
+		//create artistToMusicFileMetaData Hashtable by parsing allMetaData
+		for (MusicFileMetaData song : allMetaData) {
+			if(artistToMusicFileMetaData.get(new ArtistName(song.getArtistName()))==null){
+				//initialize artist
+				artistToMusicFileMetaData.put(new ArtistName(song.getArtistName()), new ArrayList<MusicFileMetaData>());
+			}
+			//add song to the particular artist
+			artistToMusicFileMetaData.get(song.getArtistName()).add(song);
 		}
 	}
 
 	//Getters setters
-	public Hashtable<ArtistName, ArrayList<MusicFileMetaData>> getArtistToMusicFileMetaData(){
+	public Map<ArtistName, ArrayList<MusicFileMetaData>> getArtistToMusicFileMetaData(){
 		return artistToMusicFileMetaData;
 	}
 
