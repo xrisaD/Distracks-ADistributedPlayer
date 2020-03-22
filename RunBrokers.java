@@ -31,6 +31,7 @@ public class RunBrokers {
         ArrayList<Process> publishers = new ArrayList<>();
 
 
+
         ArrayList<Process> consumers = new ArrayList<>();
 
 
@@ -67,7 +68,7 @@ public class RunBrokers {
             }
             else if(line.trim().toLowerCase().equals("start_publisher")) {
                 //Starting a publisher
-                String command = String.format("java Publisher %s %d %s" , ip , port , fileName);
+                String command = String.format("java -cp .:mp3agic-0.9.0.jar Publisher %s %d a z %s" , ip , port , fileName);
                 //Adding artists for whom the publisher is responsible to the command
                 String[] artists = {"Bob" , "John" , "mpla"};
                 for (String artist : artists ){
@@ -75,6 +76,7 @@ public class RunBrokers {
                 }
                 //Starting the process
                 Process p = Runtime.getRuntime().exec(command);
+                publishers.add(p);
                 System.out.println("[RUNBROKERS] EXEC : " + command);
                 //Running gobblers for the created process' stderr , stdout
                 StreamGobbler errorGobbler = new StreamGobbler(p.getErrorStream());
@@ -103,10 +105,11 @@ public class RunBrokers {
             System.out.println("[RUNBROKERS] terminating a broker");
             p.destroy();
         }
-        for(Process p : consumers){
+        for(Process p : publishers){
+            System.out.println("[RUNBROKERS] terminating a publisher");
             p.destroy();
         }
-        for(Process p : publishers){
+        for(Process p : consumers){
             p.destroy();
         }
         System.out.println("[RUNBROKERS] finished stuff");
@@ -117,6 +120,7 @@ public class RunBrokers {
     }
     public static String brokerStatus(Component broker){
         String result = "";
+        Request.ReplyFromBroker reply = null;
         Socket s = null;
         ObjectOutputStream out = null;
         ObjectInputStream in = null;
@@ -125,11 +129,14 @@ public class RunBrokers {
             System.out.printf("[RUNBROKERS] Broker(%s,%d) connectionAvailable: %b %n" ,
                     broker.getIp() , broker.getPort() , s.isConnected());
             out =  new ObjectOutputStream(s.getOutputStream());
-            String query = "status";
-            out.writeObject(query);
+            //Creating request object
+            Request.RequestToBroker request = new Request.RequestToBroker();
+            request.method = Request.Methods.STATUS;
+            //Sending request
+            out.writeObject(request);
             in = new ObjectInputStream(s.getInputStream());
-            result = (String) in.readObject();
-            result = "NumArtists: " + result.split(" ").length + " " + result;
+            reply = (Request.ReplyFromBroker) in.readObject();
+            result = reply.artists.toString();
 
         }
         catch(Exception e){
