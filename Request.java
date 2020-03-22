@@ -15,11 +15,33 @@ class Request {
         public static final int NOT_RESPONSIBLE = 300;
     }
     static class RequestToPublisher{
+        int method; //can be null
+
+        //Fields for the pull method
+        String artistName;
+        String songName;
+
+        //Fields for the search method
+        String query;
+
+    }
+    static class ReplyFromPublisher{
+        int method; //CANt BE NUll
+        int statusCode;
+
+        //Fields for the pull method
+        String artistName;
+        String songName;
+
+        //Fields for the search method
+        ArrayList<String> searchArtists;
+        ArrayList<String> searchSongs;
 
     }
     static class RequestToBroker {
 
-        int method; //METHOD_PULL or METHOD_NOTIFY or METHOD_STATUS  or (METHOD_SEARCH)
+        int method; //Request.Methods.PULL L or Request.Methods.NOTIFY
+                    // or Request.Methods.STATUS  or Request.Methods.SEARCH
 
         //Fields for the notify method
         ArrayList<String> artistNames = new ArrayList<>();
