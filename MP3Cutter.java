@@ -2,6 +2,8 @@ import java.io.*;
 import java.util.*;
 import java.nio.file.*;
 import com.mpatric.mp3agic.*;
+import  java.util.stream.*;
+import java.util.regex.*; 
 class MP3Cutter{
 	private File mp3ToCut;
 	public MP3Cutter(){}
@@ -17,9 +19,36 @@ class MP3Cutter{
 	public static List<MusicFile> splitFile(MusicFile mf){
 		return null;
 	}
-	public static List<MusicFileMetaData> getSongsMetaData(String f, String l){
-		return null;
+
+	public static ArrayList<MusicFileMetaData> getSongsMetaData(String a, String z){//A first letter, Z last letter, closed set
+		ArrayList <MusicFileMetaData> AllMetadata = new ArrayList<MusicFileMetaData>();
+		try (Stream<Path> walk = Files.walk(Paths.get("C:\\Users\\Jero\\Desktop\\dataset"))) {
+			List<String> temp = walk.map(x -> x.toString()).filter(f -> (f.endsWith(".mp3"))).collect(Collectors.toList());
+			for(String s: temp){
+				try{
+					MusicFileMetaData MFD = ID3(new File(s));
+					AllMetadata.add(MFD);
+				} catch (Exception e) {
+    				e.printStackTrace();
+				}
+				if(!s.contains("._")){
+					if((s.toLowerCase().compareTo(a)>=0)&&(s.toLowerCase().compareTo(z)<=0)){
+						System.out.printf("Getting songs starting from %s to %s",a,z);
+						int start=s.lastIndexOf("\\");
+						int last=s.lastIndexOf(".");
+						s=s.substring(start+1,last);
+					}
+				}
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return AllMetadata;
 	}
+
+
+
+
 
 	public static int splitFile(File f) throws IOException {
 		int partCounter = 1;//I like to name parts from 001, 002, 003, ...
@@ -104,9 +133,13 @@ class MP3Cutter{
 	public static void mergeFiles(String oneOfFiles, String into) throws IOException{
 		mergeFiles(new File(oneOfFiles), new File(into));
 	}
-
-	public static void ID3(File f) throws InvalidDataException, IOException, UnsupportedTagException {
+	
+	public static MusicFileMetaData ID3(File f) throws InvalidDataException, IOException, UnsupportedTagException {
 		Mp3File mp3file = new Mp3File(f);
+		MusicFileMetaData MFD= new MusicFileMetaData();
+		String fileN= f.getName();
+		fileN=fileN.substring(fileN.lastIndexOf("\\"),fileN.lastIndexOf("."));
+		
 		System.out.println("Length of this mp3 is: " + mp3file + " seconds");
 		System.out.println("Bitrate: " + mp3file.getBitrate() + " kbps " + (mp3file.isVbr() ? "(VBR)" : "(CBR)"));
 		System.out.println("Sample rate: " + mp3file.getSampleRate() + " Hz");
@@ -116,6 +149,35 @@ class MP3Cutter{
 		//if hasId3v1Tag it means that it have metadata
 		if (mp3file.hasId3v1Tag()) {
 			ID3v1 id3v1Tag = mp3file.getId3v1Tag();
+			//TITLE
+			if(id3v1Tag.getTitle()!=null){
+				MFD.setTrackName(id3v1Tag.getTitle());
+			}else{
+				MFD.setTrackName(fileN);//an einai null pare to onoma tou arxeiou
+			}
+
+			//ARTIST
+			if(id3v1Tag.getArtist()!=null){
+				MFD.setTrackName(id3v1Tag.getArtist());
+			}else{
+				MFD.setTrackName("Unknown Artist");//an einai null vale ton unknown
+			}
+
+			//ALBUM
+			if(id3v1Tag.getAlbum()!=null){
+				MFD.setAlbumInfo(id3v1Tag.getAlbum());
+			}else{
+				MFD.setAlbumInfo(MFD.getTrackName());//an einai null vale to onoma tou kommatiou san album
+			}
+
+			//GENRE
+			if(id3v1Tag.getGenreDescription()!=null){
+				MFD.setGenre(id3v1Tag.getGenreDescription());
+			}else{
+				MFD.setGenre("Unknown Genre");//an einai null vale to unknown
+			}
+
+			/**
 			System.out.println("Track: " + id3v1Tag.getTrack());
 			System.out.println("Artist: " + id3v1Tag.getArtist());
 			System.out.println("Title: " + id3v1Tag.getTitle());
@@ -123,6 +185,7 @@ class MP3Cutter{
 			System.out.println("Year: " + id3v1Tag.getYear());
 			System.out.println("Genre: " + id3v1Tag.getGenre() + " (" + id3v1Tag.getGenreDescription() + ")");
 			System.out.println("Comment: " + id3v1Tag.getComment());
+			**/
 		}
 
 		ID3v1 id3v1Tag;
@@ -135,6 +198,35 @@ class MP3Cutter{
 
 		if (mp3file.hasId3v2Tag()) {
 			ID3v2 id3v2Tag = mp3file.getId3v2Tag();
+
+			if(id3v2Tag.getTitle()!=null){
+				MFD.setTrackName(id3v2Tag.getTitle());
+			}else{
+				MFD.setTrackName(fileN);//an einai null pare to onoma tou arxeiou
+			}
+
+			//ARTIST
+			if(id3v2Tag.getArtist()!=null){
+				MFD.setTrackName(id3v2Tag.getArtist());
+			}else{
+				MFD.setTrackName("Unknown Artist");//an einai null vale ton unknown
+			}
+
+			//ALBUM
+			if(id3v2Tag.getAlbum()!=null){
+				MFD.setAlbumInfo(id3v2Tag.getAlbum());
+			}else{
+				MFD.setAlbumInfo(MFD.getTrackName());//an einai null vale to onoma tou kommatiou san album
+			}
+
+			//GENRE
+			if(id3v2Tag.getGenreDescription()!=null){
+				MFD.setGenre(id3v2Tag.getGenreDescription());
+			}else{
+				MFD.setGenre("Unknown Genre");//an einai null vale to unknown
+			}
+
+			/**
 			System.out.println("Track: " + id3v2Tag.getTrack());
 			System.out.println("Artist: " + id3v2Tag.getArtist());
 			System.out.println("Title: " + id3v2Tag.getTitle());
@@ -149,19 +241,20 @@ class MP3Cutter{
 			System.out.println("Copyright: " + id3v2Tag.getCopyright());
 			System.out.println("URL: " + id3v2Tag.getUrl());
 			System.out.println("Encoder: " + id3v2Tag.getEncoder());
-
+			**/
 		}
-		//return ;
+		return MFD;
 	}
+	
 
 	public static void main(String[] args) throws IOException {
-		Path current = Paths.get("documents.txt");
-		String file = current.toAbsolutePath().toString();
-
-		walk("C:\\Users\\Jero\\Desktop\\DistributedSystemsAssignment\\songs\\Horror","Horroriffic.mp3");
+		//Path current = Paths.get("documents.txt");
+		//String file = current.toAbsolutePath().toString();
+		getSongsMetaData("b","j");
+		//walk("C:\\Users\\Jero\\Desktop\\DistributedSystemsAssignment\\songs\\Horror","Horroriffic.mp3");
 		//splitFile(new File("C:\\Users\\tinoa\\Desktop\\testmp3\\test.mp3"));
 		//Path currentRelativePath = Paths.get("");
 		//mergeFiles(currentRelativePath.toAbsolutePath().toString()+"\\Kesha - TiK ToK.mp3.001",currentRelativePath.toAbsolutePath().toString()+"\\KappaKeepo.mp3");
 	}
-
+	
 }
