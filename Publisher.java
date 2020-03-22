@@ -19,11 +19,51 @@ public class Publisher extends Node implements Serializable {
 	private String last;
 	private String fileWithBrokers;
 
-	public void getBrokerList() { }
+	public void getBrokerList(String filename)  {
+		Scanner myReader = null;
+		try {
+			myReader = new Scanner(new File(filename));
+			//Notifying all brokers
+			while (myReader.hasNextLine()) {
+				//Parsing a broker
+				String data = myReader.nextLine();
+				System.out.println("data "+data);
+				String[] arrOfStr = data.split("\\s");
+				String ip = arrOfStr[0];
+				int port = Integer.parseInt(arrOfStr[1]);
+				int hashValue = Integer.parseInt(arrOfStr[2]);
+				notifyBroker(ip , port);
+			}
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+	}
 
-	public Broker hashTopic(ArtistName artist) { return null; }
+	public void hashTopic(ArtistName artist) { }
 
-	public void push(ArtistName artist,MusicFileMetaData value) { }
+	public void push(String artist, String song, ObjectOutputStream out) throws IOException {
+		ArrayList<MusicFileMetaData> songs= artistToMusicFileMetaData.get(artist);
+		if(songs!=null){
+			for (MusicFileMetaData s : songs) {
+				if (s.getTrackName().equals(song)) {
+					String path = s.getPath();
+					//TODO:send reply with number with chunks
+					Request.ReplyFromPublisher reply = new Request.ReplyFromPublisher();
+					reply.statusCode = Request.StatusCodes.OK;
+					reply.numChunks = 0;
+					out.writeObject(reply);
+					//TODO:send chunks
+
+					return;
+				}
+			}
+		}
+		//no artistName or song
+		Request.ReplyFromPublisher reply = new Request.ReplyFromPublisher();
+		reply.statusCode = Request.StatusCodes.MALFORMED_REQUEST;
+		out.writeObject(reply);
+
+	}
 
 	public void notifyFailure(Broker broker) { }
 
@@ -67,13 +107,18 @@ public class Publisher extends Node implements Serializable {
 			socket = new Socket(ip,port);
 			System.out.printf("[PUBLISHER %d] Connected to broker on port %d , ip %s%n" ,getPort() , port , ip);
 			out = new ObjectOutputStream(socket.getOutputStream());
-			//Creating notify message
-			String message = String.format("notify %s %d" , getIp() , getPort());
-			for(ArtistName name : artistToMusicFileMetaData.keySet()){
-				message += " " + name.getArtistName();
+			//Creating notify request to Broker
+			//String message = String.format("notify %s %d" , getIp() , getPort());
+			Request.RequestToBroker request = new Request.RequestToBroker();
+			request.publisherIp = this.getIp();
+			request.publisherPort = this.getPort();
+			request.method = Request.Methods.NOTIFY;
+			request.artistNames = new ArrayList<String>();
+			for(ArtistName artist  : artistToMusicFileMetaData.keySet()){
+				request.artistNames.add(artist.getArtistName());
 			}
-			System.out.printf("[PUBLISHER %d] Sending message \"%s\" to broker on port %d , ip %s%n" ,getPort(), message , port , ip);
-			out.writeObject(message);
+			System.out.printf("[PUBLISHER %d] Sending message \"%s\" to broker on port %d , ip %s%n" ,getPort(), request , port , ip);
+			out.writeObject(request);
 		}
 		catch(Exception e){
 			System.out.printf("[PUBLISHER %d] Failure on notifybroker Broker(ip = %s port = %d  %n)" , getPort() , ip , port);
@@ -155,20 +200,7 @@ public class Publisher extends Node implements Serializable {
 			// arg[2]: first letter of responsible artistname arg[3]: last letter of responsible artistname
 			// arg[4]: file with Broker's information
 			Publisher p = new Publisher(args[0],Integer.parseInt(args[1]) , args[2], args[3],args[4]);
-
-			Scanner myReader = new Scanner(new File(args[4]));
-			//Notifying all brokers
-			while (myReader.hasNextLine()) {
-				//Parsing a broker
-				String data = myReader.nextLine();
-				System.out.println("data "+data);
-				String[] arrOfStr = data.split("\\s");
-				String ip = arrOfStr[0];
-				int port = Integer.parseInt(arrOfStr[1]);
-				int hashValue = Integer.parseInt(arrOfStr[2]);
-				p.notifyBroker(ip , port);
-			}
-
+			p.getBrokerList(args[4]);
 			p.startServer();
 
 		}catch (Exception e) {
@@ -193,12 +225,15 @@ public class Publisher extends Node implements Serializable {
 
 				//Take Broker's request
 				//Broker's request is a ArtistName and a song
-                String aName= (String) in.readObject();
-                String[] args = aName.split("\\s");
+				Request.RequestToPublisher req= (Request.RequestToPublisher) in.readObject();
 
-				if(args[0].toLowerCase().equals("push")) {
-					String artist = args[1];
-					String song = args[2];
+				if(req.method == Request.Methods.PUSH) {
+					if(req.artistName==null || req.songName==null){
+						Request.ReplyFromPublisher reply = new Request.ReplyFromPublisher();
+						reply.statusCode = Request.StatusCodes.MALFORMED_REQUEST;
+						out.writeObject(reply);
+					}
+					push(req.artistName, req.songName, out);
 
 					/*
 					MP3Cutter Chunker = new MP3Cutter(new File("C:\\Users\\Jero\\Desktop\\dataset1\\Horror\\Horroriffic"));
