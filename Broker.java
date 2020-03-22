@@ -62,13 +62,10 @@ public class Broker {
 	/*
 	 * accept connection with Publicher: notify Publisher
 	 */
-	public void notifyPublisher(String[] args) {
+	public void notifyPublisher(String ip, int port,  ArrayList<String> artists) {
 		System.out.println("IN NOTIFY");
 		System.out.println();
-		String ip = args[1];
-		int port = Integer.parseInt(args[2]);
-		for(int i=3; i<args.length; i++){
-			String artistName = args[i];
+		for(String artistName:artists){
 			if(isResponsible(artistName)){
 				artistToPublisher.put(new ArtistName(artistName),new Component(ip,port));
 			}
@@ -241,10 +238,10 @@ public class Broker {
 				//Publisher notifies Broker about the artistNames he is responsible for
 				if(request.method == Request.Methods.NOTIFY){
 					//message from Publisher
-					notifyPublisher(args);
+					notifyPublisher(request.publisherIp, request.publisherPort, request.artistNames);
 				}
 				//this  "else if" is useless, it's for debug purposes
-				else if(args[0].toLowerCase().equals("status")){ 				//information querying about broker's state
+				else if(request.method == Request.Methods.STATUS){ 				//information querying about broker's state
 					//Retuns the names of the artists for whom the broker is responsible
 					String reply = "";
 					for(ArtistName key : artistToPublisher.keySet()) {
@@ -253,9 +250,9 @@ public class Broker {
 					out.writeObject(reply);
 				}
 				//pull means we got a request from Consumer for an astist's song
-				else if (args[0].toLowerCase().equals("pull")){
-					ArtistName artistName = new ArtistName(args[1]);
-					String song = args[2];
+				else if (request.method == Request.Methods.PULL){
+					ArtistName artistName = new ArtistName(request.pullArtistName);
+					String song = request.songName;
 					pull(artistName, song, out);
 				}
 

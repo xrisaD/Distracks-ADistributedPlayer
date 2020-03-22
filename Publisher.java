@@ -200,6 +200,7 @@ public class Publisher extends Node implements Serializable {
 					String artist = args[1];
 					String song = args[2];
 
+					/*
 					MP3Cutter Chunker = new MP3Cutter(new File("C:\\Users\\Jero\\Desktop\\dataset1\\Horror\\Horroriffic"));
 					Path currentRelativePath = Paths.get("");
 					String result = Chunker.walk(currentRelativePath.toAbsolutePath().toString() + "\\songs", song);//stp result exoume to filename pou epistrefei h walk
@@ -220,7 +221,7 @@ public class Publisher extends Node implements Serializable {
 								//out.writeObject(mp3File);
 							}
 						}
-					}
+					}*/
 				}
 			}catch (ClassNotFoundException c) {
 				System.out.println("Class not found");
