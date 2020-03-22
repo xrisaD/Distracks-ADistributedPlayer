@@ -38,15 +38,31 @@ class MP3Cutter{
 		return AllMetadata;
 	}
 
-	public static int splitFile(File f) throws IOException {
+	public ArrayList<byte[]> splitFile() throws IOException {
 		int partCounter = 1;//I like to name parts from 001, 002, 003, ...
 		//you can change it to 0 if you want 000, 001, ...
 
 		int sizeOfFiles = 1024 * 512;// 1MB
 		byte[] buffer = new byte[sizeOfFiles];
+		ArrayList<byte[]> chunklist=new ArrayList<byte[]> ();
+		String fileName = mp3ToCut.getName();
 
-		String fileName = f.getName();
+		//try-with-resources to ensure closing stream
+		try (FileInputStream fis = new FileInputStream(mp3ToCut);
+			 BufferedInputStream bis = new BufferedInputStream(fis)) {
 
+			int bytesAmount = 0;
+			while ((bytesAmount = bis.read(buffer)) > 0) {
+				chunklist.add(buffer);
+			}
+			//an thelei arithmo chunks to size
+		}
+		return chunklist;
+	}
+
+
+	/**
+		//AN THELAME NA APOTHIKEVOUME CHUNKS.MP3
 		//try-with-resources to ensure closing stream
 		try (FileInputStream fis = new FileInputStream(f);
 			 BufferedInputStream bis = new BufferedInputStream(fis)) {
@@ -62,9 +78,8 @@ class MP3Cutter{
 					out.write(buffer, 0, bytesAmount);
 				}
 			}
-			return partCounter;
-		}
-	}
+			return chunklist;
+	**/
 	public static String walk( String path,String song) {
 
 		File root = new File( path );
@@ -255,9 +270,9 @@ class MP3Cutter{
 		//String file = current.toAbsolutePath().toString();
 		//getSongsMetaData("b","j");
 		//walk("C:\\Users\\Jero\\Desktop\\DistributedSystemsAssignment\\songs\\Horror","Horroriffic.mp3");
-		Path currentRelativePath = Paths.get("");
-		splitFile(new File(currentRelativePath.toAbsolutePath().toString()+"\\dataset\\dataset1\\World\\Eye of Forgiveness.mp3"));
-		mergeFiles(currentRelativePath.toAbsolutePath().toString()+"\\dataset\\dataset1\\World\\Eye of Forgiveness001.mp3",currentRelativePath.toAbsolutePath().toString()+"\\Eye of Forgiveness.mp3");
+		//Path currentRelativePath = Paths.get("");
+		//splitFile(new File(currentRelativePath.toAbsolutePath().toString()+"\\dataset\\dataset1\\World\\Eye of Forgiveness.mp3"));
+		//mergeFiles(currentRelativePath.toAbsolutePath().toString()+"\\dataset\\dataset1\\World\\Eye of Forgiveness001.mp3",currentRelativePath.toAbsolutePath().toString()+"\\Eye of Forgiveness.mp3");
 	}
 	
 }

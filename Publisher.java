@@ -12,12 +12,13 @@ import com.mpatric.mp3agic.*;
 public class Publisher extends Node implements Serializable {
 	//ArtistName -> MusicFileMetaDatas of this artist
 	private Map<ArtistName, ArrayList<MusicFileMetaData>> artistToMusicFileMetaData = Collections.synchronizedMap(new HashMap<>());
-
+	private MP3Cutter cutter;
 	private String ip;
 	private int port;
 	private String first;
 	private String last;
 	private String fileWithBrokers;
+	private List<byte[]> currentsong;
 
 	public void getBrokerList(String filename)  {
 		Scanner myReader = null;
@@ -43,17 +44,22 @@ public class Publisher extends Node implements Serializable {
 
 	public void push(String artist, String song, ObjectOutputStream out) throws IOException {
 		ArrayList<MusicFileMetaData> songs= artistToMusicFileMetaData.get(artist);
+
 		if(songs!=null){
 			for (MusicFileMetaData s : songs) {
 				if (s.getTrackName().equals(song)) {
 					String path = s.getPath();
-					//TODO:send reply with number with chunks
+					cutter = new MP3Cutter(new File(path));
+					currentsong=cutter.splitFile();//returns arraylist with byte[]. So size of arraylist is number of chunks
+					int numofchunks=currentsong.size();//arithmos chunks
 					Request.ReplyFromPublisher reply = new Request.ReplyFromPublisher();
 					reply.statusCode = Request.StatusCodes.OK;
-					reply.numChunks = 0;
+					reply.numChunks = numofchunks;
 					out.writeObject(reply);
-					//TODO:send chunks
-
+					for(byte[] b:currentsong){
+						MusicFile finalMF= new MusicFile(s,b);//metadata + kathe chunk
+						out.writeObject(finalMF);
+					}
 					return;
 				}
 			}
@@ -62,7 +68,6 @@ public class Publisher extends Node implements Serializable {
 		Request.ReplyFromPublisher reply = new Request.ReplyFromPublisher();
 		reply.statusCode = Request.StatusCodes.MALFORMED_REQUEST;
 		out.writeObject(reply);
-
 	}
 
 	public void notifyFailure(Broker broker) { }
