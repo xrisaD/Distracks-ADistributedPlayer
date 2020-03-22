@@ -151,7 +151,7 @@ public class Broker {
 				}
 			}
 			//404 : something went wrong
-			else {
+			else{
 				outToConsumer.writeObject("404");
 			}
 		} catch (UnknownHostException e) {
