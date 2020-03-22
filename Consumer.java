@@ -20,38 +20,42 @@ public class Consumer extends Node implements Serializable {
 		try {
 			String ip = knownBrokers.get(0).getIp();
 			int port =  knownBrokers.get(0).getPort();
-			int statusCode = 402;
-			String[] args = {};
+			int statusCode = Request.StatusCodes.NOT_RESPONSIBLE;
+			Request.ReplyFromBroker reply = null;
 			//While we find a broker who is not responsible for the artistname
-			while(statusCode == 402){
-				if (args.length > 1){
-					ip = args[1];
-					port = Integer.parseInt(args[2]);
-				}
+			while(statusCode == Request.StatusCodes.NOT_RESPONSIBLE){
+				ip = reply.responsibleBrokerIp;
+				port = reply.responsibleBrokerPort;
 				s = new Socket(ip, port);
 				out = new ObjectOutputStream(s.getOutputStream());
 				//Creating the request object
-				String request = String.format("pull %s %s", artist, songName);
+				Request.RequestToBroker request = new Request.RequestToBroker();
+				request.method = Request.Methods.PULL;
+				request.pullArtistName = artist.getArtistName();
+				request.songName = songName;
 				//Writing the request object
 				out.writeObject(request);
 				//Waiting for the reply
 				in = new ObjectInputStream(s.getInputStream());
-				String reply = (String) in.readObject();
-				args = reply.split(" ");
+				reply = (Request.ReplyFromBroker) in.readObject();
 				System.out.printf("[CONSUMER] Got reply from Broker(%s,%d) : %s", ip, port, reply);
-				statusCode = Integer.parseInt(args[0]);
+				statusCode = reply.statusCode;
+			}
+			if(statusCode == Request.StatusCodes.NOT_FOUND){
+				throw new Exception("Song or Artist does not exist");
 			}
 			//Song exists and the broker is responsible for the artist
-			if(args[0].equals("200")){
+			if(statusCode == Request.StatusCodes.OK){
 				//Start reading chunks
-				for(int i = 0 ; i < Integer.parseInt(args[1]) ; i++){
+				for(int i = 0 ; i < reply.numChunks ; i++){
 					//HandleCHunks
 					MusicFile chunk = (MusicFile) in.readObject();
 					chunks.add(chunk);
 				}
 			}
-			if(args[0].equals("404")){
-				throw new Exception("Song or Artist does not exist");
+			//In this case the status code is MALFORMED_REQUEST
+			else{
+				throw new Exception("MALFORMED_REQUEST");
 			}
 			//TODO: for Jero and kon_kons: merge in one file save as mp3 the chunks arrayList data
 		}
