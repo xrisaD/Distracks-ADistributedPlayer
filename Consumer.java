@@ -51,7 +51,7 @@ public class Consumer extends Node implements Serializable {
 				}
 			}
 			if(args[0].equals("404")){
-				throw new Exception("Song does not exist");
+				throw new Exception("Song or Artist does not exist");
 			}
 			//TODO: for Jero and kon_kons: merge in one file save as mp3 the chunks arrayList data
 		}

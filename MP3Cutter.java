@@ -6,8 +6,21 @@ class MP3Cutter{
 	private File mp3ToCut;
 	public MP3Cutter(){}
 	public MP3Cutter(File f){
-		this.mp3ToCut=f;
+		this.mp3ToCut = f;
 	}
+
+	//TODO:
+	//1h: split pou tha dexete musicFile os orisma kai tha to spaei se polla musicFiles(dhladh se chunks) kai tha epistrefei ena list me afta ta musicFiles
+	//2h: tha pernei os orisma to proto gramma kai to teleftaio gramma ta opoia tha eksipiretei o ekastote Publisher tha diavazei
+	// ola ta tragoudia apo to dataset kai tha eksagei g kathe song ta metadata. tha ftiaxnei ena pinaka me metaData olwn twn tragoudiwn k tha ta epistrefei
+
+	public static List<MusicFile> splitFile(MusicFile mf){
+		return null;
+	}
+	public static MusicFileMetaData getSongsMetaData(String f, String l){
+		return null;
+	}
+
 	public static int splitFile(File f) throws IOException {
 		int partCounter = 1;//I like to name parts from 001, 002, 003, ...
 		//you can change it to 0 if you want 000, 001, ...
@@ -100,6 +113,7 @@ class MP3Cutter{
 		System.out.println("Has ID3v1 tag?: " + (mp3file.hasId3v1Tag() ? "YES" : "NO"));
 		System.out.println("Has ID3v2 tag?: " + (mp3file.hasId3v2Tag() ? "YES" : "NO"));
 		System.out.println("Has custom tag?: " + (mp3file.hasCustomTag() ? "YES" : "NO"));
+		//if hasId3v1Tag it means that it have metadata
 		if (mp3file.hasId3v1Tag()) {
 			ID3v1 id3v1Tag = mp3file.getId3v1Tag();
 			System.out.println("Track: " + id3v1Tag.getTrack());
@@ -141,9 +155,10 @@ class MP3Cutter{
 	}
 
 	public static void main(String[] args) throws IOException {
+		Path current = Paths.get("documents.txt");
+		String file = current.toAbsolutePath().toString();
 
 		walk("C:\\Users\\Jero\\Desktop\\DistributedSystemsAssignment\\songs\\Horror","Horroriffic.mp3");
-
 		//splitFile(new File("C:\\Users\\tinoa\\Desktop\\testmp3\\test.mp3"));
 		//Path currentRelativePath = Paths.get("");
 		//mergeFiles(currentRelativePath.toAbsolutePath().toString()+"\\Kesha - TiK ToK.mp3.001",currentRelativePath.toAbsolutePath().toString()+"\\KappaKeepo.mp3");
