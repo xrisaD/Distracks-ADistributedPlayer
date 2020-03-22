@@ -1,3 +1,4 @@
+import java.io.Serializable;
 import java.util.ArrayList;
 class Request {
     class Methods{
@@ -5,6 +6,7 @@ class Request {
         public static final int NOTIFY = 1;
         public static final int STATUS = 2;
         public static final int SEARCH = 3;
+        public static final int PUSH = 4;
     }
     class StatusCodes {
         public static final int MALFORMED_REQUEST = 400;
@@ -14,7 +16,7 @@ class Request {
 
         public static final int NOT_RESPONSIBLE = 300;
     }
-    static class RequestToPublisher{
+    static class RequestToPublisher implements Serializable{
         int method; //can be null
 
         //Fields for the pull method
@@ -25,8 +27,8 @@ class Request {
         String query;
 
     }
-    static class ReplyFromPublisher{
-        int method; //CANt BE NUll
+    static class ReplyFromPublisher implements Serializable{
+        int numChunks;
         int statusCode;
 
         //Fields for the pull method
@@ -38,7 +40,7 @@ class Request {
         ArrayList<String> searchSongs;
 
     }
-    static class RequestToBroker {
+    static class RequestToBroker implements Serializable {
 
         int method; //Request.Methods.PULL L or Request.Methods.NOTIFY
                     // or Request.Methods.STATUS  or Request.Methods.SEARCH
@@ -60,7 +62,7 @@ class Request {
 
     }
 
-    static class ReplyFromBroker {
+    static class ReplyFromBroker implements Serializable {
 
         int method; //METHOD_PULL or METHOD_NOTIFY or METHOD_STATUS  or (METHOD_SEARCH)
         int statusCode;
