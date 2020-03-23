@@ -267,6 +267,14 @@ public class Publisher extends Node implements Serializable {
 			} catch (IOException ioException) {
 				ioException.printStackTrace();
 			}
+			try {
+				if (in != null) in.close();
+				if (out != null) out.close();
+				if(socket != null) socket.close();
+			}
+			catch(Exception e){
+				throw new RuntimeException(e);
+			}
 		}
 	}
 

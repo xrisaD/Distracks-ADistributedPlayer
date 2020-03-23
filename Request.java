@@ -26,6 +26,15 @@ class Request {
         //Fields for the search method
         String query;
 
+        @Override
+        public String toString() {
+            return "RequestToPublisher{" +
+                    "method=" + method +
+                    ", artistName='" + artistName + '\'' +
+                    ", songName='" + songName + '\'' +
+                    ", query='" + query + '\'' +
+                    '}';
+        }
     }
     static class ReplyFromPublisher implements Serializable{
         int numChunks;
@@ -39,6 +48,17 @@ class Request {
         ArrayList<String> searchArtists;
         ArrayList<String> searchSongs;
 
+        @Override
+        public String toString() {
+            return "ReplyFromPublisher{" +
+                    "numChunks=" + numChunks +
+                    ", statusCode=" + statusCode +
+                    ", artistName='" + artistName + '\'' +
+                    ", songName='" + songName + '\'' +
+                    ", searchArtists=" + searchArtists +
+                    ", searchSongs=" + searchSongs +
+                    '}';
+        }
     }
     static class RequestToBroker implements Serializable {
 
@@ -60,6 +80,18 @@ class Request {
         //Fields for the search method
         String query;
 
+        @Override
+        public String toString() {
+            return "RequestToBroker{" +
+                    "method=" + method +
+                    ", artistNames=" + artistNames +
+                    ", publisherIp='" + publisherIp + '\'' +
+                    ", publisherPort=" + publisherPort +
+                    ", pullArtistName='" + pullArtistName + '\'' +
+                    ", songName='" + songName + '\'' +
+                    ", query='" + query + '\'' +
+                    '}';
+        }
     }
 
     static class ReplyFromBroker implements Serializable {
@@ -81,5 +113,18 @@ class Request {
         ArrayList<String> searchArtists;
         ArrayList<String> searchSongs;
 
+        @Override
+        public String toString() {
+            return "ReplyFromBroker{" +
+                    "method=" + method +
+                    ", statusCode=" + statusCode +
+                    ", numChunks=" + numChunks +
+                    ", responsibleBrokerIp='" + responsibleBrokerIp + '\'' +
+                    ", responsibleBrokerPort=" + responsibleBrokerPort +
+                    ", artists=" + artists +
+                    ", searchArtists=" + searchArtists +
+                    ", searchSongs=" + searchSongs +
+                    '}';
+        }
     }
 }
