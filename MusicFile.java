@@ -1,4 +1,5 @@
 import java.io.Serializable;
+import java.util.Arrays;
 
 public class MusicFile implements Serializable {
 	private byte[] musicFileExtract;
@@ -24,5 +25,5 @@ public class MusicFile implements Serializable {
 	public MusicFileMetaData getMetaData(){
 		return metaData;
 	}
-	
+
 }
