@@ -202,7 +202,7 @@ public class Publisher extends Node implements Serializable {
 			// arg[4]: file with Broker's information
 			Publisher p = new Publisher(args[0],Integer.parseInt(args[1]) , args[2], args[3],args[4]);
 			Path currentRelativePath = Paths.get("");
-			p.getBrokerList(currentRelativePath.toAbsolutePath().toString()+"\\src\\"+args[4]);
+			p.getBrokerList(args[4]);
 			p.startServer();
 
 		}catch (Exception e) {

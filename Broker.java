@@ -155,7 +155,6 @@ public class Broker {
 				outToConsumer.writeObject("404");
 			}
 		} catch (IOException | ClassNotFoundException e) {
-			e.printStackTrace();
 			System.out.println("[BROKER] Error while requesting song from publisher " + e.getMessage());
 		} finally{
 			try {
@@ -311,12 +310,9 @@ public class Broker {
 				 System.out.printf("[BROKER %s % d] ----------------- %n" , getIp() , getPort() );
 				 **/
 
-			}catch (ClassNotFoundException c) {
-				System.out.println("Class not found");
-				c.printStackTrace();
-				return;
-			} catch (IOException ioException) {
-				ioException.printStackTrace();
+			} catch (IOException | ClassNotFoundException e) {
+				System.out.printf("[BROKER %s % d] terminating a connection due to an exception : %s %n"
+						, getIp() , getPort() , e.getMessage() );
 			}
 			finally {
 				try {
