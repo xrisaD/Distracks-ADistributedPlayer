@@ -1,6 +1,8 @@
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
 
 public class Publisher extends Node implements Serializable {
@@ -126,8 +128,8 @@ public class Publisher extends Node implements Serializable {
 		}
 		finally{
 			try {
-				if(out!=null) out.close();
-				if(socket!=null) socket.close();
+				//if(out!=null) out.close();
+				//if(socket!=null) socket.close();
 			}
 			catch(Exception e){
 				System.out.println("Error while closing streams");
@@ -199,7 +201,8 @@ public class Publisher extends Node implements Serializable {
 			// arg[2]: first letter of responsible artistname arg[3]: last letter of responsible artistname
 			// arg[4]: file with Broker's information
 			Publisher p = new Publisher(args[0],Integer.parseInt(args[1]) , args[2], args[3],args[4]);
-			p.getBrokerList(args[4]);
+			Path currentRelativePath = Paths.get("");
+			p.getBrokerList(currentRelativePath.toAbsolutePath().toString()+"\\src\\"+args[4]);
 			p.startServer();
 
 		}catch (Exception e) {
@@ -279,25 +282,12 @@ public class Publisher extends Node implements Serializable {
 		List<MusicFileMetaData> allMetaData= MP3Cutter.getSongsMetaData(first, last);
 		//create artistToMusicFileMetaData Hashtable by parsing allMetaData
 		for (MusicFileMetaData song : allMetaData) {
-			System.out.println(song);
-			boolean flag=false;
-			for (Map.Entry<ArtistName, ArrayList<MusicFileMetaData>> entry : artistToMusicFileMetaData.entrySet()) {
-				ArtistName key = entry.getKey();
-				if(key.getArtistName().equals(song.getArtistName())){
-					ArrayList<MusicFileMetaData> value = entry.getValue();
-					value.add(song);
-					artistToMusicFileMetaData.put(key,value);
-					flag=true;
-					break;
-				}
-			}
-			if(!flag){
+			if(artistToMusicFileMetaData.get(new ArtistName(song.getArtistName()))==null){
 				//initialize artist
-				ArrayList<MusicFileMetaData> meta= new ArrayList<MusicFileMetaData>();
-				meta.add(song);
-				artistToMusicFileMetaData.put(new ArtistName(song.getArtistName()), meta);
-				System.out.println("in");
+				artistToMusicFileMetaData.put(new ArtistName(song.getArtistName()), new ArrayList<MusicFileMetaData>());
 			}
+			//add song to the particular artist
+			artistToMusicFileMetaData.get(song.getArtistName()).add(song);
 		}
 	}
 
