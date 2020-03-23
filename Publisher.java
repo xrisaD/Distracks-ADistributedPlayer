@@ -1,13 +1,7 @@
-import javax.management.RuntimeErrorException;
 import java.io.*;
-import java.lang.reflect.Array;
-import java.net.*;
-import java.util.ArrayList;
-import java.util.Hashtable;
-import java.util.Scanner;
+import java.net.ServerSocket;
+import java.net.Socket;
 import java.util.*;
-import java.nio.file.*;
-import com.mpatric.mp3agic.*;
 
 public class Publisher extends Node implements Serializable {
 	//ArtistName -> MusicFileMetaDatas of this artist
@@ -285,12 +279,33 @@ public class Publisher extends Node implements Serializable {
 		List<MusicFileMetaData> allMetaData= MP3Cutter.getSongsMetaData(first, last);
 		//create artistToMusicFileMetaData Hashtable by parsing allMetaData
 		for (MusicFileMetaData song : allMetaData) {
-			if(artistToMusicFileMetaData.get(new ArtistName(song.getArtistName()))==null){
+			System.out.println(song);
+			boolean flag=false;
+			for (Map.Entry<ArtistName, ArrayList<MusicFileMetaData>> entry : artistToMusicFileMetaData.entrySet()) {
+				ArtistName key = entry.getKey();
+				if(key.getArtistName().equals(song.getArtistName())){
+					flag=true;
+					break;
+				}
+			}
+			if(flag){
 				//initialize artist
 				artistToMusicFileMetaData.put(new ArtistName(song.getArtistName()), new ArrayList<MusicFileMetaData>());
+				System.out.println("in");
 			}
 			//add song to the particular artist
-			artistToMusicFileMetaData.get(song.getArtistName()).add(song);
+			System.out.println(song.getArtistName()+" "+song.getTrackName());
+			//artistToMusicFileMetaData.get(song.getArtistName()).add(song);
+			for (Map.Entry<ArtistName, ArrayList<MusicFileMetaData>> entry : artistToMusicFileMetaData.entrySet()) {
+				ArtistName key = entry.getKey();
+				ArrayList<MusicFileMetaData> value = entry.getValue();
+				if(key.getArtistName().equals(song.getArtistName())){
+					value.add(song);
+					artistToMusicFileMetaData.put(key,value);
+					break;
+				}
+			}
+			System.out.println(song.getArtistName()+" "+song.getTrackName());
 		}
 	}
 
