@@ -154,12 +154,9 @@ public class Broker {
 			else {
 				outToConsumer.writeObject("404");
 			}
-		} catch (UnknownHostException e) {
+		} catch (IOException | ClassNotFoundException e) {
 			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
+			System.out.println("[BROKER] Error while requesting song from publisher " + e.getMessage());
 		} finally{
 			try {
 				if(in!=null) in.close();
