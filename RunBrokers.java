@@ -13,6 +13,12 @@ public class RunBrokers {
      * Starts brokers locally with different ports
      *              Usage RunBrokers <nBrokers>
      */
+    private static String OS = System.getProperty("os.name").toLowerCase();
+    private static boolean isWindows() {
+        return OS.contains("win");
+    }
+    private static String classPathDelimiter = isWindows() ? ";" : ":";
+
     public static void main(String[] args) throws IOException {
         //Usage RunBrokers <nBrokers>
         int nBrokers = Integer.parseInt(args[0]);
@@ -68,7 +74,7 @@ public class RunBrokers {
             }
             else if(line.trim().toLowerCase().equals("start_publisher")) {
                 //Starting a publisher
-                String command = String.format("java -cp .:mp3agic-0.9.0.jar Publisher %s %d a z %s" , ip , port , fileName);
+                String command = String.format("java -cp ." + classPathDelimiter + "mp3agic-0.9.0.jar Publisher %s %d a z %s%n" , ip , port , fileName);
                 //Adding artists for whom the publisher is responsible to the command
                 String[] artists = {"Bob" , "John" , "mpla"};
                 for (String artist : artists ){
