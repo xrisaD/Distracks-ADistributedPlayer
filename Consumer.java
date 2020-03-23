@@ -21,11 +21,11 @@ public class Consumer extends Node implements Serializable {
 			String ip = knownBrokers.get(0).getIp();
 			int port =  knownBrokers.get(0).getPort();
 			int statusCode = Request.StatusCodes.NOT_RESPONSIBLE;
-			Request.ReplyFromBroker reply = null;
+			Request.ReplyFromBroker reply=null;
 			//While we find a broker who is not responsible for the artistname
+			System.out.println("in");
 			while(statusCode == Request.StatusCodes.NOT_RESPONSIBLE){
-				ip = reply.responsibleBrokerIp;
-				port = reply.responsibleBrokerPort;
+				System.out.println("in");
 				s = new Socket(ip, port);
 				out = new ObjectOutputStream(s.getOutputStream());
 				//Creating the request object
@@ -41,6 +41,7 @@ public class Consumer extends Node implements Serializable {
 				System.out.printf("[CONSUMER] Got reply from Broker(%s,%d) : %s", ip, port, reply);
 				statusCode = reply.statusCode;
 			}
+			System.out.println("in");
 			if(statusCode == Request.StatusCodes.NOT_FOUND){
 				throw new Exception("Song or Artist does not exist");
 			}
@@ -52,6 +53,7 @@ public class Consumer extends Node implements Serializable {
 					MusicFile chunk = (MusicFile) in.readObject();
 					chunks.add(chunk);
 				}
+				System.out.println(chunks.size());
 			}
 			//In this case the status code is MALFORMED_REQUEST
 			else{
