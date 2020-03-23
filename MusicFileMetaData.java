@@ -48,4 +48,14 @@ public class MusicFileMetaData implements Serializable {
         this.path = path;
     }
 
+    @Override
+    public String toString() {
+        return "MusicFileMetaData{" +
+                "trackName='" + trackName + '\'' +
+                ", artistName='" + artistName + '\'' +
+                ", albumInfo='" + albumInfo + '\'' +
+                ", genre='" + genre + '\'' +
+                ", path='" + path + '\'' +
+                '}';
+    }
 }
