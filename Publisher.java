@@ -287,7 +287,7 @@ public class Publisher extends Node implements Serializable {
 				artistToMusicFileMetaData.put(new ArtistName(song.getArtistName()), new ArrayList<MusicFileMetaData>());
 			}
 			//add song to the particular artist
-			artistToMusicFileMetaData.get(song.getArtistName()).add(song);
+			artistToMusicFileMetaData.get(new ArtistName(song.getArtistName())).add(song);
 		}
 	}
 

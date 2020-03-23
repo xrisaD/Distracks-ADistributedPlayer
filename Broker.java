@@ -3,6 +3,8 @@ import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
 
 public class Broker {
@@ -235,6 +237,7 @@ public class Broker {
 			//arg[1]:port
 			//arg[2]:hashValue
 			Broker b = new Broker(args[0],Integer.parseInt(args[1]),Integer.parseInt(args[2]));
+
 			b.saveBrokersData(args[3]);
 			b.startServer();
 		}catch (Exception e) {
@@ -272,7 +275,9 @@ public class Broker {
 
 					}
 					notifyPublisher(request.publisherIp, request.publisherPort, request.artistNames);
+					System.out.println("replying");
 					replyWithOK(out);
+					System.out.println("replying");
 				}
 				//this  "else if" is for debug purposes
 				else if(request.method == Request.Methods.STATUS){ 				//information querying about broker's state
@@ -320,9 +325,9 @@ public class Broker {
 			}
 			finally {
 				try {
-					if (in != null) in.close();
-					if (out != null) out.close();
-					if(socket != null) socket.close();
+					//if (in != null) in.close();
+					//if (out != null) out.close();
+					//if(socket != null) socket.close();
 				}
 				catch(Exception e){
 					throw new RuntimeException(e);
