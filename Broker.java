@@ -321,9 +321,9 @@ public class Broker {
 			}
 			finally {
 				try {
-					//if (in != null) in.close();
-					//if (out != null) out.close();
-					//if(socket != null) socket.close();
+					if (in != null) in.close();
+					if (out != null) out.close();
+					if(socket != null) socket.close();
 				}
 				catch(Exception e){
 					throw new RuntimeException(e);

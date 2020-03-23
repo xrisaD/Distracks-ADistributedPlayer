@@ -247,6 +247,13 @@ class MP3Cutter{
 				 System.out.println("Encoder: " + id3v2Tag.getEncoder());
 				 **/
 			}
+			else{
+				//no metadata occasion
+				MFD.setTrackName(fileN);
+				MFD.setArtistName("Unknown Artist");
+				MFD.setAlbumInfo("Unknown Album");
+				MFD.setGenre("Unknown Genre");
+			}
 			return MFD;
 		} catch (UnsupportedTagException e) {
 			e.printStackTrace();
@@ -255,14 +262,7 @@ class MP3Cutter{
 		} catch (InvalidDataException e) {
 			e.printStackTrace();
 		}
-		finally {
-			//no metadata occasion
-			MFD.setTrackName(fileN);
-			MFD.setArtistName("Unknown Artist");
-			MFD.setAlbumInfo("Unknown Album");
-			MFD.setGenre("Unknown Genre");
-		}
-		return MFD;
+		return null;
 	}
 
 	public static void main(String[] args) throws IOException {

@@ -128,8 +128,8 @@ public class Publisher extends Node implements Serializable {
 		}
 		finally{
 			try {
-				//if(out!=null) out.close();
-				//if(socket!=null) socket.close();
+				if(out!=null) out.close();
+				if(socket!=null) socket.close();
 			}
 			catch(Exception e){
 				System.out.println("Error while closing streams");
