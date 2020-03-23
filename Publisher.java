@@ -284,28 +284,20 @@ public class Publisher extends Node implements Serializable {
 			for (Map.Entry<ArtistName, ArrayList<MusicFileMetaData>> entry : artistToMusicFileMetaData.entrySet()) {
 				ArtistName key = entry.getKey();
 				if(key.getArtistName().equals(song.getArtistName())){
+					ArrayList<MusicFileMetaData> value = entry.getValue();
+					value.add(song);
+					artistToMusicFileMetaData.put(key,value);
 					flag=true;
 					break;
 				}
 			}
-			if(flag){
+			if(!flag){
 				//initialize artist
-				artistToMusicFileMetaData.put(new ArtistName(song.getArtistName()), new ArrayList<MusicFileMetaData>());
+				ArrayList<MusicFileMetaData> meta= new ArrayList<MusicFileMetaData>();
+				meta.add(song);
+				artistToMusicFileMetaData.put(new ArtistName(song.getArtistName()), meta);
 				System.out.println("in");
 			}
-			//add song to the particular artist
-			System.out.println(song.getArtistName()+" "+song.getTrackName());
-			//artistToMusicFileMetaData.get(song.getArtistName()).add(song);
-			for (Map.Entry<ArtistName, ArrayList<MusicFileMetaData>> entry : artistToMusicFileMetaData.entrySet()) {
-				ArtistName key = entry.getKey();
-				ArrayList<MusicFileMetaData> value = entry.getValue();
-				if(key.getArtistName().equals(song.getArtistName())){
-					value.add(song);
-					artistToMusicFileMetaData.put(key,value);
-					break;
-				}
-			}
-			System.out.println(song.getArtistName()+" "+song.getTrackName());
 		}
 	}
 
