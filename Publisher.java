@@ -139,43 +139,6 @@ public class Publisher extends Node implements Serializable {
 
 	}
 
-	public void sendChunkToBroker(String ip , int port){
-		System.out.printf("Publisher(%s,%d) sending song to Broker(%s,%d)\n" , getIp(),getPort() , ip , port);
-		Socket socket = null;
-		ObjectOutputStream out = null;
-		try{
-			//Connecting to the broker
-			System.out.printf("[PUBLISHER %d] Connecting to broker on port %d , ip %s%n" , getPort() , port , ip);
-			socket = new Socket(ip,port);
-			System.out.printf("[PUBLISHER %d] Connected to broker on port %d , ip %s%n" ,getPort() , port , ip);
-			System.out.printf("DEN EBAINE EDW");
-			out = new ObjectOutputStream(socket.getOutputStream());
-			//Creating notify message
-			int sizeOfFiles = 1024 * 512;// 1MB
-
-			File mp3= new File("C:\\Users\\Jero\\Desktop\\dataset1\\Horror\\Horroriffic");
-			byte[] buffer = read(mp3);
-			//MusicFile mp3File = new MusicFile("a","b","c","d",buffer);
-			//out.writeObject(mp3File);
-		}
-		catch(Exception e){
-			System.out.printf("[PUBLISHER %d] Failure on notifybroker Broker(ip = %s port = %d  %n)" , getPort() , ip , port);
-			e.printStackTrace();
-			System.out.println(e.getMessage());
-		}
-		finally{
-			try {
-				if(out!=null)out.close();
-				if (socket!=null)socket.close();
-			}
-			catch(Exception e){
-				System.out.println("Error while closing streams");
-				throw new RuntimeException(e);
-			}
-		}
-
-	}
-
 	public byte[] read(File file) throws IOException {
 
 		byte[] buffer = new byte[(int) file.length()];
@@ -311,5 +274,4 @@ public class Publisher extends Node implements Serializable {
 	public void setPort(int port) {
 		this.port = port;
 	}
-
 }
