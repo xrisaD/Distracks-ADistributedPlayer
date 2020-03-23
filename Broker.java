@@ -154,7 +154,7 @@ public class Broker {
 			}
 			//404 : something went wrong
 			else {
-				outToConsumer.writeObject("404");
+				replyWithNotFound(outToConsumer);
 			}
 		} catch (IOException | ClassNotFoundException e) {
 			System.out.println("[BROKER] Error while requesting song from publisher " + e.getMessage());
