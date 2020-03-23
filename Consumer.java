@@ -68,9 +68,9 @@ public class Consumer extends Node implements Serializable {
 		}
 		finally {
 			try {
-				if (s != null) s.close();
 				if (in != null) in.close();
 				if (out != null) out.close();
+				if (s != null) s.close();
 			}
 			catch(Exception e){
 				System.out.printf("[CONSUMER] Error while closing socket on playData %s " , e.getMessage());
