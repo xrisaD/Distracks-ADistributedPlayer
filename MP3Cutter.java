@@ -21,14 +21,16 @@ class MP3Cutter{
 		//A first letter, Z last letter, closed set
 		ArrayList <MusicFileMetaData> AllMetadata = new ArrayList<MusicFileMetaData>();
 		Path currentRelativePath = Paths.get("");
-		try (Stream<Path> walk = Files.walk(Paths.get(currentRelativePath.toAbsolutePath().toString()+"\\dataset"))) {
+		try (Stream<Path> walk = Files.walk(Paths.get(currentRelativePath.toAbsolutePath().toString()+"\\src\\dataset"))) {
 			List<String> temp = walk.map(x -> x.toString()).filter(f -> (f.endsWith(".mp3"))).collect(Collectors.toList());
 			for(String s: temp){
 				if(!s.contains("._")){
 					//create music file with meta data
 					MusicFileMetaData MFD = ID3(new File(s));
+					System.out.println(MFD);
 					if((MFD.getArtistName().toLowerCase().compareTo(first)>=0) && (MFD.getArtistName().toLowerCase().compareTo(last)<=0)){
 						//if artistName is in this range, then this Publisher is responsible for this artist
+
 						AllMetadata.add(MFD);
 					}
 				}
@@ -145,7 +147,7 @@ class MP3Cutter{
 		MusicFileMetaData MFD = new MusicFileMetaData();
 		String fileN = f.getName();
 		fileN = fileN.substring(fileN.lastIndexOf("\\")+1, fileN.lastIndexOf("."));
-
+		MFD.setPath(f.getAbsolutePath());
 		//handle metadata
 		try {
 			Mp3File mp3file = new Mp3File(f);
