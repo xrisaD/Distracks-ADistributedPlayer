@@ -20,7 +20,8 @@ class MP3Cutter{
 	public static ArrayList<MusicFileMetaData> getSongsMetaData(String first, String last){
 		//A first letter, Z last letter, closed set
 		ArrayList <MusicFileMetaData> AllMetadata = new ArrayList<MusicFileMetaData>();
-		try (Stream<Path> walk = Files.walk(Paths.get("dataset"))) {
+		Path currentRelativePath = Paths.get("");
+		try (Stream<Path> walk = Files.walk(Paths.get(currentRelativePath.toAbsolutePath().toString()+"\\dataset"))) {
 			List<String> temp = walk.map(x -> x.toString()).filter(f -> (f.endsWith(".mp3"))).collect(Collectors.toList());
 			for(String s: temp){
 				if(!s.contains("._")){
