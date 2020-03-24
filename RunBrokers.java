@@ -19,58 +19,91 @@ public class RunBrokers {
     }
     private static String classPathDelimiter = isWindows() ? ";" : ":";
 
-    public static void main(String[] args) throws IOException {
-        //Usage RunBrokers <nBrokers>
-        int nBrokers = Integer.parseInt(args[0]);
-        String ip = "127.0.0.1";
-        int port = 5000;
-        String fileName = "brokers.txt";
+    //Globals for the main program
+    private static ArrayList<Process> brokers = new ArrayList<>();
+    private static ArrayList<Component> brokerAddr = new ArrayList<> ();
 
-
-        File brokersFile =  new File(fileName);
-        PrintWriter pw = new PrintWriter(brokersFile);
-
-        //Array list containing the processes created
-        ArrayList<Process> brokers = new ArrayList<>();
-        ArrayList<Component> brokerAddr = new ArrayList<> ();
-
-        ArrayList<Process> publishers = new ArrayList<>();
+    private static ArrayList<Process> publishers = new ArrayList<>();
 
 
 
-        ArrayList<Process> consumers = new ArrayList<>();
+    private static ArrayList<Process> consumers = new ArrayList<>();
 
+    private static int port = 5000;
+    private static String ip = "127.0.0.1";
+    private static String fileName = "brokers.txt";
 
+    public static void startBrokers(int nBrokers){
         for (int i = 0 ; i < nBrokers ; i++){
             //Calculating hash of the broker
             int brokerHash = Utilities.getMd5(ip + port).hashCode();
             //Writing to brokers.txt
-            pw.printf("%s %d %d%n" , ip , port , brokerHash);
+            String brokerLine = String.format("%s %d %d" , ip , port , brokerHash);
+            appendToFile(brokerLine);
             //Starting the brokers
-            String command = String.format("java Broker %s %d %d %s" , ip , port , brokerHash , brokersFile);
-            Process p = Runtime.getRuntime().exec(command);
-            //Keeping information about the current broker
-            brokers.add(p);
-            brokerAddr.add(new Component(ip,port));
-            System.out.println("[RUNBROKERS] EXEC : " + command);
-            //Next node must be started on a new port
-            //Running gobblers for the created process' stderr , stdout
-            StreamGobbler errorGobbler = new StreamGobbler(p.getErrorStream());
-            StreamGobbler outputGobbler = new StreamGobbler(p.getInputStream());
-            errorGobbler.start();
-            outputGobbler.start();
-            port++;
-        }
-        pw.close();
+            String command = String.format("java Broker %s %d %d %s" , ip , port , brokerHash , fileName);
+            try {
+                Process p = Runtime.getRuntime().exec(command);
+                brokers.add(p);
+                //Keeping information about the current broker
+                brokerAddr.add(new Component(ip,port));
+                System.out.println("[RUNBROKERS] EXEC : " + command);
+                //Next node must be started on a new port
+                //Running gobblers for the created process' stderr , stdout
+                StreamGobbler errorGobbler = new StreamGobbler(p.getErrorStream() , true);
+                StreamGobbler outputGobbler = new StreamGobbler(p.getInputStream() , false);
+                errorGobbler.start();
+                outputGobbler.start();
+                port++;
+            }
+            catch (IOException e){
+                System.out.println("[RUNBROKERS] Couldn't start a broker");
+            }
 
+        }
+    }
+
+    /**
+     * Creates an empty file
+     */
+    public static void initializeFile(){
+        PrintWriter pw = null;
+        try {
+            File brokersFile = new File(fileName);
+            pw = new PrintWriter(brokersFile);
+        }
+        catch(Exception e){
+        }
+        finally {
+            if(pw != null) pw.close();
+        }
+    }
+    public static void appendToFile(String line){
+        try(FileWriter fw = new FileWriter(fileName, true);
+            PrintWriter out = new PrintWriter(fw))
+        {
+            out.println(line);
+        } catch (IOException e) {
+            //exception handling left as an exercise for the reader
+        }
+    }
+
+    public static void main(String[] args) throws IOException {
+
+        initializeFile();
+        //Array list containing the processes created
         Scanner sc = new Scanner(System.in);
         //Program loop watining for commands
         while(true) {
             String line = sc.nextLine();
             //If user typed exit break the loop and terminate created proesses
+            String[] params = line.split(" ");
             if(line.trim().toLowerCase().equals("exit")){
                 System.out.println("Bye");
                 break;
+            }
+            else if(line.trim().toLowerCase().startsWith("start_broker")){
+                startBrokers(Integer.parseInt(params[1]));
             }
             else if(line.trim().toLowerCase().equals("start_publisher")) {
                 //Starting a publisher
@@ -85,8 +118,8 @@ public class RunBrokers {
                 publishers.add(p);
                 System.out.println("[RUNBROKERS] EXEC : " + command);
                 //Running gobblers for the created process' stderr , stdout
-                StreamGobbler errorGobbler = new StreamGobbler(p.getErrorStream());
-                StreamGobbler outputGobbler = new StreamGobbler(p.getInputStream());
+                StreamGobbler errorGobbler = new StreamGobbler(p.getErrorStream() , true);
+                StreamGobbler outputGobbler = new StreamGobbler(p.getInputStream() , false);
                 errorGobbler.start();
                 outputGobbler.start();
                 port++;
@@ -99,10 +132,13 @@ public class RunBrokers {
                 }
             }
             else{
+                System.out.println("--------------------");
                 System.out.print("exit : exit the program\n" +
                         "start_publisher : start a publisher\n" +
-                        "status : show brokers and the artists they are responsible for\n"
+                        "broker_status : show brokers and the artists they are responsible for\n" +
+                        "start_broker <n> : starts n new brokers at new ports\n"
                 );
+                System.out.println("--------------------");
             }
         }
 
@@ -166,10 +202,12 @@ public class RunBrokers {
 
     static class StreamGobbler extends Thread {
         InputStream is;
-
+        //Indicates if the gobler handles an error stream
+        boolean err;
         // reads everything from is until empty.
-        StreamGobbler(InputStream is) {
+        StreamGobbler(InputStream is , boolean err) {
             this.is = is;
+            this.err= err;
         }
 
         public void run() {
@@ -177,11 +215,17 @@ public class RunBrokers {
             String line = null;
             try {
                 while ((line = sc.nextLine()) != null) {
-                    System.out.println(line);
+                    if(!err) {
+                        System.out.println(line);
+                    }
+                    else{
+                        System.err.println(line);
+                    }
                 }
             }
             //Sometimes no such element exception occurs when a process is destroyed
             catch(Exception e){
+
                 System.out.println("Stream gobbler " + this + " terminating");
             }
         }
