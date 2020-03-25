@@ -47,10 +47,13 @@ public class Publisher extends Node implements Serializable {
 			for (MusicFileMetaData s : songs) {
 				if (s.getTrackName().equals(song)) {
 					System.out.println("OH SONG  "+s.getTrackName());
+
 					String path = s.getPath();
+					System.out.println("PATH  "+path);
 					cutter = new MP3Cutter(new File(path));
-					currentsong=cutter.splitFile();//returns arraylist with byte[]. So size of arraylist is number of chunks
-					int numofchunks=currentsong.size();//arithmos chunks
+
+					currentsong = cutter.splitFile();//returns arraylist with byte[]. So size of arraylist is number of chunks
+					int numofchunks = currentsong.size();//arithmos chunks
 					Request.ReplyFromPublisher reply = new Request.ReplyFromPublisher();
 					reply.statusCode = Request.StatusCodes.OK;
 					reply.numChunks = numofchunks;
