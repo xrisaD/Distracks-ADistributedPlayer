@@ -1,5 +1,6 @@
 import java.io.*;
 import java.net.Socket;
+import java.nio.ByteBuffer;
 import java.util.*;
 
 public class Consumer extends Node implements Serializable {
@@ -52,11 +53,15 @@ public class Consumer extends Node implements Serializable {
 			//Song exists and the broker is responsible for the artist
 			if(statusCode == Request.StatusCodes.OK){
 				//Start reading chunks
+				int size=0;
 				for(int i = 0 ; i < reply.numChunks ; i++){
 					//HandleCHunks
+
 					MusicFile chunk = (MusicFile) in.readObject();
+					size+=chunk.getMusicFileExtract().length;
 					chunks.add(chunk);
 				}
+				save(chunks,size,reply.numChunks);
 			}
 			//In this case the status code is MALFORMED_REQUEST
 			else{
@@ -82,6 +87,26 @@ public class Consumer extends Node implements Serializable {
 
 		}
 	}
+
+	private void save(ArrayList<MusicFile> chunks,int size,int numChunks){
+		byte[] allByteArray = new byte[size];
+
+		ByteBuffer buff = ByteBuffer.wrap(allByteArray);
+		for(int k=0;k<numChunks;k++){
+			buff.put(chunks.get(k).getMusicFileExtract());
+		}
+
+		byte[] combined = buff.array();
+		try (FileOutputStream fos = new FileOutputStream("C:\\Users\\tinoa\\IdeaProjects\\github_katanemimena\\src\\pathname.mp3")) {
+			fos.write(combined);
+			//fos.close(); There is no more need for this line since you had created the instance of "fos" inside the try. And this will automatically close the OutputStream
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
 	private void readBrokers(String fileName) {
 		try {
 			File myObj = new File(fileName);
