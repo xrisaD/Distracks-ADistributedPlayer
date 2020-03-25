@@ -22,7 +22,7 @@ class MP3Cutter{
 		//A first letter, Z last letter, closed set
 		ArrayList <MusicFileMetaData> AllMetadata = new ArrayList<MusicFileMetaData>();
 		Path currentRelativePath = Paths.get("");
-		try (Stream<Path> walk = Files.walk(Paths.get(currentRelativePath.toAbsolutePath().toString()+"\\src\\dataset"))) {
+		try (Stream<Path> walk = Files.walk(Paths.get("C:\\Users\\Jero\\Desktop\\DistributedSystemsAssignment\\dataset"))) {
 			List<String> temp = walk.map(x -> x.toString()).filter(f -> (f.endsWith(".mp3"))).collect(Collectors.toList());
 			for(String s: temp){
 				if(!s.contains("._")){
@@ -47,11 +47,10 @@ class MP3Cutter{
 		String fileName = mp3ToCut.getName();//onoma tou arxeiou/mp3
 		long length=mp3ToCut.length();//arithmos byte arxeiou
 		long numOfChunks = length/sizeOfFiles+1;
-		System.out.println(numOfChunks);
 		long left=length-sizeOfFiles*(numOfChunks-1);//
 		byte[] buffer;
 		try (FileInputStream fis = new FileInputStream(mp3ToCut);
-			 BufferedInputStream bis = new BufferedInputStream(fis)) {
+			BufferedInputStream bis = new BufferedInputStream(fis)) {
 			int bytesAmount = 0;
 			for(int i=0;i<numOfChunks;i++){
 				if(i==numOfChunks-1) {
@@ -73,23 +72,15 @@ class MP3Cutter{
 				 **/
 			}
 		}
-
-		byte[] allByteArray = new byte[(int)length];
-		ByteArrayOutputStream my_stream = new ByteArrayOutputStream();
-		ByteBuffer buff = ByteBuffer.wrap(allByteArray);
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();//baos stream gia bytes
 		for(int k=0;k<numOfChunks;k++){
-			System.out.println(chunklist.get(k).length);
-			my_stream.write(chunklist.get(k));
+			baos.write(chunklist.get(k));
 		}
-		byte[] concatenated_byte_array = my_stream.toByteArray();
-		byte[] combined = buff.array();
-		try (FileOutputStream fos = new FileOutputStream("C:\\Users\\Jero\\Desktop\\TESTING\\testing.mp3")) {
-
+		byte[] concatenated_byte_array = baos.toByteArray();//metatrepei to stream se array
+		try (FileOutputStream fos = new FileOutputStream("C:\\Users\\Jero\\Desktop\\DistributedSystemsAssignment\\splittested.mp3")) {
 			fos.write(concatenated_byte_array);
-
-			//fos.close(); There is no more need for this line since you had created the instance of "fos" inside the try. And this will automatically close the OutputStream
 		}
-		return chunklist;
+		return chunklist;//gyrnaei lista me ta chunks
 	}
 
 
