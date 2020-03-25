@@ -1,6 +1,7 @@
 import java.io.*;
 import java.net.Socket;
 import java.nio.ByteBuffer;
+import java.nio.file.Paths;
 import java.util.*;
 
 public class Consumer extends Node implements Serializable {
@@ -97,7 +98,7 @@ public class Consumer extends Node implements Serializable {
 		}
 
 		byte[] combined = buff.array();
-		try (FileOutputStream fos = new FileOutputStream("C:\\Users\\tinoa\\IdeaProjects\\github_katanemimena\\src\\pathname.mp3")) {
+		try (FileOutputStream fos = new FileOutputStream(Paths.get("")+"pathname.mp3")) {
 			fos.write(combined);
 			//fos.close(); There is no more need for this line since you had created the instance of "fos" inside the try. And this will automatically close the OutputStream
 		} catch (FileNotFoundException e) {
