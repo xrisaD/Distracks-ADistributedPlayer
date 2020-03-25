@@ -1,6 +1,7 @@
 import java.io.*;
 import java.net.Socket;
 import java.nio.ByteBuffer;
+import java.nio.file.Paths;
 import java.util.*;
 
 public class Consumer extends Node implements Serializable {
@@ -56,7 +57,6 @@ public class Consumer extends Node implements Serializable {
 				int size=0;
 				for(int i = 0 ; i < reply.numChunks ; i++){
 					//HandleCHunks
-
 					MusicFile chunk = (MusicFile) in.readObject();
 					size+=chunk.getMusicFileExtract().length;
 					chunks.add(chunk);
@@ -94,7 +94,7 @@ public class Consumer extends Node implements Serializable {
 			baos.write(chunks.get(k).getMusicFileExtract());
 		}
 		byte[] concatenated_byte_array = baos.toByteArray();//metatrepei to stream se array
-		try (FileOutputStream fos = new FileOutputStream("C:\\Users\\Jero\\Desktop\\DistributedSystemsAssignment\\savetested.mp3")) {
+		try (FileOutputStream fos = new FileOutputStream(Paths.get("")+"savetested.mp3")) {
 			fos.write(concatenated_byte_array);
 		}
 	}
@@ -128,7 +128,7 @@ public class Consumer extends Node implements Serializable {
 			Consumer c = new Consumer();
 			c.readBrokers(args[0]);
 			System.out.println("Let's start PlayData.. ");
-			c.playData(new ArtistName("GTXM"),"The Big Numbers Song");
+			c.playData(new ArtistName("Unknown Artist"),"Kesha");
 		}
 		catch(Exception e){
 			System.err.println("Usage : java Consumer <brokerFile>");
