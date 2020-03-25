@@ -277,7 +277,7 @@ public class Broker {
 			try{
 				System.out.println("in broker run!! Broker has a message 2");
 
-				//out = new ObjectOutputStream(socket.getOutputStream());
+				out = new ObjectOutputStream(socket.getOutputStream());
 				in = new ObjectInputStream(socket.getInputStream());
 
 				System.out.println("in broker run!! Broker has a message 3");
@@ -321,7 +321,6 @@ public class Broker {
 					System.out.println("with Artistname "+ artistName.getArtistName());
 					System.out.println("with song "+ song);
 
-					out = new ObjectOutputStream(socket.getOutputStream());
 					if(request.pullArtistName ==null || song==null){
 						System.out.println("NOT NULL ALL OK");
 						Request.ReplyFromBroker reply = new Request.ReplyFromBroker();

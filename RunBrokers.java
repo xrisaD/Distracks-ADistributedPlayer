@@ -182,7 +182,6 @@ public class RunBrokers {
         }
         catch(Exception e){
             result = "Unreachable exception : " + e.getMessage();
-            e.printStackTrace();
         }
         finally{
             System.out.printf("[RUNBROKERS] closing connection with Broker(%s,%d)%n" ,
