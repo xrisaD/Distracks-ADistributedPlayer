@@ -4,10 +4,12 @@ import java.util.Arrays;
 public class MusicFile implements Serializable {
 	private byte[] musicFileExtract;
 	private MusicFileMetaData metaData;
+	private int numChunk;
 	//constructor
 	public MusicFile( MusicFileMetaData metaData ,byte[] musicFileExtract){
 		this.metaData = metaData;
 		this.musicFileExtract=musicFileExtract;
+		numChunk=0;
 	}
 	public MusicFile(){
 
@@ -26,4 +28,11 @@ public class MusicFile implements Serializable {
 		return metaData;
 	}
 
+	public int getNumChunk() {
+		return numChunk;
+	}
+
+	public void setNumChunk(int numChunk) {
+		this.numChunk = numChunk;
+	}
 }

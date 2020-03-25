@@ -51,16 +51,25 @@ class MP3Cutter{
 		int sizeOfFiles = 1024 * 512;// 1MB
 		byte[] buffer = new byte[sizeOfFiles];
 		ArrayList<byte[]> chunklist=new ArrayList<byte[]> ();
-		String fileName = mp3ToCut.getName();
-
+		long length=mp3ToCut.length();
+		long numOfChunks = length/sizeOfFiles+1;
+		long left=length-sizeOfFiles*(numOfChunks-1);
 		//try-with-resources to ensure closing stream
 		try (FileInputStream fis = new FileInputStream(mp3ToCut);
 			 BufferedInputStream bis = new BufferedInputStream(fis)) {
 
 			int bytesAmount = 0;
-			while ((bytesAmount = bis.read(buffer)) > 0) {
+			for(int i=0;i<numOfChunks;i++){
+				if(i==6) {
+					byte[] extra = new byte[(int) left];
+					bytesAmount = bis.read(extra);
+					chunklist.add(extra);
+					break;
+				}
+				bytesAmount = bis.read(buffer);
 				chunklist.add(buffer);
 			}
+
 			//an thelei arithmo chunks to size
 		}
 		return chunklist;
