@@ -27,7 +27,7 @@ class MP3Cutter{
 				if(!s.contains("._")){
 					//create music file with meta data
 					MusicFileMetaData MFD = ID3(new File(s));
-					if((MFD.getArtistName().toLowerCase().compareTo(first)>=0) && (MFD.getArtistName().toLowerCase().compareTo(last)<=0)){
+					if((MFD.getArtistName().toLowerCase().compareTo(first.toLowerCase())>=0) && (MFD.getArtistName().toLowerCase().compareTo(last.toLowerCase())<=0)){
 						//if artistName is in this range, then this Publisher is responsible for this artist
 						AllMetadata.add(MFD);
 					}
@@ -36,6 +36,7 @@ class MP3Cutter{
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+
 		return AllMetadata;
 	}
 
@@ -250,6 +251,7 @@ class MP3Cutter{
 			}
 			else{
 				//no metadata occasion
+				System.out.println("NO METAAA");
 				MFD.setTrackName(fileN);
 				MFD.setArtistName("Unknown Artist");
 				MFD.setAlbumInfo("Unknown Album");

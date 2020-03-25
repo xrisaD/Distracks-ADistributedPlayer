@@ -29,6 +29,7 @@ public class Publisher extends Node implements Serializable {
 				String ip = arrOfStr[0];
 				int port = Integer.parseInt(arrOfStr[1]);
 				int hashValue = Integer.parseInt(arrOfStr[2]);
+				System.out.println("IP: "+ip+" Port: "+port+" hashValue: "+hashValue);
 				notifyBroker(ip , port);
 			}
 		} catch (FileNotFoundException e) {
@@ -39,11 +40,13 @@ public class Publisher extends Node implements Serializable {
 	public void hashTopic(ArtistName artist) { }
 
 	public void push(String artist, String song, ObjectOutputStream out) throws IOException {
-		ArrayList<MusicFileMetaData> songs= artistToMusicFileMetaData.get(artist);
+		System.out.println("HELOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO PUSHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH");
+		ArrayList<MusicFileMetaData> songs = artistToMusicFileMetaData.get(new ArtistName(artist));
 
 		if(songs!=null){
 			for (MusicFileMetaData s : songs) {
 				if (s.getTrackName().equals(song)) {
+					System.out.println("OH SONG  "+s.getTrackName());
 					String path = s.getPath();
 					cutter = new MP3Cutter(new File(path));
 					currentsong=cutter.splitFile();//returns arraylist with byte[]. So size of arraylist is number of chunks
@@ -52,6 +55,7 @@ public class Publisher extends Node implements Serializable {
 					reply.statusCode = Request.StatusCodes.OK;
 					reply.numChunks = numofchunks;
 					out.writeObject(reply);
+
 					for(byte[] b:currentsong){
 						MusicFile finalMF= new MusicFile(s,b);//metadata + kathe chunk
 						out.writeObject(finalMF);
@@ -61,6 +65,7 @@ public class Publisher extends Node implements Serializable {
 			}
 		}
 		//no artistName or song
+		System.out.println("NO PUSH");
 		Request.ReplyFromPublisher reply = new Request.ReplyFromPublisher();
 		reply.statusCode = Request.StatusCodes.MALFORMED_REQUEST;
 		out.writeObject(reply);
@@ -115,11 +120,15 @@ public class Publisher extends Node implements Serializable {
 			request.publisherPort = this.getPort();
 			request.method = Request.Methods.NOTIFY;
 			request.artistNames = new ArrayList<String>();
+			System.out.println("Ok1 in Publisher" );
+			System.out.println("SIZEEEEEEEEE "+artistToMusicFileMetaData.size());
 			for(ArtistName artist  : artistToMusicFileMetaData.keySet()){
+				System.out.println("1 mOOOOOOOREEEEE ARTISTTTTTTTTTTTT");
 				request.artistNames.add(artist.getArtistName());
 			}
 			System.out.printf("[PUBLISHER %d] Sending message \"%s\" to broker on port %d , ip %s%n" ,getPort(), request , port , ip);
 			out.writeObject(request);
+			//read Ok?
 		}
 		catch(Exception e){
 			System.out.printf("[PUBLISHER %d] Failure on notifybroker Broker(ip = %s port = %d  %n)" , getPort() , ip , port);
@@ -186,42 +195,19 @@ public class Publisher extends Node implements Serializable {
 			ObjectOutputStream out = null;
 			try{
 				in = new ObjectInputStream(socket.getInputStream());
-                out = new ObjectOutputStream(socket.getOutputStream());
-
 				//Take Broker's request
 				//Broker's request is a ArtistName and a song
 				Request.RequestToPublisher req= (Request.RequestToPublisher) in.readObject();
 
+				out = new ObjectOutputStream(socket.getOutputStream());
 				if(req.method == Request.Methods.PUSH) {
 					if(req.artistName==null || req.songName==null){
+						System.out.println("NOT OK PUSHhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh");
 						Request.ReplyFromPublisher reply = new Request.ReplyFromPublisher();
 						reply.statusCode = Request.StatusCodes.MALFORMED_REQUEST;
 						out.writeObject(reply);
 					}
 					push(req.artistName, req.songName, out);
-
-					/*
-					MP3Cutter Chunker = new MP3Cutter(new File("C:\\Users\\Jero\\Desktop\\dataset1\\Horror\\Horroriffic"));
-					Path currentRelativePath = Paths.get("");
-					String result = Chunker.walk(currentRelativePath.toAbsolutePath().toString() + "\\songs", song);//stp result exoume to filename pou epistrefei h walk
-
-					if (!result.equals("error")) {//an h walk den epistrepsei error
-						File splitting = new File(result);
-						int chunks = Chunker.splitFile(splitting);
-						String title = splitting.getName();
-						if (chunks != 0) {
-							int partCounter = 0;
-							for (int flag = 1; flag <= chunks; flag++) {
-								int indexOfMp3 = title.indexOf(".mp3");
-								String newName = title.substring(0, indexOfMp3);
-								String filePartName = String.format("%s%03d.mp3", newName, partCounter++);
-								File mp3 = new File(currentRelativePath.toAbsolutePath().toString() + "\\songs" + "\\" + filePartName);
-								byte[] buffer = read(mp3);
-								//MusicFile mp3File = new MusicFile("a", "b", "c", "d", buffer);
-								//out.writeObject(mp3File);
-							}
-						}
-					}*/
 				}
 			}catch (ClassNotFoundException c) {
 				System.out.println("Class not found");
@@ -252,7 +238,12 @@ public class Publisher extends Node implements Serializable {
 		//initialize HashTable
 		List<MusicFileMetaData> allMetaData= MP3Cutter.getSongsMetaData(first, last);
 		//create artistToMusicFileMetaData Hashtable by parsing allMetaData
+		System.out.println("DATTTTTTTTTTTTTTTTTTTTTAAAAAA");
 		for (MusicFileMetaData song : allMetaData) {
+			System.out.println("DATTTTTTTTTTTTTTTTTTTTTAAAAAA");
+			System.out.println(song.getArtistName());
+			System.out.println(song.getPath());
+
 			if(artistToMusicFileMetaData.get(new ArtistName(song.getArtistName()))==null){
 				//initialize artist
 				artistToMusicFileMetaData.put(new ArtistName(song.getArtistName()), new ArrayList<MusicFileMetaData>());

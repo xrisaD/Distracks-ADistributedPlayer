@@ -18,30 +18,38 @@ public class Consumer extends Node implements Serializable {
 		ObjectInputStream in = null;
 		ObjectOutputStream out = null;
 		try {
+			System.out.println("Start PlayData.. "+artist +" "+songName);
 			String ip = knownBrokers.get(0).getIp();
 			int port =  knownBrokers.get(0).getPort();
 			int statusCode = Request.StatusCodes.NOT_RESPONSIBLE;
 			Request.ReplyFromBroker reply=null;
 			//While we find a broker who is not responsible for the artistname
-			System.out.println("in");
+			System.out.println("in1");
 			while(statusCode == Request.StatusCodes.NOT_RESPONSIBLE){
-				System.out.println("in");
+				System.out.println("in2");
 				s = new Socket(ip, port);
-				out = new ObjectOutputStream(s.getOutputStream());
+
+				System.out.println("in3");
 				//Creating the request object
 				Request.RequestToBroker request = new Request.RequestToBroker();
 				request.method = Request.Methods.PULL;
 				request.pullArtistName = artist.getArtistName();
 				request.songName = songName;
+				System.out.println("in4");
 				//Writing the request object
+				out = new ObjectOutputStream(s.getOutputStream());
 				out.writeObject(request);
+
 				//Waiting for the reply
+				System.out.println("in6");
 				in = new ObjectInputStream(s.getInputStream());
+				System.out.println("in6.5");
 				reply = (Request.ReplyFromBroker) in.readObject();
+				System.out.println("in7");
 				System.out.printf("[CONSUMER] Got reply from Broker(%s,%d) : %s", ip, port, reply);
 				statusCode = reply.statusCode;
 			}
-			System.out.println("in");
+			System.out.println("in10");
 			if(statusCode == Request.StatusCodes.NOT_FOUND){
 				throw new Exception("Song or Artist does not exist");
 			}
@@ -108,6 +116,8 @@ public class Consumer extends Node implements Serializable {
 		try {
 			Consumer c = new Consumer();
 			c.readBrokers(args[0]);
+			System.out.println("Let's start PlayData.. ");
+			c.playData(new ArtistName("Unknown Artist"),"Kesha");
 		}
 		catch(Exception e){
 			System.err.println("Usage : java Consumer <brokerFile>");

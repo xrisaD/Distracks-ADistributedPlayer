@@ -47,6 +47,7 @@ public class Broker {
 	 */
 	public boolean isResponsible(String artistName){
 		int md5 = Utilities.getMd5(artistName).hashCode();
+		System.out.println("HASHAKIIIIIIIIIIIIIIIIIIIIII "+hashValues.size());
 		int res = findResponsibleBroker(md5);
 		//this broker is responsible for this artistName
 		return ( res == this.hashValue);
@@ -84,16 +85,22 @@ public class Broker {
 		System.out.println();
 		for(String artistName:artists){
 			if(isResponsible(artistName)){
+				System.out.println("1 MORE ARTIST");
 				artistToPublisher.put(new ArtistName(artistName),new Component(ip,port));
 			}
 		}
 	}
 
 	public void  pull(ArtistName artist, String song, ObjectOutputStream  out) throws IOException {
+		System.out.println("IN PULL !!");
 		//check if th broker is responsible for this artist
 		if(isResponsible(artist.getArtistName())){
+			System.out.println("He is the responsible broker!!!");
 			//find Publisher for this artist
 			Component publisherWithThisArtist = artistToPublisher.get(artist);
+			for(ArtistName an:artistToPublisher.keySet()){
+						System.out.println(an.getArtistName());
+			}
 			//open connection with Publisher and request the specific song
 			if(publisherWithThisArtist != null) {
 				requestSongFromPublisher(publisherWithThisArtist, artist, song, out);
@@ -119,8 +126,9 @@ public class Broker {
 
 	public void requestSongFromPublisher(Component c, ArtistName artistName
 								, String song, ObjectOutputStream  outToConsumer) {
+		System.out.println("In REQUEST FROM PUBLISHER");
 		Socket s = null;
-		ObjectInputStream in = null;
+		ObjectInputStream inFromPublisher = null;
 		ObjectOutputStream outToPublisher = null;
 		try {
 			s = new Socket(c.getIp(), c.getPort());
@@ -133,22 +141,27 @@ public class Broker {
 
 			outToPublisher = new ObjectOutputStream(s.getOutputStream());
 			outToPublisher.writeObject(request);
+			System.out.println("I SEND THE  REQUEST TO PUBLISHER AND I AM WAITING FOR THE ANSWER!");
 
+			inFromPublisher = new ObjectInputStream(s.getInputStream());
 			//wait from Publisher to send to Broker songs data
-			Request.ReplyFromPublisher reply = (Request.ReplyFromPublisher) in.readObject();
+			Request.ReplyFromPublisher reply = (Request.ReplyFromPublisher) inFromPublisher.readObject();
+			System.out.println("I GET THE REPLY FROM PUBLISHER!" + reply.statusCode);
 
 			 //if everithing is ok
 			if(reply.statusCode == Request.StatusCodes.OK){
+				System.out.println("OK status code!!!");
 				int numOfChunks = reply.numChunks;
 				//whatever you receive from Publisher send it to Consumer
 				//Reply to the consumer
 				Request.ReplyFromBroker replyToConsumer = new Request.ReplyFromBroker();
 				replyToConsumer.statusCode = Request.StatusCodes.OK;
-				replyToConsumer.numChunks = reply.numChunks;
+				replyToConsumer.numChunks = numOfChunks;
+				System.out.println("EVERYTHING IS OK! THE NUM OF CHUNK IS: "+numOfChunks);
 
 				outToConsumer.writeObject(reply);
 				for(int i=0; i<numOfChunks; i++){
-					 MusicFile chunk = (MusicFile)in.readObject();
+					 MusicFile chunk = (MusicFile)inFromPublisher.readObject();
 					outToConsumer.writeObject(chunk);
 				}
 			}
@@ -160,7 +173,7 @@ public class Broker {
 			System.out.println("[BROKER] Error while requesting song from publisher " + e.getMessage());
 		} finally{
 			try {
-				if(in!=null) in.close();
+				if(inFromPublisher!=null) inFromPublisher.close();
 				if(outToPublisher!=null) outToPublisher.close();
 				if(s!=null) s.close();
 			} catch (IOException ioException) {
@@ -172,6 +185,8 @@ public class Broker {
 	 * start a server for Consumers and Publisher
 	 */
 	public void startServer() {
+
+		System.out.println(this.port+"HASHHHHHHHHHHHHHHHHHHHHHHHHHAKIIIIIIIIIIII ENAAAAAAAA  "+this.hashValues.size());
 		ServerSocket providerSocket = null;
 		Socket connection = null;
 		try {
@@ -180,6 +195,8 @@ public class Broker {
 			while (true) {
 				//accept a connection
 				connection = providerSocket.accept();
+
+				System.out.println(this.port+"HASHHHHHHHHHHHHHHHHHHHHHHHHHAKIIIIIIIIIIII DUOOOOO "+this.hashValues.size());
 				//We start a thread
 				//this thread will do the communication
 				BrokerHandler bh = new BrokerHandler(connection);
@@ -205,20 +222,22 @@ public class Broker {
 			File myObj = new File(fileName);
 			Scanner myReader = new Scanner(myObj);
 			while (myReader.hasNextLine()) {
+
 				String data = myReader.nextLine();
+
 				String[] arrOfStr = data.split("\\s");
 				String ip = arrOfStr[0];
 				int port = Integer.parseInt(arrOfStr[1]);
 				int hashValue = Integer.parseInt(arrOfStr[2]);
 
 				Component c = new Component(ip,port);
-				hashValueToBroker.put(hashValue,c);
+				this.hashValueToBroker.put(hashValue,c);
 			}
 			//sort by hashValues
 			Set<Integer> set = hashValueToBroker.keySet();
 			synchronized (set){
 				for ( int key :  set) {
-					hashValues.add(key);
+					this.hashValues.add(key);
 				}
 				hashValues.sort(Comparator.naturalOrder());
 			}
@@ -236,7 +255,6 @@ public class Broker {
 			//arg[1]:port
 			//arg[2]:hashValue
 			Broker b = new Broker(args[0],Integer.parseInt(args[1]),Integer.parseInt(args[2]));
-
 			b.saveBrokersData(args[3]);
 			b.startServer();
 		}catch (Exception e) {
@@ -257,26 +275,31 @@ public class Broker {
 			ObjectInputStream in = null;
 			ObjectOutputStream out = null;
 			try{
-				out = new ObjectOutputStream(socket.getOutputStream());
+				System.out.println("in broker run!! Broker has a message 2");
+
+				//out = new ObjectOutputStream(socket.getOutputStream());
 				in = new ObjectInputStream(socket.getInputStream());
 
+				System.out.println("in broker run!! Broker has a message 3");
 				Request.RequestToBroker request = (Request.RequestToBroker) in.readObject();
 				System.out.printf("[Broker (%s,%d)] GOT A MESSSAGE <%s> %n" , getIp() , getPort() , request.toString());
 
 				//Publisher notifies Broker about the artistNames he is responsible for
 				if(request.method == Request.Methods.NOTIFY){
+					System.out.println("[ Broker ] notify true"+getPort());
 					//message from
 					//Check that data is correct or send MALFORMED_REQUEST
 					if(request.publisherIp == null ||
 							request.publisherPort <= 0 ||
 							request.artistNames == null) {
+						System.out.println("request true"+getPort());
 						replyWithMalformedRequest(out);
 
 					}
 					notifyPublisher(request.publisherIp, request.publisherPort, request.artistNames);
-					System.out.println("replying");
-					replyWithOK(out);
-					System.out.println("replying");
+					System.out.println("replying1 "+request.publisherPort +" "+ getPort());
+					//replyWithOK(out);
+					System.out.println("replying2");
 				}
 				//this  "else if" is for debug purposes
 				else if(request.method == Request.Methods.STATUS){ 				//information querying about broker's state
@@ -292,9 +315,15 @@ public class Broker {
 				}
 				//pull means we got a request from Consumer for an artist's song
 				else if (request.method == Request.Methods.PULL){
+					System.out.println("PULL to Broker with port: "+ getPort());
 					ArtistName artistName = new ArtistName(request.pullArtistName);
 					String song = request.songName;
+					System.out.println("with Artistname "+ artistName.getArtistName());
+					System.out.println("with song "+ song);
+
+					out = new ObjectOutputStream(socket.getOutputStream());
 					if(request.pullArtistName ==null || song==null){
+						System.out.println("NOT NULL ALL OK");
 						Request.ReplyFromBroker reply = new Request.ReplyFromBroker();
 						reply.statusCode = Request.StatusCodes.MALFORMED_REQUEST;
 						out.writeObject(reply);
