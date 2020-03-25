@@ -1,7 +1,6 @@
 import java.io.*;
 import java.net.Socket;
 import java.nio.ByteBuffer;
-import java.nio.file.Paths;
 import java.util.*;
 
 public class Consumer extends Node implements Serializable {
@@ -22,8 +21,8 @@ public class Consumer extends Node implements Serializable {
 		try {
 			System.out.println("Start PlayData.. "+artist +" "+songName);
 
-			String ip = knownBrokers.get(1).getIp();
-			int port =  knownBrokers.get(1).getPort();
+			String ip = knownBrokers.get(0).getIp();
+			int port =  knownBrokers.get(0).getPort();
 
 			//While we find a broker who is not responsible for the artistname
 			Request.ReplyFromBroker reply=null;
@@ -89,22 +88,14 @@ public class Consumer extends Node implements Serializable {
 		}
 	}
 
-	private void save(ArrayList<MusicFile> chunks,int size,int numChunks){
-		byte[] allByteArray = new byte[size];
-
-		ByteBuffer buff = ByteBuffer.wrap(allByteArray);
+	private void save(ArrayList<MusicFile> chunks,int size,int numChunks) throws IOException {
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();//baos stream gia bytes
 		for(int k=0;k<numChunks;k++){
-			buff.put(chunks.get(k).getMusicFileExtract());
+			baos.write(chunks.get(k).getMusicFileExtract());
 		}
-
-		byte[] combined = buff.array();
-		try (FileOutputStream fos = new FileOutputStream(Paths.get("")+"pathname.mp3")) {
-			fos.write(combined);
-			//fos.close(); There is no more need for this line since you had created the instance of "fos" inside the try. And this will automatically close the OutputStream
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
+		byte[] concatenated_byte_array = baos.toByteArray();//metatrepei to stream se array
+		try (FileOutputStream fos = new FileOutputStream("C:\\Users\\Jero\\Desktop\\DistributedSystemsAssignment\\savetested.mp3")) {
+			fos.write(concatenated_byte_array);
 		}
 	}
 
@@ -137,7 +128,7 @@ public class Consumer extends Node implements Serializable {
 			Consumer c = new Consumer();
 			c.readBrokers(args[0]);
 			System.out.println("Let's start PlayData.. ");
-			c.playData(new ArtistName("Unknown Artist"),"Kesha");
+			c.playData(new ArtistName("GTXM"),"The Big Numbers Song");
 		}
 		catch(Exception e){
 			System.err.println("Usage : java Consumer <brokerFile>");
