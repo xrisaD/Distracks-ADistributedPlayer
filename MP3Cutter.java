@@ -27,6 +27,10 @@ class MP3Cutter{
 				if(!s.contains("._")){
 					//create music file with meta data
 					MusicFileMetaData MFD = ID3(new File(s));
+					System.out.println("PATHHHHHHHH" +MFD.getPath());
+					System.out.println("PATHHHHHHHH SOSTOOOOOOO " +s);
+					MFD.setPath(s);
+					System.out.println("PATHHHHHHHH" +MFD.getPath());
 					if((MFD.getArtistName().toLowerCase().compareTo(first.toLowerCase())>=0) && (MFD.getArtistName().toLowerCase().compareTo(last.toLowerCase())<=0)){
 						//if artistName is in this range, then this Publisher is responsible for this artist
 						AllMetadata.add(MFD);
