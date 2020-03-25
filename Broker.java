@@ -116,7 +116,6 @@ public class Broker {
 			//send message to Consumer with the ip and the port with the responsible broker
 			//consumer will ask this Broker for the song
 			Request.ReplyFromBroker reply = new Request.ReplyFromBroker();
-
 			reply.statusCode = Request.StatusCodes.NOT_RESPONSIBLE;//300
 			reply.responsibleBrokerIp = broker.getIp();
 			reply.responsibleBrokerPort = broker.getPort();
@@ -124,8 +123,7 @@ public class Broker {
 		}
 	}
 
-	public void requestSongFromPublisher(Component c, ArtistName artistName
-								, String song, ObjectOutputStream  outToConsumer) {
+	public void requestSongFromPublisher(Component c, ArtistName artistName, String song, ObjectOutputStream  outToConsumer) {
 		System.out.println("In REQUEST FROM PUBLISHER");
 		Socket s = null;
 		ObjectInputStream inFromPublisher = null;
@@ -158,8 +156,9 @@ public class Broker {
 				replyToConsumer.statusCode = Request.StatusCodes.OK;
 				replyToConsumer.numChunks = numOfChunks;
 				System.out.println("EVERYTHING IS OK! THE NUM OF CHUNK IS: "+numOfChunks);
+				outToConsumer.writeObject(replyToConsumer);
+				System.out.println("i send this mes to consumer!");
 
-				outToConsumer.writeObject(reply);
 				for(int i=0; i<numOfChunks; i++){
 					 MusicFile chunk = (MusicFile)inFromPublisher.readObject();
 					outToConsumer.writeObject(chunk);
@@ -383,5 +382,9 @@ public class Broker {
 
 	public void setPort(int port) {
 		this.port = port;
+	}
+
+	public int getHashValue() {
+		return hashValue;
 	}
 }
