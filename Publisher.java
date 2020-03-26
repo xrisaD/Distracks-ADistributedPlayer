@@ -61,18 +61,19 @@ public class Publisher extends Node implements Serializable {
 					return;
 				}
 			}
-			Request.ReplyFromPublisher reply = new Request.ReplyFromPublisher();
-			reply.statusCode = Request.StatusCodes.NOT_FOUND;
-			out.writeObject(reply);
+			//not found song
+			notifyFailure(Request.StatusCodes.NOT_FOUND, out);
 		}else {
 			//no artistName or song
-			Request.ReplyFromPublisher reply = new Request.ReplyFromPublisher();
-			reply.statusCode = Request.StatusCodes.MALFORMED_REQUEST;
-			out.writeObject(reply);
+			notifyFailure(Request.StatusCodes.MALFORMED_REQUEST, out);
 		}
 	}
 
-	public void notifyFailure(Broker broker) { }
+	public void notifyFailure(int statusCode, ObjectOutputStream out) throws IOException {
+		Request.ReplyFromPublisher reply = new Request.ReplyFromPublisher();
+		reply.statusCode = statusCode;
+		out.writeObject(reply);
+	}
 
 	/**
 	 * Server starts for Brokers

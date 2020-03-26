@@ -52,6 +52,7 @@ public class Broker {
 		return consumer;
 	}
 
+
 	public void replyWithMalformedRequest(ObjectOutputStream out) throws IOException{
 		Request.ReplyFromBroker reply = new Request.ReplyFromBroker();
 		reply.statusCode = Request.StatusCodes.MALFORMED_REQUEST;
