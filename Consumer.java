@@ -136,11 +136,6 @@ public class Consumer extends Node implements Serializable {
 			e.printStackTrace();
 		}
 	}
-
-
-	public void run() {
-
-	}
 	public static void main(String[] args){
 		try {
 			Consumer c = new Consumer();

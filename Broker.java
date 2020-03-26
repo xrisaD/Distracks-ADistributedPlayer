@@ -1,9 +1,6 @@
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.net.UnknownHostException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.*;
 
 public class Broker {
@@ -19,8 +16,6 @@ public class Broker {
 	private int port;
 	private int hashValue;
 
-	public void calculateKeys() {
-	}
 
 	/**
 	 *
@@ -196,29 +191,17 @@ public class Broker {
 	 *
 	 * @param fileName ip port hashValue
 	 */
-	private void saveBrokersData(String fileName) {
+	private ArrayList<Component> saveBrokersData(String fileName) {
+		ArrayList<Component> brokers = new ArrayList();
 		try {
 			File myObj = new File(fileName);
 			Scanner myReader = new Scanner(myObj);
 			while (myReader.hasNextLine()) {
-
 				String data = myReader.nextLine();
-
 				String[] arrOfStr = data.split("\\s");
 				String ip = arrOfStr[0];
 				int port = Integer.parseInt(arrOfStr[1]);
-				int hashValue = Integer.parseInt(arrOfStr[2]);
-
-				Component c = new Component(ip,port);
-				this.hashValueToBroker.put(hashValue,c);
-			}
-			//sort by hashValues
-			Set<Integer> set = hashValueToBroker.keySet();
-			synchronized (set){
-				for ( int key :  set) {
-					this.hashValues.add(key);
-				}
-				hashValues.sort(Comparator.naturalOrder());
+				brokers.add(new Component(ip,port));
 			}
 			//close reader
 			myReader.close();
@@ -226,15 +209,29 @@ public class Broker {
 			System.out.println("An error occurred.");
 			e.printStackTrace();
 		}
+		return brokers;
 	}
-
+	public void calculateKeys(ArrayList<Component> brokers) {
+		for(Component b: brokers){
+			this.hashValueToBroker.put(Utilities.getMd5(b.getIp()+b.getPort()).hashCode(),b);
+		}
+		//sort by hashValues
+		Set<Integer> set = hashValueToBroker.keySet();
+		synchronized (set){
+			for ( int key :  set) {
+				this.hashValues.add(key);
+			}
+			hashValues.sort(Comparator.naturalOrder());
+		}
+	}
 	public static void main(String[] args){
 		try{
 			//arg[0]:ip
 			//arg[1]:port
 			//arg[2]:hashValue
-			Broker b = new Broker(args[0],Integer.parseInt(args[1]),Integer.parseInt(args[2]));
-			b.saveBrokersData(args[3]);
+			Broker b = new Broker(args[0],Integer.parseInt(args[1]));
+			ArrayList<Component> brokers = b.saveBrokersData(args[2]);
+			b.calculateKeys(brokers);
 			b.startServer();
 		}catch (Exception e) {
 			System.out.println("Usage: java Broker ip port hashValue brokersFile");
@@ -327,15 +324,15 @@ public class Broker {
 					throw new RuntimeException(e);
 				}
 			}
-
 		}
 	}
 
-	//constructor
-	public Broker(String ip, int port, int hashValue){
+	//constructors
+
+	public Broker(String ip, int port){
 		this.ip = ip;
 		this.port = port;
-		this.hashValue = hashValue;
+		this.hashValue = Utilities.getMd5(this.ip+this.port).hashCode();
 	}
 
 	//getter and setters
