@@ -11,13 +11,6 @@ class MP3Cutter{
 	public MP3Cutter(File f){
 		this.mp3ToCut = f;
 	}
-
-	//TODO: split pou tha dexete musicFile os orisma kai tha to spaei se polla musicFiles(dhladh se chunks) kai tha epistrefei ena list me afta ta musicFiles
-
-	public static List<MusicFile> splitFile(MusicFile mf){
-		return null;
-	}
-
 	public static ArrayList<MusicFileMetaData> getSongsMetaData(String first, String last){
 		//A first letter, Z last letter, closed set
 		ArrayList <MusicFileMetaData> AllMetadata = new ArrayList<MusicFileMetaData>();
@@ -103,6 +96,7 @@ class MP3Cutter{
 	 }
 	 return chunklist;
 	 **/
+	/*
 	public static String walk( String path,String song) {
 
 		File root = new File( path );
@@ -127,7 +121,7 @@ class MP3Cutter{
 			}
 		}
 		return "Error";
-	}
+	}*/
 	public static void mergeFiles(List<File> files, File into)
 			throws IOException {
 		try (FileOutputStream fos = new FileOutputStream(into);
@@ -153,14 +147,14 @@ class MP3Cutter{
 			throws IOException {
 		mergeFiles(listOfFilesToMerge(oneOfFiles), into);
 	}
-
+	/*
 	public static List<File> listOfFilesToMerge(String oneOfFiles) {
 		return listOfFilesToMerge(new File(oneOfFiles));
 	}
 
 	public static void mergeFiles(String oneOfFiles, String into) throws IOException{
 		mergeFiles(new File(oneOfFiles), new File(into));
-	}
+	}*/
 
 	//function that handles metadata
 	public static MusicFileMetaData ID3(File f)  {

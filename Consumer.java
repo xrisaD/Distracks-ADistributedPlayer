@@ -20,8 +20,6 @@ public class Consumer extends Node implements Serializable {
 		ObjectInputStream in = null;
 		ObjectOutputStream out = null;
 		try {
-			System.out.println("Start PlayData.. "+artist +" "+songName);
-
 			String ip = knownBrokers.get(0).getIp();
 			int port =  knownBrokers.get(0).getPort();
 

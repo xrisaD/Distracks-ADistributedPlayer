@@ -29,8 +29,6 @@ public class Broker {
 	 * @return hash value to repsonsible broker
 	 */
 	public int findResponsibleBroker(int md5){
-		//System.out.println("HashValues : " + hashValues);
-		//System.out.println("Md5 = " + md5);
 		if( md5 > hashValues.get(hashValues.size() - 1)){
 			return hashValues.get(0);
 		}
@@ -79,31 +77,24 @@ public class Broker {
 	 * accept connection with Publicher: notify Publisher
 	 */
 	public void notifyPublisher(String ip, int port,  ArrayList<String> artists) {
-		System.out.println("IN NOTIFY");
 		System.out.println();
 		for(String artistName:artists){
 			System.out.println(artistName);
 			if(isResponsible(artistName)){
-				System.out.println("1 MORE ARTIST");
 				artistToPublisher.put(new ArtistName(artistName),new Component(ip,port));
 			}
 		}
 	}
 
 	public void  pull(ArtistName artist, String song, ObjectOutputStream  out) throws IOException {
-		System.out.println("IN PULL !!");
 		//check if th broker is responsible for this artist
 		if(isResponsible(artist.getArtistName())){
-			System.out.println("He is the responsible broker!!!");
 			//find Publisher for this artist
 			Component publisherWithThisArtist = artistToPublisher.get(artist);
-			System.out.println(publisherWithThisArtist.getPort());
 			//open connection with Publisher and request the specific song
 			if(publisherWithThisArtist != null || artistToPublisher.size()==0) {
-				System.out.println("ok..we continue");
 				requestSongFromPublisher(publisherWithThisArtist, artist, song, out);
 			}else{
-				System.out.println("not ok");
 				//404 : something went wrong
 				replyWithNotFound(out);
 			}
@@ -123,7 +114,6 @@ public class Broker {
 	}
 
 	public void requestSongFromPublisher(Component c, ArtistName artistName, String song, ObjectOutputStream  outToConsumer) {
-		System.out.println("In REQUEST FROM PUBLISHER");
 		Socket s = null;
 		ObjectInputStream inFromPublisher = null;
 		ObjectOutputStream outToPublisher = null;
@@ -138,25 +128,20 @@ public class Broker {
 
 			outToPublisher = new ObjectOutputStream(s.getOutputStream());
 			outToPublisher.writeObject(request);
-			System.out.println("I SEND THE  REQUEST TO PUBLISHER AND I AM WAITING FOR THE ANSWER!");
 
 			inFromPublisher = new ObjectInputStream(s.getInputStream());
 			//wait from Publisher to send to Broker songs data
 			Request.ReplyFromPublisher reply = (Request.ReplyFromPublisher) inFromPublisher.readObject();
-			System.out.println("I GET THE REPLY FROM PUBLISHER!" + reply.statusCode);
 
 			 //if everithing is ok
 			if(reply.statusCode == Request.StatusCodes.OK){
-				System.out.println("OK status code!!!");
 				int numOfChunks = reply.numChunks;
 				//whatever you receive from Publisher send it to Consumer
 				//Reply to the consumer
 				Request.ReplyFromBroker replyToConsumer = new Request.ReplyFromBroker();
 				replyToConsumer.statusCode = Request.StatusCodes.OK;
 				replyToConsumer.numChunks = numOfChunks;
-				System.out.println("EVERYTHING IS OK! THE NUM OF CHUNK IS: "+numOfChunks);
 				outToConsumer.writeObject(replyToConsumer);
-				System.out.println("i send this mes to consumer!");
 
 				for(int i=0; i<numOfChunks; i++){
 					 MusicFile chunk = (MusicFile)inFromPublisher.readObject();
@@ -165,7 +150,6 @@ public class Broker {
 			}
 			//404 : something went wrong
 			else {
-				System.out.println("NOT FIND IN BROKER");
 				replyWithNotFound(outToConsumer);
 			}
 		} catch (IOException | ClassNotFoundException e) {
@@ -185,7 +169,6 @@ public class Broker {
 	 */
 	public void startServer() {
 
-		System.out.println(this.port+"HASHHHHHHHHHHHHHHHHHHHHHHHHHAKIIIIIIIIIIII ENAAAAAAAA  "+this.hashValues.size());
 		ServerSocket providerSocket = null;
 		Socket connection = null;
 		try {
@@ -310,11 +293,8 @@ public class Broker {
 					System.out.println("PULL to Broker with port: "+ getPort());
 					ArtistName artistName = new ArtistName(request.pullArtistName);
 					String song = request.songName;
-					System.out.println("with Artistname "+ artistName.getArtistName());
-					System.out.println("with song "+ song);
 
 					if(request.pullArtistName ==null || song==null){
-						System.out.println("NOT NULL ALL OK");
 						replyWithMalformedRequest(out);
 					}else {
 						pull(artistName, song, out);

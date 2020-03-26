@@ -24,12 +24,10 @@ public class Publisher extends Node implements Serializable {
 			while (myReader.hasNextLine()) {
 				//Parsing a broker
 				String data = myReader.nextLine();
-				System.out.println("data "+data);
 				String[] arrOfStr = data.split("\\s");
 				String ip = arrOfStr[0];
 				int port = Integer.parseInt(arrOfStr[1]);
 				int hashValue = Integer.parseInt(arrOfStr[2]);
-				System.out.println("IP: "+ip+" Port: "+port+" hashValue: "+hashValue);
 				notifyBroker(ip , port);
 			}
 		} catch (FileNotFoundException e) {
@@ -41,15 +39,12 @@ public class Publisher extends Node implements Serializable {
 
 	public void push(String artist, String song, ObjectOutputStream out) throws IOException {
 		ArrayList<MusicFileMetaData> songs = artistToMusicFileMetaData.get(new ArtistName(artist));
-		System.out.println("PUSHHHHHHHHHHHHHHHHHHHHHHHHHH");
 
 		if(songs!=null ){
 			//&& songs.size()>0
 			System.out.println("IN search for song");
 			for (MusicFileMetaData s : songs) {
 				if (s.getTrackName().equals(song)) {
-					System.out.println("OH SONG  "+s.getTrackName());
-
 					String path = s.getPath();
 					cutter = new MP3Cutter(new File(path));
 
@@ -66,13 +61,11 @@ public class Publisher extends Node implements Serializable {
 					return;
 				}
 			}
-			System.out.println("SONG TON FOUND");
 			Request.ReplyFromPublisher reply = new Request.ReplyFromPublisher();
 			reply.statusCode = Request.StatusCodes.NOT_FOUND;
 			out.writeObject(reply);
 		}else {
 			//no artistName or song
-			System.out.println("NO PUSH");
 			Request.ReplyFromPublisher reply = new Request.ReplyFromPublisher();
 			reply.statusCode = Request.StatusCodes.MALFORMED_REQUEST;
 			out.writeObject(reply);
@@ -246,9 +239,6 @@ public class Publisher extends Node implements Serializable {
 		//create artistToMusicFileMetaData Hashtable by parsing allMetaData
 
 		for (MusicFileMetaData song : allMetaData) {
-			System.out.println("DATTTTTTTTTTTTTTTTTTTTTAAAAAA");
-			System.out.println(song.getArtistName());
-			System.out.println(song.getPath());
 
 			if(artistToMusicFileMetaData.get(new ArtistName(song.getArtistName()))==null){
 				//initialize artist
