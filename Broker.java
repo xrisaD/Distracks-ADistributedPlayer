@@ -145,7 +145,7 @@ public class Broker {
 
 				for(int i=0; i<numOfChunks; i++){
 					 MusicFile chunk = (MusicFile)inFromPublisher.readObject();
-					outToConsumer.writeObject(chunk);
+					 outToConsumer.writeObject(chunk);
 				}
 			}
 			//404 : something went wrong
