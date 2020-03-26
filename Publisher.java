@@ -27,7 +27,6 @@ public class Publisher extends Node implements Serializable {
 				String[] arrOfStr = data.split("\\s");
 				String ip = arrOfStr[0];
 				int port = Integer.parseInt(arrOfStr[1]);
-				int hashValue = Integer.parseInt(arrOfStr[2]);
 				notifyBroker(ip , port);
 			}
 		} catch (FileNotFoundException e) {
@@ -44,7 +43,7 @@ public class Publisher extends Node implements Serializable {
 			//&& songs.size()>0
 			System.out.println("IN search for song");
 			for (MusicFileMetaData s : songs) {
-				if (s.getTrackName().equals(song)) {
+				if (s.getTrackName().toLowerCase().equals(song)) {
 					String path = s.getPath();
 					cutter = new MP3Cutter(new File(path));
 
@@ -147,26 +146,6 @@ public class Publisher extends Node implements Serializable {
 		}
 
 	}
-
-	public byte[] read(File file) throws IOException {
-
-		byte[] buffer = new byte[(int) file.length()];
-		InputStream ios = null;
-		try {
-			ios = new FileInputStream(file);
-			if (ios.read(buffer) == -1) {
-				throw new IOException("EOF reached while trying to read the whole file");
-			}
-		} finally {
-			try {
-				if (ios != null)
-					ios.close();
-			} catch (IOException e) {
-			}
-		}
-		return buffer;
-	}
-
 	public static void main(String[] args){
 		try{
 			// arg[0]: ip arg[1]:port
@@ -198,15 +177,13 @@ public class Publisher extends Node implements Serializable {
 				//Take Broker's request
 				//Broker's request is a ArtistName and a song
 				Request.RequestToPublisher req= (Request.RequestToPublisher) in.readObject();
-
+				System.out.println(req.toString());
 				out = new ObjectOutputStream(socket.getOutputStream());
 				if(req.method == Request.Methods.PUSH) {
 					if(req.artistName==null || req.songName==null){
-						Request.ReplyFromPublisher reply = new Request.ReplyFromPublisher();
-						reply.statusCode = Request.StatusCodes.MALFORMED_REQUEST;
-						out.writeObject(reply);
+						notifyFailure(Request.StatusCodes.MALFORMED_REQUEST, out);
 					}else {
-						push(req.artistName, req.songName, out);
+						push(req.artistName, req.songName.toLowerCase(), out);
 					}
 				}
 			}catch (ClassNotFoundException c) {

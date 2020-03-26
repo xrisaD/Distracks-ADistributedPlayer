@@ -16,7 +16,6 @@ public class Broker {
 	private int port;
 	private int hashValue;
 
-
 	/**
 	 *
 	 * @param md5 hash value

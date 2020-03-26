@@ -140,11 +140,10 @@ public class Consumer extends Node implements Serializable {
 		try {
 			Consumer c = new Consumer();
 			c.readBrokers(args[0]); //this shouldn't happen
-			c.playData(new ArtistName("Unknown Artist"),"Kesha");
+			c.playData(new ArtistName("statusq".toLowerCase()),"Kesha");
 		}
 		catch(Exception e){
 			System.err.println("Usage : java Consumer <brokerFile>");
 		}
 	}
-
 }
