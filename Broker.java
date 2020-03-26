@@ -35,7 +35,6 @@ public class Broker {
 			return hashValues.get(0);
 		}
 		int index = Collections.binarySearch(hashValues, md5);
-		System.out.println("Index = " + index);
 		if(index>0){
 			return hashValues.get(index);
 		}else{
@@ -47,7 +46,6 @@ public class Broker {
 	 */
 	public boolean isResponsible(String artistName){
 		int md5 = Utilities.getMd5(artistName).hashCode();
-		System.out.println("HASHAKIIIIIIIIIIIIIIIIIIIIII "+hashValues.size());
 		int res = findResponsibleBroker(md5);
 		//this broker is responsible for this artistName
 		return ( res == this.hashValue);
@@ -74,7 +72,7 @@ public class Broker {
 	}
 	public void replyWithNotFound(ObjectOutputStream out) throws IOException{
 		Request.ReplyFromBroker reply = new Request.ReplyFromBroker();
-		reply.statusCode = Request.StatusCodes.OK;
+		reply.statusCode = Request.StatusCodes.NOT_FOUND;
 		out.writeObject(reply);
 	}
 	/*
@@ -84,6 +82,7 @@ public class Broker {
 		System.out.println("IN NOTIFY");
 		System.out.println();
 		for(String artistName:artists){
+			System.out.println(artistName);
 			if(isResponsible(artistName)){
 				System.out.println("1 MORE ARTIST");
 				artistToPublisher.put(new ArtistName(artistName),new Component(ip,port));
@@ -98,13 +97,13 @@ public class Broker {
 			System.out.println("He is the responsible broker!!!");
 			//find Publisher for this artist
 			Component publisherWithThisArtist = artistToPublisher.get(artist);
-			for(ArtistName an:artistToPublisher.keySet()){
-						System.out.println(an.getArtistName());
-			}
+			System.out.println(publisherWithThisArtist.getPort());
 			//open connection with Publisher and request the specific song
-			if(publisherWithThisArtist != null) {
+			if(publisherWithThisArtist != null || artistToPublisher.size()==0) {
+				System.out.println("ok..we continue");
 				requestSongFromPublisher(publisherWithThisArtist, artist, song, out);
 			}else{
+				System.out.println("not ok");
 				//404 : something went wrong
 				replyWithNotFound(out);
 			}
@@ -166,6 +165,7 @@ public class Broker {
 			}
 			//404 : something went wrong
 			else {
+				System.out.println("NOT FIND IN BROKER");
 				replyWithNotFound(outToConsumer);
 			}
 		} catch (IOException | ClassNotFoundException e) {
@@ -194,8 +194,6 @@ public class Broker {
 			while (true) {
 				//accept a connection
 				connection = providerSocket.accept();
-
-				System.out.println(this.port+"HASHHHHHHHHHHHHHHHHHHHHHHHHHAKIIIIIIIIIIII DUOOOOO "+this.hashValues.size());
 				//We start a thread
 				//this thread will do the communication
 				BrokerHandler bh = new BrokerHandler(connection);
@@ -274,12 +272,9 @@ public class Broker {
 			ObjectInputStream in = null;
 			ObjectOutputStream out = null;
 			try{
-				System.out.println("in broker run!! Broker has a message 2");
-
 				out = new ObjectOutputStream(socket.getOutputStream());
 				in = new ObjectInputStream(socket.getInputStream());
 
-				System.out.println("in broker run!! Broker has a message 3");
 				Request.RequestToBroker request = (Request.RequestToBroker) in.readObject();
 				System.out.printf("[Broker (%s,%d)] GOT A MESSSAGE <%s> %n" , getIp() , getPort() , request.toString());
 
@@ -296,9 +291,7 @@ public class Broker {
 
 					}
 					notifyPublisher(request.publisherIp, request.publisherPort, request.artistNames);
-					System.out.println("replying1 "+request.publisherPort +" "+ getPort());
-					//replyWithOK(out);
-					System.out.println("replying2");
+					//replyWithOK(out); ?
 				}
 				//this  "else if" is for debug purposes
 				else if(request.method == Request.Methods.STATUS){ 				//information querying about broker's state
@@ -322,11 +315,10 @@ public class Broker {
 
 					if(request.pullArtistName ==null || song==null){
 						System.out.println("NOT NULL ALL OK");
-						Request.ReplyFromBroker reply = new Request.ReplyFromBroker();
-						reply.statusCode = Request.StatusCodes.MALFORMED_REQUEST;
-						out.writeObject(reply);
+						replyWithMalformedRequest(out);
+					}else {
+						pull(artistName, song, out);
 					}
-					pull(artistName, song, out);
 				}
 				//Unknown method so we return a reply informing of a malformed request
 				else{

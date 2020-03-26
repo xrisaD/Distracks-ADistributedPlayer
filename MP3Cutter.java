@@ -21,16 +21,15 @@ class MP3Cutter{
 	public static ArrayList<MusicFileMetaData> getSongsMetaData(String first, String last){
 		//A first letter, Z last letter, closed set
 		ArrayList <MusicFileMetaData> AllMetadata = new ArrayList<MusicFileMetaData>();
-		Path currentRelativePath = Paths.get("");
-		try (Stream<Path> walk = Files.walk(Paths.get("C:\\Users\\Jero\\Desktop\\DistributedSystemsAssignment\\dataset"))) {
+		Path path = Paths.get("dataset").toAbsolutePath();
+		try (Stream<Path> walk = Files.walk(path)) {
 			List<String> temp = walk.map(x -> x.toString()).filter(f -> (f.endsWith(".mp3"))).collect(Collectors.toList());
 			for(String s: temp){
 				if(!s.contains("._")){
 					//create music file with meta data
 					MusicFileMetaData MFD = ID3(new File(s));
-					if((MFD.getArtistName().toLowerCase().compareTo(first)>=0) && (MFD.getArtistName().toLowerCase().compareTo(last)<=0)){
+					if((MFD.getArtistName().toLowerCase().compareTo(first.toLowerCase())>=0) && (MFD.getArtistName().toLowerCase().compareTo(last.toLowerCase())<=0)){
 						//if artistName is in this range, then this Publisher is responsible for this artist
-
 						AllMetadata.add(MFD);
 					}
 				}
@@ -77,7 +76,8 @@ class MP3Cutter{
 			baos.write(chunklist.get(k));
 		}
 		byte[] concatenated_byte_array = baos.toByteArray();//metatrepei to stream se array
-		try (FileOutputStream fos = new FileOutputStream("C:\\Users\\Jero\\Desktop\\DistributedSystemsAssignment\\splittested.mp3")) {
+		Path path = Paths.get("").toAbsolutePath();
+		try (FileOutputStream fos = new FileOutputStream(path+"splittested.mp3")) {
 			fos.write(concatenated_byte_array);
 		}
 		return chunklist;//gyrnaei lista me ta chunks
@@ -286,15 +286,4 @@ class MP3Cutter{
 		}
 		return null;
 	}
-
-	public static void main(String[] args) throws IOException {
-		//Path current = Paths.get("documents.txt");
-		//String file = current.toAbsolutePath().toString();
-		//getSongsMetaData("b","j");
-		//walk("C:\\Users\\Jero\\Desktop\\DistributedSystemsAssignment\\songs\\Horror","Horroriffic.mp3");
-		//Path currentRelativePath = Paths.get("");
-		//splitFile(new File(currentRelativePath.toAbsolutePath().toString()+"\\dataset\\dataset1\\World\\Eye of Forgiveness.mp3"));
-		//mergeFiles(currentRelativePath.toAbsolutePath().toString()+"\\dataset\\dataset1\\World\\Eye of Forgiveness001.mp3",currentRelativePath.toAbsolutePath().toString()+"\\Eye of Forgiveness.mp3");
-	}
-
 }

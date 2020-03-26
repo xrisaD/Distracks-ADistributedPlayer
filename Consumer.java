@@ -49,6 +49,7 @@ public class Consumer extends Node implements Serializable {
 			}
 
 			if(statusCode == Request.StatusCodes.NOT_FOUND){
+				System.out.println("Song or Artist does not exist");
 				throw new Exception("Song or Artist does not exist");
 			}
 			//Song exists and the broker is responsible for the artist
@@ -65,6 +66,7 @@ public class Consumer extends Node implements Serializable {
 			}
 			//In this case the status code is MALFORMED_REQUEST
 			else{
+				System.out.println("MALFORMED_REQUEST");
 				throw new Exception("MALFORMED_REQUEST");
 			}
 		}
