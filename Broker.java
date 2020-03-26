@@ -1,10 +1,7 @@
-
 import java.io.*;
+import java.math.BigInteger;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.net.UnknownHostException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.*;
 
 public class Broker {
@@ -12,30 +9,24 @@ public class Broker {
 	//artistName->Publisher's ip and port
 	private Map<ArtistName, Component> artistToPublisher = Collections.synchronizedMap(new HashMap<ArtistName, Component>());
 	//mapping hashValues->Broker's ip and port
-	private Map<Integer, Component> hashValueToBroker = Collections.synchronizedMap(new HashMap<Integer, Component>());
+	private Map<BigInteger, Component> hashValueToBroker = Collections.synchronizedMap(new HashMap<BigInteger, Component>());
 	//hashValues for all Brokers
-	private List<Integer> hashValues = Collections.synchronizedList(new ArrayList<Integer>());
+	private List<BigInteger> hashValues = Collections.synchronizedList(new ArrayList<BigInteger>());
 
 	private String ip;
 	private int port;
-	private int hashValue;
-
-	public void calculateKeys() {
-	}
+	private BigInteger hashValue;
 
 	/**
 	 *
 	 * @param md5 hash value
 	 * @return hash value to repsonsible broker
 	 */
-	public int findResponsibleBroker(int md5){
-		//System.out.println("HashValues : " + hashValues);
-		//System.out.println("Md5 = " + md5);
-		if( md5 > hashValues.get(hashValues.size() - 1)){
+	public BigInteger findResponsibleBroker(BigInteger md5){
+		if( md5.compareTo(hashValues.get(hashValues.size() - 1))>0){
 			return hashValues.get(0);
 		}
 		int index = Collections.binarySearch(hashValues, md5);
-		System.out.println("Index = " + index);
 		if(index>0){
 			return hashValues.get(index);
 		}else{
@@ -46,11 +37,10 @@ public class Broker {
 	 * check if this Broker is responsible for this artistName
 	 */
 	public boolean isResponsible(String artistName){
-		int md5 = Utilities.getMd5(artistName).hashCode();
-		System.out.println("HASHAKIIIIIIIIIIIIIIIIIIIIII "+hashValues.size());
-		int res = findResponsibleBroker(md5);
+		BigInteger md5 = Utilities.getMd5(artistName);
+		BigInteger res = findResponsibleBroker(md5);
 		//this broker is responsible for this artistName
-		return ( res == this.hashValue);
+		return ( res .compareTo(this.hashValue) == 0);
 	}
 
 
@@ -61,6 +51,7 @@ public class Broker {
 	public Consumer acceptConnection(Consumer consumer) {
 		return consumer;
 	}
+
 
 	public void replyWithMalformedRequest(ObjectOutputStream out) throws IOException{
 		Request.ReplyFromBroker reply = new Request.ReplyFromBroker();
@@ -74,35 +65,29 @@ public class Broker {
 	}
 	public void replyWithNotFound(ObjectOutputStream out) throws IOException{
 		Request.ReplyFromBroker reply = new Request.ReplyFromBroker();
-		reply.statusCode = Request.StatusCodes.OK;
+		reply.statusCode = Request.StatusCodes.NOT_FOUND;
 		out.writeObject(reply);
 	}
 	/*
 	 * accept connection with Publicher: notify Publisher
 	 */
 	public void notifyPublisher(String ip, int port,  ArrayList<String> artists) {
-		System.out.println("IN NOTIFY");
 		System.out.println();
 		for(String artistName:artists){
+			System.out.println(artistName);
 			if(isResponsible(artistName)){
-				System.out.println("1 MORE ARTIST");
 				artistToPublisher.put(new ArtistName(artistName),new Component(ip,port));
 			}
 		}
 	}
 
 	public void  pull(ArtistName artist, String song, ObjectOutputStream  out) throws IOException {
-		System.out.println("IN PULL !!");
 		//check if th broker is responsible for this artist
 		if(isResponsible(artist.getArtistName())){
-			System.out.println("He is the responsible broker!!!");
 			//find Publisher for this artist
 			Component publisherWithThisArtist = artistToPublisher.get(artist);
-			for(ArtistName an:artistToPublisher.keySet()){
-						System.out.println(an.getArtistName());
-			}
 			//open connection with Publisher and request the specific song
-			if(publisherWithThisArtist != null) {
+			if(publisherWithThisArtist != null || artistToPublisher.size()==0) {
 				requestSongFromPublisher(publisherWithThisArtist, artist, song, out);
 			}else{
 				//404 : something went wrong
@@ -110,7 +95,7 @@ public class Broker {
 			}
 		}else{
 			//find responsible Broker and send
-			int brokersHashValue = findResponsibleBroker(Utilities.getMd5(artist.getArtistName()).hashCode());
+			BigInteger brokersHashValue = findResponsibleBroker(Utilities.getMd5(artist.getArtistName()));
 			//it can't be null, there is at least one Broker, ourself
 			Component broker = hashValueToBroker.get(brokersHashValue);
 			//send message to Consumer with the ip and the port with the responsible broker
@@ -124,7 +109,6 @@ public class Broker {
 	}
 
 	public void requestSongFromPublisher(Component c, ArtistName artistName, String song, ObjectOutputStream  outToConsumer) {
-		System.out.println("In REQUEST FROM PUBLISHER");
 		Socket s = null;
 		ObjectInputStream inFromPublisher = null;
 		ObjectOutputStream outToPublisher = null;
@@ -139,29 +123,24 @@ public class Broker {
 
 			outToPublisher = new ObjectOutputStream(s.getOutputStream());
 			outToPublisher.writeObject(request);
-			System.out.println("I SEND THE  REQUEST TO PUBLISHER AND I AM WAITING FOR THE ANSWER!");
 
 			inFromPublisher = new ObjectInputStream(s.getInputStream());
 			//wait from Publisher to send to Broker songs data
 			Request.ReplyFromPublisher reply = (Request.ReplyFromPublisher) inFromPublisher.readObject();
-			System.out.println("I GET THE REPLY FROM PUBLISHER!" + reply.statusCode);
 
 			 //if everithing is ok
 			if(reply.statusCode == Request.StatusCodes.OK){
-				System.out.println("OK status code!!!");
 				int numOfChunks = reply.numChunks;
 				//whatever you receive from Publisher send it to Consumer
 				//Reply to the consumer
 				Request.ReplyFromBroker replyToConsumer = new Request.ReplyFromBroker();
 				replyToConsumer.statusCode = Request.StatusCodes.OK;
 				replyToConsumer.numChunks = numOfChunks;
-				System.out.println("EVERYTHING IS OK! THE NUM OF CHUNK IS: "+numOfChunks);
 				outToConsumer.writeObject(replyToConsumer);
-				System.out.println("i send this mes to consumer!");
 
 				for(int i=0; i<numOfChunks; i++){
 					 MusicFile chunk = (MusicFile)inFromPublisher.readObject();
-					outToConsumer.writeObject(chunk);
+					 outToConsumer.writeObject(chunk);
 				}
 			}
 			//404 : something went wrong
@@ -185,7 +164,6 @@ public class Broker {
 	 */
 	public void startServer() {
 
-		System.out.println(this.port+"HASHHHHHHHHHHHHHHHHHHHHHHHHHAKIIIIIIIIIIII ENAAAAAAAA  "+this.hashValues.size());
 		ServerSocket providerSocket = null;
 		Socket connection = null;
 		try {
@@ -194,8 +172,6 @@ public class Broker {
 			while (true) {
 				//accept a connection
 				connection = providerSocket.accept();
-
-				System.out.println(this.port+"HASHHHHHHHHHHHHHHHHHHHHHHHHHAKIIIIIIIIIIII DUOOOOO "+this.hashValues.size());
 				//We start a thread
 				//this thread will do the communication
 				BrokerHandler bh = new BrokerHandler(connection);
@@ -216,29 +192,17 @@ public class Broker {
 	 *
 	 * @param fileName ip port hashValue
 	 */
-	private void saveBrokersData(String fileName) {
+	private ArrayList<Component> saveBrokersData(String fileName) {
+		ArrayList<Component> brokers = new ArrayList();
 		try {
 			File myObj = new File(fileName);
 			Scanner myReader = new Scanner(myObj);
 			while (myReader.hasNextLine()) {
-
 				String data = myReader.nextLine();
-
 				String[] arrOfStr = data.split("\\s");
 				String ip = arrOfStr[0];
 				int port = Integer.parseInt(arrOfStr[1]);
-				int hashValue = Integer.parseInt(arrOfStr[2]);
-
-				Component c = new Component(ip,port);
-				this.hashValueToBroker.put(hashValue,c);
-			}
-			//sort by hashValues
-			Set<Integer> set = hashValueToBroker.keySet();
-			synchronized (set){
-				for ( int key :  set) {
-					this.hashValues.add(key);
-				}
-				hashValues.sort(Comparator.naturalOrder());
+				brokers.add(new Component(ip,port));
 			}
 			//close reader
 			myReader.close();
@@ -246,15 +210,29 @@ public class Broker {
 			System.out.println("An error occurred.");
 			e.printStackTrace();
 		}
+		return brokers;
 	}
-
+	public void calculateKeys(ArrayList<Component> brokers) {
+		for(Component b: brokers){
+			this.hashValueToBroker.put(Utilities.getMd5(b.getIp()+b.getPort()),b);
+		}
+		//sort by hashValues
+		Set<BigInteger> set = hashValueToBroker.keySet();
+		synchronized (set){
+			for ( BigInteger key :  set) {
+				this.hashValues.add(key);
+			}
+			hashValues.sort(Comparator.naturalOrder());
+		}
+	}
 	public static void main(String[] args){
 		try{
 			//arg[0]:ip
 			//arg[1]:port
 			//arg[2]:hashValue
-			Broker b = new Broker(args[0],Integer.parseInt(args[1]),Integer.parseInt(args[2]));
-			b.saveBrokersData(args[3]);
+			Broker b = new Broker(args[0],Integer.parseInt(args[1]));
+			ArrayList<Component> brokers = b.saveBrokersData(args[2]);
+			b.calculateKeys(brokers);
 			b.startServer();
 		}catch (Exception e) {
 			System.out.println("Usage: java Broker ip port hashValue brokersFile");
@@ -274,12 +252,9 @@ public class Broker {
 			ObjectInputStream in = null;
 			ObjectOutputStream out = null;
 			try{
-				System.out.println("in broker run!! Broker has a message 2");
-
 				out = new ObjectOutputStream(socket.getOutputStream());
 				in = new ObjectInputStream(socket.getInputStream());
 
-				System.out.println("in broker run!! Broker has a message 3");
 				Request.RequestToBroker request = (Request.RequestToBroker) in.readObject();
 				System.out.printf("[Broker (%s,%d)] GOT A MESSSAGE <%s> %n" , getIp() , getPort() , request.toString());
 
@@ -296,9 +271,7 @@ public class Broker {
 
 					}
 					notifyPublisher(request.publisherIp, request.publisherPort, request.artistNames);
-					System.out.println("replying1 "+request.publisherPort +" "+ getPort());
-					//replyWithOK(out);
-					System.out.println("replying2");
+					//replyWithOK(out); ?
 				}
 				//this  "else if" is for debug purposes
 				else if(request.method == Request.Methods.STATUS){ 				//information querying about broker's state
@@ -317,16 +290,12 @@ public class Broker {
 					System.out.println("PULL to Broker with port: "+ getPort());
 					ArtistName artistName = new ArtistName(request.pullArtistName);
 					String song = request.songName;
-					System.out.println("with Artistname "+ artistName.getArtistName());
-					System.out.println("with song "+ song);
 
 					if(request.pullArtistName ==null || song==null){
-						System.out.println("NOT NULL ALL OK");
-						Request.ReplyFromBroker reply = new Request.ReplyFromBroker();
-						reply.statusCode = Request.StatusCodes.MALFORMED_REQUEST;
-						out.writeObject(reply);
+						replyWithMalformedRequest(out);
+					}else {
+						pull(artistName, song, out);
 					}
-					pull(artistName, song, out);
 				}
 				//Unknown method so we return a reply informing of a malformed request
 				else{
@@ -356,15 +325,15 @@ public class Broker {
 					throw new RuntimeException(e);
 				}
 			}
-
 		}
 	}
 
-	//constructor
-	public Broker(String ip, int port, int hashValue){
+	//constructors
+
+	public Broker(String ip, int port){
 		this.ip = ip;
 		this.port = port;
-		this.hashValue = hashValue;
+		this.hashValue = Utilities.getMd5(this.ip+this.port);
 	}
 
 	//getter and setters
@@ -384,7 +353,7 @@ public class Broker {
 		this.port = port;
 	}
 
-	public int getHashValue() {
+	public BigInteger getHashValue() {
 		return hashValue;
 	}
 }

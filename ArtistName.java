@@ -25,6 +25,6 @@ public class ArtistName {
 		if (this == o) return true;
 		if (o == null || getClass() != o.getClass()) return false;
 		ArtistName that = (ArtistName) o;
-		return this.artistName.equals( that.artistName);
+		return this.artistName.toLowerCase().equals( that.artistName.toLowerCase());
 	}
 }
