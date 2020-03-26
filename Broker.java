@@ -1,4 +1,5 @@
 import java.io.*;
+import java.math.BigInteger;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.*;
@@ -8,21 +9,21 @@ public class Broker {
 	//artistName->Publisher's ip and port
 	private Map<ArtistName, Component> artistToPublisher = Collections.synchronizedMap(new HashMap<ArtistName, Component>());
 	//mapping hashValues->Broker's ip and port
-	private Map<Integer, Component> hashValueToBroker = Collections.synchronizedMap(new HashMap<Integer, Component>());
+	private Map<BigInteger, Component> hashValueToBroker = Collections.synchronizedMap(new HashMap<BigInteger, Component>());
 	//hashValues for all Brokers
-	private List<Integer> hashValues = Collections.synchronizedList(new ArrayList<Integer>());
+	private List<BigInteger> hashValues = Collections.synchronizedList(new ArrayList<BigInteger>());
 
 	private String ip;
 	private int port;
-	private int hashValue;
+	private BigInteger hashValue;
 
 	/**
 	 *
 	 * @param md5 hash value
 	 * @return hash value to repsonsible broker
 	 */
-	public int findResponsibleBroker(int md5){
-		if( md5 > hashValues.get(hashValues.size() - 1)){
+	public BigInteger findResponsibleBroker(BigInteger md5){
+		if( md5.compareTo(hashValues.get(hashValues.size() - 1))>0){
 			return hashValues.get(0);
 		}
 		int index = Collections.binarySearch(hashValues, md5);
@@ -36,10 +37,10 @@ public class Broker {
 	 * check if this Broker is responsible for this artistName
 	 */
 	public boolean isResponsible(String artistName){
-		int md5 = Utilities.getMd5(artistName).hashCode();
-		int res = findResponsibleBroker(md5);
+		BigInteger md5 = Utilities.getMd5(artistName);
+		BigInteger res = findResponsibleBroker(md5);
 		//this broker is responsible for this artistName
-		return ( res == this.hashValue);
+		return ( res .compareTo(this.hashValue) == 0);
 	}
 
 
@@ -94,7 +95,7 @@ public class Broker {
 			}
 		}else{
 			//find responsible Broker and send
-			int brokersHashValue = findResponsibleBroker(Utilities.getMd5(artist.getArtistName()).hashCode());
+			BigInteger brokersHashValue = findResponsibleBroker(Utilities.getMd5(artist.getArtistName()));
 			//it can't be null, there is at least one Broker, ourself
 			Component broker = hashValueToBroker.get(brokersHashValue);
 			//send message to Consumer with the ip and the port with the responsible broker
@@ -213,12 +214,12 @@ public class Broker {
 	}
 	public void calculateKeys(ArrayList<Component> brokers) {
 		for(Component b: brokers){
-			this.hashValueToBroker.put(Utilities.getMd5(b.getIp()+b.getPort()).hashCode(),b);
+			this.hashValueToBroker.put(Utilities.getMd5(b.getIp()+b.getPort()),b);
 		}
 		//sort by hashValues
-		Set<Integer> set = hashValueToBroker.keySet();
+		Set<BigInteger> set = hashValueToBroker.keySet();
 		synchronized (set){
-			for ( int key :  set) {
+			for ( BigInteger key :  set) {
 				this.hashValues.add(key);
 			}
 			hashValues.sort(Comparator.naturalOrder());
@@ -332,7 +333,7 @@ public class Broker {
 	public Broker(String ip, int port){
 		this.ip = ip;
 		this.port = port;
-		this.hashValue = Utilities.getMd5(this.ip+this.port).hashCode();
+		this.hashValue = Utilities.getMd5(this.ip+this.port);
 	}
 
 	//getter and setters
@@ -352,7 +353,7 @@ public class Broker {
 		this.port = port;
 	}
 
-	public int getHashValue() {
+	public BigInteger getHashValue() {
 		return hashValue;
 	}
 }
