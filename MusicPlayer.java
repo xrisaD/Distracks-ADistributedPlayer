@@ -1,7 +1,10 @@
 import javafx.application.Application;
+import javafx.collections.ObservableMap;
+import javafx.event.EventHandler;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.media.Media;
+import javafx.scene.media.MediaMarkerEvent;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Path;
@@ -11,16 +14,19 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.nio.file.Paths;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import javafx.util.Duration;
 import org.apache.commons.io.IOUtils ;
 
 public class MusicPlayer extends Application {
 
     private IncompleteList<MusicFile> list;
     MediaPlayer mediaplayer;
+    IncompleteList<MediaPlayer> mediaPlayers;
     public MusicPlayer(){
 
     }
@@ -32,6 +38,8 @@ public class MusicPlayer extends Application {
     public static void main(String[] args){
         launch(args);
     }
+    //FKIN GLBOAL TO SOLVE MY PROBLEMS
+    private boolean MARKER_HANDLER_EXECUTED = false;
 
     public void start(Stage stage) {
         //Circle circ = new Circle(40, 40, 30);
@@ -75,45 +83,80 @@ public class MusicPlayer extends Application {
      *  Outputs every musicFile as they become available (they come over the network) as a temp mp3 file
      *  and outputs the filenames as medias for use by another thread
      */
-    private void _outputData(IncompleteList<MusicFile> musicFiles , IncompleteList<Media> filenames){
+    private void _outputData(IncompleteList<MusicFile> musicFiles , IncompleteList<MediaPlayer> filenames){
         int i = 0;
         for(MusicFile mf : musicFiles){
             String filename = "tmp/chunk" + i + ".mp3";
             createTempFile(filename);
             musicFileToMp3(mf , filename);
             Media m = new Media(new File(filename).toURI().toString());
-            filenames.add(m);
+
+
+
+            MediaPlayer mp = new MediaPlayer(m);
+            mp.setOnReady(new Runnable() {
+                @Override
+                public void run() {
+                    Media mpMedia = mp.getMedia();
+                    ObservableMap<String, Duration> markers = mpMedia.getMarkers();
+                    //markers.put("START", Duration.ZERO);
+                    //markers.put("INTERVAL",mpMedia.getDuration().divide(2.0));
+                    markers.put("SWITCH", mpMedia.getDuration().subtract(new Duration(30)));
+
+                    System.out.println(markers);
+                }
+            });
+            filenames.add(mp);
             i++;
-            //System.out.println(musicFiles);
-            //System.err.println(filenames);
         }
     }
 
     /**
      * Starts playing medias as soon as they become available
      */
-    private void _playMediaTracks(Iterator<Media> it) {
+    private void _playMediaTracks(Iterator<MediaPlayer> it) {
         if (!it.hasNext()) {
             System.err.println("Iterator doesn't have next");
             return;
         }
-        System.err.println("Asking for the next media");
-        mediaplayer = new MediaPlayer(it.next());
-        mediaplayer.setOnEndOfMedia(new Runnable() {
+        MediaPlayer tmp = it.next();
+       // mediaplayer.currentTimeProperty().get().toMillis();
+        //mediaplayer.stopTimeProperty().get().toMillis();
+
+
+
+        //mediaplayer.setCycleCount(5);
+        //mediaplayer.set
+        tmp.setOnEndOfMedia(new Runnable() {
             @Override
             public void run() {
-                System.out.println("Going to the next one / end of media");
+                //_playMediaTracks(it);
+                if(!MARKER_HANDLER_EXECUTED) {
+                    System.out.println("End of media handler executed");
+                    _playMediaTracks(it);
+                }
+                else{
+                    //marker handler was executed
+                    MARKER_HANDLER_EXECUTED = false;
+                }
+            }
+        });
+        tmp.setOnMarker(new EventHandler<MediaMarkerEvent>() {
+            @Override
+            public void handle(MediaMarkerEvent event) {
+                MARKER_HANDLER_EXECUTED = true;
+                System.out.println("Marker handler executed");
                 _playMediaTracks(it);
             }
         });
-        mediaplayer.play();
+        tmp.play();
     }
 
     private void _playSequentially(IncompleteList<MusicFile> musicFiles){
         //One thread will createThF
-        IncompleteList<Media> medias = new IncompleteList<>(musicFiles.numItems);
-        new Thread(()-> _outputData(musicFiles,medias)).start();
-        new Thread(()-> _playMediaTracks(medias.iterator())).start();
+        mediaPlayers =  new IncompleteList<>(musicFiles.numItems);
+        new Thread(()-> _outputData(musicFiles,mediaPlayers)).start();
+        new Thread(()-> _playMediaTracks(mediaPlayers.iterator())).start();
     }
 
 
