@@ -251,7 +251,7 @@ public class Consumer extends Node implements Serializable {
 			c.readBrokers(args[0]); //this shouldn't happen.. and how is the consumer going to know which broker to
 									//send requests to?
 			//c.playData(new ArtistName("Kevin MacLeod"),"Painting Room" , false);
-			c.playData(new ArtistName("Sm") , "BeforeOperationsResearch" , true);
+			c.playData(new ArtistName("Sm") , "BeforeOperationsResearch" , false);
 		}
 		catch(Exception e){
 			System.err.println("Usage : java Consumer <brokerFile>");
