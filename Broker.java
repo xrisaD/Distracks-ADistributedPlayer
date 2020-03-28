@@ -193,7 +193,7 @@ public class Broker {
 	 * @param fileName ip port hashValue
 	 */
 	private ArrayList<Component> saveBrokersData(String fileName) {
-		ArrayList<Component> brokers = new ArrayList();
+		ArrayList<Component> brokers = new ArrayList<>();
 		try {
 			File myObj = new File(fileName);
 			Scanner myReader = new Scanner(myObj);
@@ -235,7 +235,7 @@ public class Broker {
 			b.calculateKeys(brokers);
 			b.startServer();
 		}catch (Exception e) {
-			System.out.println("Usage: java Broker ip port hashValue brokersFile");
+			System.out.println("Usage: java Broker ip port brokersFile");
 			System.out.println(e.getMessage());
 			e.printStackTrace();
 		}
