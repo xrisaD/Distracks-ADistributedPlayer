@@ -84,30 +84,11 @@ public class Consumer extends Node implements Serializable {
 				register(new Component(ip,port) , artist);
 				//download mp3 to the device
 				if(download) {
-					int size = 0;
-					//Start reading chunks
-					for (int i = 0; i < reply.numChunks; i++) {
-						//HandleCHunks
-						MusicFile chunk = (MusicFile) in.readObject();
-						size += chunk.getMusicFileExtract().length;
-						//Add chunk to the icomplete list
-						chunks.add(chunk);
-					}
-					save(chunks, "TEMPTEMPTMEPTEMPTMEPMTEPMTEMTPETMETPEP");
+					download(reply.numChunks, in);
 				}
 				//Play the music now
 				else{
-					int size = 0;
-					MusicPlayer mp = new MusicPlayer(reply.numChunks);
-					mp.play();
-					for (int i = 0; i < reply.numChunks; i++) {
-						//HandleCHunks
-						MusicFile chunk = (MusicFile) in.readObject();
-						size += chunk.getMusicFileExtract().length;
-						//Add chunk to the icomplete list
-						mp.addChunk(chunk);
-					}
-
+					stream(reply.numChunks, in);
 				}
 			}
 			//In this case the status code is MALFORMED_REQUEST
@@ -135,7 +116,30 @@ public class Consumer extends Node implements Serializable {
 
 		}
 	}
-
+	private void stream(int numChunks, ObjectInputStream in) throws IOException, ClassNotFoundException {
+		int size = 0;
+		MusicPlayer mp = new MusicPlayer(numChunks);
+		mp.play();
+		for (int i = 0; i < numChunks; i++) {
+			//HandleCHunks
+			MusicFile chunk = (MusicFile) in.readObject();
+			size += chunk.getMusicFileExtract().length;
+			//Add chunk to the icomplete list
+			mp.addChunk(chunk);
+		}
+	}
+	private void download(int numChunks, ObjectInputStream in) throws IOException, ClassNotFoundException {
+		int size = 0;
+		//Start reading chunks
+		for (int i = 0; i < numChunks; i++) {
+			//HandleCHunks
+			MusicFile chunk = (MusicFile) in.readObject();
+			size += chunk.getMusicFileExtract().length;
+			//Add chunk to the icomplete list
+			chunks.add(chunk);
+		}
+		save(chunks, "TEMPTEMPTMEPTEMPTMEPMTEPMTEMTPETMETPEP");
+	}
 	private void save(ArrayList<MusicFile> chunks , String filename) throws IOException {
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();//baos stream gia bytes
 		for(int k = 0 ; k < chunks.size() ; k++){
@@ -171,6 +175,7 @@ public class Consumer extends Node implements Serializable {
 		//set Broker's ip and port
 		String ip = b.getIp();
 		int port = b.getPort();
+
 	}
 	public static void main(String[] args){
 		try {
