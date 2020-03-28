@@ -26,7 +26,7 @@ public class RunBrokers {
 
 
 
-    private static ArrayList<Process> consumers = new ArrayList<>();
+   private static Consumer c;
 
     private static int port = 5000;
     private static String ip = "127.0.0.1";
@@ -40,7 +40,7 @@ public class RunBrokers {
             String brokerLine = String.format("%s %d %d" , ip , port , brokerHash);
             appendToFile(brokerLine);
             //Starting the brokers
-            String command = String.format("java Broker %s %d %d %s" , ip , port , brokerHash , fileName);
+            String command = String.format("java Broker %s %d %s" , ip , port , fileName);
             try {
                 Process p = Runtime.getRuntime().exec(command);
                 brokers.add(p);
@@ -60,6 +60,36 @@ public class RunBrokers {
             }
 
         }
+    }
+    public static void startPublisher(String first , String last){
+        //Starting a publisher
+        String command = String.format("java -cp ." + classPathDelimiter + "mp3agic-0.9.0.jar Publisher %s %d %s %s %s%n" , ip , port , first ,last , fileName);
+        try {
+            //Starting the process
+            Process p = Runtime.getRuntime().exec(command);
+            publishers.add(p);
+            System.out.println("[RUNBROKERS] EXEC : " + command);
+            //Running gobblers for the created process' stderr , stdout
+            StreamGobbler errorGobbler = new StreamGobbler(p.getErrorStream() , true);
+            StreamGobbler outputGobbler = new StreamGobbler(p.getInputStream() , false);
+            errorGobbler.start();
+            outputGobbler.start();
+            port++;
+            //System.out.println("[RUNBROKERS] EXEC : " + command);
+        }
+        catch (IOException e){
+            System.out.println("[RUNBROKERS] Couldn't start a broker");
+        }
+    }
+
+    private  static  void printHelp(){
+        System.out.println("--------------------");
+        System.out.print("exit : exit the program\n" +
+                "start_publisher <first> <last> : start a publisher responsible for the range of names first-last\n" +
+                "broker_status : show brokers and the artists they are responsible for\n" +
+                "start_broker <n> : starts n new brokers at new ports\n"
+        );
+        System.out.println("--------------------");
     }
 
     /**
@@ -97,47 +127,40 @@ public class RunBrokers {
             String line = sc.nextLine();
             //If user typed exit break the loop and terminate created proesses
             String[] params = line.split(" ");
-            if(line.trim().toLowerCase().equals("exit")){
-                System.out.println("Bye");
-                break;
-            }
-            else if(line.trim().toLowerCase().startsWith("start_broker")){
-                startBrokers(Integer.parseInt(params[1]));
-            }
-            else if(line.trim().toLowerCase().equals("start_publisher")) {
-                //Starting a publisher
-                String command = String.format("java -cp ." + classPathDelimiter + "mp3agic-0.9.0.jar Publisher %s %d a z %s%n" , ip , port , fileName);
-                //Adding artists for whom the publisher is responsible to the command
-                String[] artists = {"Bob" , "John" , "mpla"};
-                for (String artist : artists ){
-                    command += " " + artist;
+            try {
+                if (line.trim().toLowerCase().equals("exit")) {
+                    System.out.println("Bye");
+                    break;
+                } else if (line.trim().toLowerCase().startsWith("start_broker")) {
+                    startBrokers(Integer.parseInt(params[1]));
+                } else if (line.trim().toLowerCase().startsWith("start_publisher")) {
+                    startPublisher(params[1], params[2]);
                 }
-                //Starting the process
-                Process p = Runtime.getRuntime().exec(command);
-                publishers.add(p);
-                System.out.println("[RUNBROKERS] EXEC : " + command);
-                //Running gobblers for the created process' stderr , stdout
-                StreamGobbler errorGobbler = new StreamGobbler(p.getErrorStream() , true);
-                StreamGobbler outputGobbler = new StreamGobbler(p.getInputStream() , false);
-                errorGobbler.start();
-                outputGobbler.start();
-                port++;
-                //System.out.println("[RUNBROKERS] EXEC : " + command);
-            }
-            //Display status of brokers
-            else if(line.trim().toLowerCase().equals("broker_status")){
-                for(Component c : brokerAddr){
-                    System.out.printf("Broker %s %d status : %s%n" , c.getIp() , c.getPort() , brokerStatus(c));
+                //Display status of brokers
+                else if (line.trim().toLowerCase().startsWith("broker_status")) {
+                    for (Component c : brokerAddr) {
+                        System.out.printf("Broker %s %d status : %s%n", c.getIp(), c.getPort(), brokerStatus(c));
+                    }
+                }
+                //TODO
+                else if (line.trim().toLowerCase().startsWith("start_consumer")) {
+                    //c = new Consumer();
+                    //c.readBrokers("brokers.txt");
+                } else if (line.trim().toLowerCase().startsWith("stream")) {
+                    // if a consumer has started
+                    // stream(artistname , songname)
+
+                } else if (line.trim().toLowerCase().startsWith("download")) {
+                    // if a consumer has started
+                    // download(artistname , songname , outPutfilename)
+                } else {
+                    printHelp();
                 }
             }
-            else{
-                System.out.println("--------------------");
-                System.out.print("exit : exit the program\n" +
-                        "start_publisher : start a publisher\n" +
-                        "broker_status : show brokers and the artists they are responsible for\n" +
-                        "start_broker <n> : starts n new brokers at new ports\n"
-                );
-                System.out.println("--------------------");
+            //Something went wrong so we show the help menu to the user
+            catch (Exception e){
+                e.printStackTrace();
+                printHelp();
             }
         }
 
@@ -150,14 +173,14 @@ public class RunBrokers {
             System.out.println("[RUNBROKERS] terminating a publisher");
             p.destroy();
         }
-        for(Process p : consumers){
-            p.destroy();
-        }
         System.out.println("[RUNBROKERS] finished stuff");
         //Exiting
         Runtime.getRuntime().exit(0);
 
 
+    }
+    private static boolean consumerHasStarted(){
+        return c != null;
     }
     public static String brokerStatus(Component broker){
         String result = "";
