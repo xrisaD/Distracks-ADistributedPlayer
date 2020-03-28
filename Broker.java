@@ -4,6 +4,9 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.*;
+import java.math.BigInteger;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 
 public class Broker {
 
@@ -145,9 +148,11 @@ public class Broker {
 				replyToConsumer.statusCode = Request.StatusCodes.OK;
 				replyToConsumer.numChunks = numOfChunks;
 				outToConsumer.writeObject(replyToConsumer);
-
+				Utilities ut=new Utilities();
 				for(int i=0; i<numOfChunks; i++){
 					 MusicFile chunk = (MusicFile)inFromPublisher.readObject();
+					 BigInteger brokermd5=ut.getMd5(chunk.getMusicFileExtract());
+					 System.out.println(chunk.biggie.compareTo(brokermd5)+"   COMPARE UP TO CHUNK(BROKER) "+i);
 					 outToConsumer.writeObject(chunk);
 				}
 			}
@@ -155,7 +160,7 @@ public class Broker {
 			else {
 				replyWithNotFound(outToConsumer);
 			}
-		} catch (IOException | ClassNotFoundException e) {
+		} catch (IOException | ClassNotFoundException | NoSuchAlgorithmException e ) {
 			System.out.println("[BROKER] Error while requesting song from publisher " + e.getMessage());
 		} finally{
 			try {

@@ -6,6 +6,9 @@ import java.net.Socket;
 import java.nio.ByteBuffer;
 import java.nio.file.Paths;
 import java.util.*;
+import java.math.BigInteger;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 
 public class Consumer extends Node implements Serializable {
 
@@ -93,12 +96,14 @@ public class Consumer extends Node implements Serializable {
 				//Save the information that this broker is responsible for the requested artist
 				register(new Component(s.getInetAddress().getHostAddress(),s.getPort()) , artist);
 				//download mp3 to the device
+
 				if(download) {
 					download(reply.numChunks, in ,songName);
 				}
 				//Play the music now
 				else{
 					stream(reply.numChunks, in);
+
 				}
 			}
 			//In this case the status code is MALFORMED_REQUEST
@@ -126,14 +131,17 @@ public class Consumer extends Node implements Serializable {
 
 		}
 	}
-	private void stream(int numChunks, ObjectInputStream in) throws IOException, ClassNotFoundException {
+	private void stream(int numChunks, ObjectInputStream in) throws IOException, ClassNotFoundException, NoSuchAlgorithmException {
 		int size = 0;
 		mp = new MusicPlayer(numChunks);
 		mp.play();
+		Utilities util=new Utilities();
 		for (int i = 0; i < numChunks; i++) {
 			//HandleCHunks
 			MusicFile chunk = (MusicFile) in.readObject();
 			size += chunk.getMusicFileExtract().length;
+			BigInteger brokermd5=util.getMd5(chunk.getMusicFileExtract());
+			System.out.println(chunk.biggie.compareTo(brokermd5)+"   COMPARE UP TO CHUNK CONSUMER"+i);
 			//Add chunk to the icomplete list
 			mp.addChunk(chunk);
 		}
@@ -213,6 +221,7 @@ public class Consumer extends Node implements Serializable {
 			}
 			//Song exists and the broker is responsible for the artist
 			else if(statusCode == Request.StatusCodes.OK){
+
 				//Save the information that this broker is responsible for the requested artist
 				register(new Component(s.getInetAddress().getHostAddress(),s.getPort()) , artist);
 				//get MetaData of songs
@@ -254,8 +263,8 @@ public class Consumer extends Node implements Serializable {
 			Consumer c = new Consumer();
 			c.readBrokers(args[0]); //this shouldn't happen.. and how is the consumer going to know which broker to
 									//send requests to?
-			//c.playData(new ArtistName("Kevin MacLeod"),"Painting Room" , false);
-			c.playData(new ArtistName("Stefanos Chios") , "Prosoxi re malaka" , false);
+			c.playData(new ArtistName("Kevin MacLeod"),"Painting Room" , false);
+
 		}
 		catch(Exception e){
 			System.err.println("Usage : java Consumer <brokerFile>");
