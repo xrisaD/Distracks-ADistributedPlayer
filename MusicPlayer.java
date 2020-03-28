@@ -102,6 +102,7 @@ public class MusicPlayer extends Application {
             System.err.println("Iterator doesn't have next");
             return;
         }
+        System.out.println("Asking for the next mediaPlayer");
         MediaPlayer tmp = it.next();
        // mediaplayer.currentTimeProperty().get().toMillis();
         //mediaplayer.stopTimeProperty().get().toMillis();
