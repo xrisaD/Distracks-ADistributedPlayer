@@ -48,36 +48,6 @@ public class MusicPlayer extends Application {
     private boolean MARKER_HANDLER_EXECUTED = false;
 
     public void start(Stage stage) {
-        //Circle circ = new Circle(40, 40, 30);
-        //Group root = new Group(circ);
-        // scene = new Scene(root, 400, 300);
-
-
-        //play(new MusicFile(songs.get(1) , songData));
-        //stage.setTitle("My JavaFX Application");
-       // stage.setScene(scene);
-        //stage.show();
-
-
-        System.out.println("Number of active threads from the given thread: " + Thread.activeCount());
-
-        System.out.println("Shiet\n");
-        System.out.println("Getting song metadata");
-        List<MusicFileMetaData> songs = new ArrayList<>();
-        songs.add(new MusicFileMetaData());
-        songs.get(0).setPath("Fullpowa.mp3");
-        MusicFile mf = readFully(songs.get(0));
-        //Play two songs at the same time
-        List<MusicFile> chunks = breakMusicFile(mf , 50000);
-        //System.out.println(chunks);
-
-        IncompleteList<MusicFile> nlist = new IncompleteList<>(chunks.size());
-        for(MusicFile m : chunks){
-            nlist.add(m);
-        }
-        System.out.println("chunks : " + chunks.size());
-        this.list = nlist;
-        this.play();
 
     }
     //METHODS
