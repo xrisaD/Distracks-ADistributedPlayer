@@ -35,6 +35,9 @@ public class MusicPlayer extends Application {
         this.list = list;
         launch("test");
     }
+    public MusicPlayer(int nChunks){
+        list = new IncompleteList<>(nChunks);
+    }
 
     public static void main(String[] args){
         launch(args);
@@ -51,7 +54,7 @@ public class MusicPlayer extends Application {
         //play(new MusicFile(songs.get(1) , songData));
         //stage.setTitle("My JavaFX Application");
        // stage.setScene(scene);
-        stage.show();
+        //stage.show();
 
 
         System.out.println("Number of active threads from the given thread: " + Thread.activeCount());
@@ -60,7 +63,7 @@ public class MusicPlayer extends Application {
         System.out.println("Getting song metadata");
         List<MusicFileMetaData> songs = new ArrayList<>();
         songs.add(new MusicFileMetaData());
-        songs.get(0).setPath("dataset1\\Kesha.mp3");
+        songs.get(0).setPath("Fullpowa.mp3");
         MusicFile mf = readFully(songs.get(0));
         //Play two songs at the same time
         List<MusicFile> chunks = breakMusicFile(mf , 50000);
@@ -78,6 +81,13 @@ public class MusicPlayer extends Application {
     //METHODS
     public void play(){
         _playSequentially(list);
+    }
+
+    /**
+     * Adds a chunk to the "music player" buffer
+     */
+    public void addChunk(MusicFile chunk){
+        list.add(chunk);
     }
 
     /**
@@ -102,7 +112,7 @@ public class MusicPlayer extends Application {
                     ObservableMap<String, Duration> markers = mpMedia.getMarkers();
                     //markers.put("START", Duration.ZERO);
                     //markers.put("INTERVAL",mpMedia.getDuration().divide(2.0));
-                    markers.put("SWITCH", mpMedia.getDuration().subtract(new Duration(30)));
+                    markers.put("SWITCH", mpMedia.getDuration().subtract(new Duration(100)));
 
                     System.out.println(markers);
                 }
@@ -132,6 +142,7 @@ public class MusicPlayer extends Application {
             @Override
             public void run() {
                 //_playMediaTracks(it);
+                //System.out.println("ENDOF MEDIA  markerexec:"  +  MARKER_HANDLER_EXECUTED);
                 if(!MARKER_HANDLER_EXECUTED) {
                     System.out.println("End of media handler executed");
                     _playMediaTracks(it);
@@ -145,8 +156,9 @@ public class MusicPlayer extends Application {
         tmp.setOnMarker(new EventHandler<MediaMarkerEvent>() {
             @Override
             public void handle(MediaMarkerEvent event) {
-                MARKER_HANDLER_EXECUTED = true;
+                //System.out.println("MARKER markerexec:"  +  MARKER_HANDLER_EXECUTED);
                 System.out.println("Marker handler executed");
+                MARKER_HANDLER_EXECUTED = true;
                 _playMediaTracks(it);
             }
         });
