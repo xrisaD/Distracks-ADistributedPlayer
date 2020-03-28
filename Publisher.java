@@ -60,12 +60,10 @@ public class Publisher extends Node implements Serializable {
 					return;
 				}
 			}
-			//not found song
-			notifyFailure(Request.StatusCodes.NOT_FOUND, out);
-		}else {
-			//no artistName or song
-			notifyFailure(Request.StatusCodes.MALFORMED_REQUEST, out);
+
 		}
+		//Not found means the publisher was unable to find the artist or the songs
+		notifyFailure(Request.StatusCodes.NOT_FOUND, out);
 	}
 
 	public void notifyFailure(int statusCode, ObjectOutputStream out) throws IOException {
