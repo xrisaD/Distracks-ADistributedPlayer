@@ -79,12 +79,12 @@ public class Consumer extends Node implements Serializable {
 				throw new Exception("Song or Artist does not exist");
 			}
 			//Song exists and the broker is responsible for the artist
-			if(statusCode == Request.StatusCodes.OK){
+			else if(statusCode == Request.StatusCodes.OK){
 				//Save the information that this broker is responsible for the requested artist
 				register(new Component(ip,port) , artist);
 				//download mp3 to the device
 				if(download) {
-					download(reply.numChunks, in);
+					download(reply.numChunks, in ,songName);
 				}
 				//Play the music now
 				else{
@@ -128,7 +128,7 @@ public class Consumer extends Node implements Serializable {
 			mp.addChunk(chunk);
 		}
 	}
-	private void download(int numChunks, ObjectInputStream in) throws IOException, ClassNotFoundException {
+	private void download(int numChunks, ObjectInputStream in, String filename) throws IOException, ClassNotFoundException {
 		int size = 0;
 		//Start reading chunks
 		for (int i = 0; i < numChunks; i++) {
@@ -138,7 +138,7 @@ public class Consumer extends Node implements Serializable {
 			//Add chunk to the icomplete list
 			chunks.add(chunk);
 		}
-		save(chunks, "TEMPTEMPTMEPTEMPTMEPMTEPMTEMTPETMETPEP");
+		save(chunks, filename + ".mp3");
 	}
 	private void save(ArrayList<MusicFile> chunks , String filename) throws IOException {
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();//baos stream gia bytes
