@@ -29,8 +29,8 @@ public class Consumer extends Node implements Serializable {
 		request.songName = songName;
 		out.writeObject(request);
 	}
-	public void playData(ArtistName artist, String  songName , boolean download) throws Exception {
-		//set Broker's ip and port
+	//set Broker's ip and port
+	private Component getBroker(ArtistName artist){
 		String ip = null;
 		int port = 0;
 		//try to find the responsible broker
@@ -45,6 +45,15 @@ public class Consumer extends Node implements Serializable {
 			ip = knownBrokers.get(index).getIp();
 			port = knownBrokers.get(index).getPort();
 		}
+		return new Component(ip, port);
+	}
+
+	public void playData(ArtistName artist, String  songName , boolean download) throws Exception {
+		Component b = getBroker(artist);
+		//set Broker's ip and port
+		String ip = b.getIp();
+		int port = b.getPort();
+
 		Socket s = null;
 		ObjectInputStream in = null;
 		ObjectOutputStream out = null;
@@ -156,6 +165,12 @@ public class Consumer extends Node implements Serializable {
 			System.out.println("An error occurred.");
 			e.printStackTrace();
 		}
+	}
+	private void search(ArtistName artist){
+		Component b = getBroker(artist);
+		//set Broker's ip and port
+		String ip = b.getIp();
+		int port = b.getPort();
 	}
 	public static void main(String[] args){
 		try {
