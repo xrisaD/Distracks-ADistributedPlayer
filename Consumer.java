@@ -9,7 +9,9 @@ public class Consumer extends Node implements Serializable {
 
 	private ArrayList<Component> knownBrokers = new ArrayList<>();
 	private Map<ArtistName, Component> artistToBroker = new HashMap<ArtistName, Component>();
-	private ArrayList<MusicFile> chunks = new ArrayList<>();
+
+
+	private IncompleteList<MusicFile> chunks;
 
 	public Consumer(){}
 
@@ -27,7 +29,7 @@ public class Consumer extends Node implements Serializable {
 		request.songName = songName;
 		out.writeObject(request);
 	}
-	public void playData(ArtistName artist, String  songName,Boolean download) throws Exception {
+	public void playData(ArtistName artist, String  songName) throws Exception {
 		//set Broker's ip and port
 		String ip = null;
 		int port = 0;
@@ -72,20 +74,15 @@ public class Consumer extends Node implements Serializable {
 				//Save the information that this broker is responsible for the requested artist
 				register(new Component(ip,port) , artist);
 				//download mp3 to the device
-				if(download){
-					int size=0;
-					//Start reading chunks
-					for(int i = 0 ; i < reply.numChunks ; i++){
-						//HandleCHunks
-						MusicFile chunk = (MusicFile) in.readObject();
-						size+=chunk.getMusicFileExtract().length;
-						chunks.add(chunk);
-					}
-					download(chunks,size,reply.numChunks);
 
-				}//play the song now
-				else{
-					
+				int size=0;
+				//Start reading chunks
+				for(int i = 0 ; i < reply.numChunks ; i++){
+					//HandleCHunks
+					MusicFile chunk = (MusicFile) in.readObject();
+					size+=chunk.getMusicFileExtract().length;
+					//Add chunk to the icomplete list
+					chunks.add(chunk);
 				}
 			}
 			//In this case the status code is MALFORMED_REQUEST
@@ -114,13 +111,51 @@ public class Consumer extends Node implements Serializable {
 		}
 	}
 
-	private void download(ArrayList<MusicFile> chunks,int size,int numChunks) throws IOException {
+	/**
+	 * Strams a song
+	 */
+	private void stream(ArtistName artistName , String songName) throws Exception{
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				try {
+					playData(artistName, songName);
+				}
+				catch (Exception e){
+					e.printStackTrace();
+				}
+			}
+		});
+		//We need to wait until the incompleteList has been created so we dont pass a null reference
+		while(chunks == null) {
+
+		}
+		//Initalizing the music player
+		MusicPlayer mp = new MusicPlayer(chunks);
+		mp.play();
+
+	}
+
+	/**
+	 * Downloads a song and saves it to local storage
+	 */
+	private  void download(ArtistName artistName , String songName , String filename) throws Exception{
+		playData(artistName , songName);
+		ArrayList<MusicFile> musicFiles = new ArrayList<>();
+		for(MusicFile chunk : chunks){
+			musicFiles.add(chunk);
+		}
+		//Saving the chunks as an mp3 to the filename provided
+		save(musicFiles , filename);
+	}
+
+	private void save(ArrayList<MusicFile> chunks , String filename) throws IOException {
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();//baos stream gia bytes
-		for(int k=0;k<numChunks;k++){
+		for(int k = 0 ; k < chunks.size() ; k++){
 			baos.write(chunks.get(k).getMusicFileExtract());
 		}
 		byte[] concatenated_byte_array = baos.toByteArray();//metatrepei to stream se array
-		try (FileOutputStream fos = new FileOutputStream(Paths.get("")+"savetested.mp3")) {
+		try (FileOutputStream fos = new FileOutputStream(Paths.get("")+filename)) {
 			fos.write(concatenated_byte_array);
 		}
 	}
@@ -149,8 +184,7 @@ public class Consumer extends Node implements Serializable {
 			Consumer c = new Consumer();
 			c.readBrokers(args[0]); //this shouldn't happen.. and how is the consumer going to know which broker to
 									//send requests to?
-			boolean download = false;
-			c.playData(new ArtistName("Kevin MacLeod"),"Painting Room", download);
+			c.playData(new ArtistName("Kevin MacLeod"),"Painting Room");
 		}
 		catch(Exception e){
 			System.err.println("Usage : java Consumer <brokerFile>");
