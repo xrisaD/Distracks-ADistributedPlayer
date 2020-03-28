@@ -73,9 +73,7 @@ public class Broker {
 	 * accept connection with Publicher: notify Publisher
 	 */
 	public void notifyPublisher(String ip, int port,  ArrayList<String> artists) {
-		System.out.println();
 		for(String artistName:artists){
-			System.out.println(artistName);
 			if(isResponsible(artistName)){
 				artistToPublisher.put(new ArtistName(artistName),new Component(ip,port));
 			}
@@ -284,7 +282,6 @@ public class Broker {
 			b.startServer();
 		}catch (Exception e) {
 			System.out.println("Usage: java Broker ip port brokersFile");
-			System.out.println(e.getMessage());
 			e.printStackTrace();
 		}
 	}
@@ -304,17 +301,15 @@ public class Broker {
 				in = new ObjectInputStream(socket.getInputStream());
 
 				Request.RequestToBroker request = (Request.RequestToBroker) in.readObject();
-				System.out.printf("[Broker (%s,%d)] GOT A MESSSAGE <%s> %n" , getIp() , getPort() , request.toString());
+				System.out.printf("[BROKER (%s,%d)] GOT A MESSSAGE <%s> %n" , getIp() , getPort() , request.toString());
 
 				//Publisher notifies Broker about the artistNames he is responsible for
 				if(request.method == Request.Methods.NOTIFY){
-					System.out.println("[ Broker ] notify true"+getPort());
 					//message from
 					//Check that data is correct or send MALFORMED_REQUEST
 					if(request.publisherIp == null ||
 							request.publisherPort <= 0 ||
 							request.artistNames == null) {
-						System.out.println("request true"+getPort());
 						replyWithMalformedRequest(out);
 
 					}
@@ -323,7 +318,6 @@ public class Broker {
 				}
 				//pull means we got a request from Consumer for an artist's song
 				else if (request.method == Request.Methods.PULL){
-					System.out.println("PULL to Broker with port: "+ getPort());
 					ArtistName artist = new ArtistName(request.pullArtistName);
 					String song = request.songName;
 
@@ -339,7 +333,6 @@ public class Broker {
 					}
 				}
 				else if(request.method == Request.Methods.SEARCH){
-					System.out.println("SEARCH to Broker with port: "+ getPort());
 					ArtistName artist = new ArtistName(request.pullArtistName);
 					if(request.pullArtistName ==null){
 						replyWithMalformedRequest(out);
@@ -368,14 +361,6 @@ public class Broker {
 					replyWithMalformedRequest(out);
 				}
 
-				//Response to Broker' request for an Artist
-				/**
-				 System.out.printf("[BROKER %s % d] STATUS ----------------- %n" , getIp() , getPort() );
-				 System.out.println(artistToPublisher);
-				 System.out.println(hashValueToBroker);
-				 System.out.println(hashValueToBroker);
-				 System.out.printf("[BROKER %s % d] ----------------- %n" , getIp() , getPort() );
-				 **/
 
 			} catch (IOException | ClassNotFoundException e) {
 				System.out.printf("[BROKER %s % d] terminating a connection due to an exception : %s %n"

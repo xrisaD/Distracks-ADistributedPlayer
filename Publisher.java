@@ -184,7 +184,7 @@ public class Publisher extends Node implements Serializable {
 				//Take Broker's request
 				//Broker's request is a ArtistName and a song
 				Request.RequestToPublisher req= (Request.RequestToPublisher) in.readObject();
-				System.out.println(req.toString());
+				System.out.printf("[PUBLISHER %s , %d] GOT REQUEST " + req.toString() , getIp() , getPort());
 				out = new ObjectOutputStream(socket.getOutputStream());
 				if(req.method == Request.Methods.PUSH) {
 					if(req.artistName==null || req.songName==null){
@@ -202,7 +202,6 @@ public class Publisher extends Node implements Serializable {
 					notifyFailure(Request.StatusCodes.MALFORMED_REQUEST, out);
 				}
 			}catch (ClassNotFoundException c) {
-				System.out.println("Class not found");
 				c.printStackTrace();
 				return;
 			} catch (IOException ioException) {

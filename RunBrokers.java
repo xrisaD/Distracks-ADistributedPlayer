@@ -1,6 +1,7 @@
 import java.io.*;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 //hashing imports
 import java.math.BigInteger;
@@ -144,16 +145,27 @@ public class RunBrokers {
                 }
                 //TODO
                 else if (line.trim().toLowerCase().startsWith("start_consumer")) {
-                    //c = new Consumer();
-                    //c.readBrokers("brokers.txt");
+                    c = new Consumer();
+                    c.readBrokers("brokers.txt");
                 } else if (line.trim().toLowerCase().startsWith("stream")) {
                     // if a consumer has started
                     // stream(artistname , songname)
-
+                    System.out.println("Unsupported");
                 } else if (line.trim().toLowerCase().startsWith("download")) {
                     // if a consumer has started
+                    if(consumerHasStarted()){
+                        c.playData(new ArtistName(params[1]) , params[2] , true);
+                    }
                     // download(artistname , songname , outPutfilename)
-                } else {
+                }else if (line.trim().toLowerCase().startsWith("search")) {
+                    // if a consumer has started
+                    if(consumerHasStarted()){
+                        List<MusicFileMetaData> metaData = c.search(new ArtistName(params[1]));
+                        System.out.println(metaData);
+                    }
+                    // download(artistname , songname , outPutfilename)
+                }
+                else {
                     printHelp();
                 }
             }

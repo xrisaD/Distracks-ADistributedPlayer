@@ -157,7 +157,7 @@ public class Consumer extends Node implements Serializable {
 		}
 	}
 
-	private void readBrokers(String fileName) {
+	public void readBrokers(String fileName) {
 		try {
 			File myObj = new File(fileName);
 			Scanner myReader = new Scanner(myObj);
@@ -176,7 +176,7 @@ public class Consumer extends Node implements Serializable {
 			e.printStackTrace();
 		}
 	}
-	private void search(ArtistName artist){
+	public List<MusicFileMetaData> search(ArtistName artist){
 		Component b = getBroker(artist);
 		//set Broker's ip and port
 		String ip = b.getIp();
@@ -211,15 +211,12 @@ public class Consumer extends Node implements Serializable {
 				//Save the information that this broker is responsible for the requested artist
 				register(new Component(ip,port) , artist);
 				//get MetaData of songs
-				System.out.println();
-				System.out.println();
-				System.out.println();
-
 				ArrayList<MusicFileMetaData> metaData = reply.metaData;
 				int i = 0;
 				for(MusicFileMetaData song: metaData){
 					System.out.println("Song with number: "+ (i++) +" is "+song.getTrackName());
 				}
+				return reply.metaData;
 			}
 			//In this case the status code is MALFORMED_REQUEST
 			else{
@@ -246,6 +243,7 @@ public class Consumer extends Node implements Serializable {
 			}
 
 		}
+		return null;
 
 	}
 	public static void main(String[] args){
@@ -254,7 +252,7 @@ public class Consumer extends Node implements Serializable {
 			c.readBrokers(args[0]); //this shouldn't happen.. and how is the consumer going to know which broker to
 									//send requests to?
 			//c.playData(new ArtistName("Kevin MacLeod"),"Painting Room" , false);
-			c.search(new ArtistName("Kevin MacLeod"));
+			c.playData(new ArtistName("Sm") , "BeforeOperationsResearch" , true);
 		}
 		catch(Exception e){
 			System.err.println("Usage : java Consumer <brokerFile>");

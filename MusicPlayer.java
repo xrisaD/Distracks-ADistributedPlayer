@@ -33,14 +33,16 @@ public class MusicPlayer extends Application {
     }
     public MusicPlayer(IncompleteList<MusicFile> list){
         this.list = list;
-        launch("test");
+        new Thread(() -> launch()).start();
     }
     public MusicPlayer(int nChunks){
         list = new IncompleteList<>(nChunks);
+        new Thread(() -> launch()).start();
     }
 
     public static void main(String[] args){
-        launch(args);
+        new MusicPlayer(5);
+        //launch(args);
     }
     //FKIN GLBOAL TO SOLVE MY PROBLEMS
     private boolean MARKER_HANDLER_EXECUTED = false;
