@@ -88,7 +88,11 @@ public class RunBrokers {
         System.out.print("exit : exit the program\n" +
                 "start_publisher <first> <last> : start a publisher responsible for the range of names first-last\n" +
                 "broker_status : show brokers and the artists they are responsible for\n" +
-                "start_broker <n> : starts n new brokers at new ports\n"
+                "start_broker <n> : starts n new brokers at new ports\n" +
+                "start_consumer  : starts a new consumer\n" +
+                "search  : search for the songs of an artist \n" +
+                "download  : download a song of an artist \n" +
+                "stream  : stream a song of an artist \n"
         );
         System.out.println("--------------------");
     }
@@ -143,24 +147,35 @@ public class RunBrokers {
                         System.out.printf("Broker %s %d status : %s%n", c.getIp(), c.getPort(), brokerStatus(c));
                     }
                 }
-                //TODO
                 else if (line.trim().toLowerCase().startsWith("start_consumer")) {
                     c = new Consumer();
                     c.readBrokers("brokers.txt");
                 } else if (line.trim().toLowerCase().startsWith("stream")) {
-                    // if a consumer has started
-                    // stream(artistname , songname)
-                    System.out.println("Unsupported");
+                    if(consumerHasStarted()){
+                        System.out.print("Artist name : ");
+                        String artist = sc.nextLine();
+                        System.out.print("Song name to stream : ");
+                        String songName= sc.nextLine();
+                        System.out.println("Starting streaming");
+                        c.playData(new ArtistName(artist) , songName , false);
+                    }
+
                 } else if (line.trim().toLowerCase().startsWith("download")) {
                     // if a consumer has started
                     if(consumerHasStarted()){
-                        c.playData(new ArtistName(params[1]) , params[2] , true);
+                        System.out.print("Artist name : ");
+                        String artist = sc.nextLine();
+                        System.out.print("Song name to download : ");
+                        String songName= sc.nextLine();
+                        c.playData(new ArtistName(artist) , songName , true);
                     }
                     // download(artistname , songname , outPutfilename)
                 }else if (line.trim().toLowerCase().startsWith("search")) {
                     // if a consumer has started
                     if(consumerHasStarted()){
-                        List<MusicFileMetaData> metaData = c.search(new ArtistName(params[1]));
+                        System.out.print("Artist name to search: ");
+                        String artist = sc.nextLine();
+                        List<MusicFileMetaData> metaData = c.search(new ArtistName(artist));
                         System.out.println(metaData);
                     }
                     // download(artistname , songname , outPutfilename)
