@@ -13,8 +13,7 @@ public class Consumer extends Node implements Serializable {
 
 	public Consumer(){}
 
-	public void register(Broker broker, ArtistName artist) {
-		Component c = new Component(broker.getIp(), broker.getPort());
+	public void register(Component c, ArtistName artist) {
 		artistToBroker.put(artist,c);
 		this.knownBrokers.add(c);
 	}
@@ -70,6 +69,8 @@ public class Consumer extends Node implements Serializable {
 			}
 			//Song exists and the broker is responsible for the artist
 			if(statusCode == Request.StatusCodes.OK){
+				//Save the information that this broker is responsible for the requested artist
+				register(new Component(ip,port) , artist);
 				//Start reading chunks
 				int size=0;
 				for(int i = 0 ; i < reply.numChunks ; i++){
@@ -139,7 +140,8 @@ public class Consumer extends Node implements Serializable {
 	public static void main(String[] args){
 		try {
 			Consumer c = new Consumer();
-			c.readBrokers(args[0]); //this shouldn't happen
+			c.readBrokers(args[0]); //this shouldn't happen.. and how is the consumer going to know which broker to
+									//send requests to?
 			c.playData(new ArtistName("Kevin MacLeod"),"Painting Room");
 		}
 		catch(Exception e){
