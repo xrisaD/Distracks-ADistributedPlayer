@@ -11,7 +11,7 @@ public class Consumer extends Node implements Serializable {
 	private Map<ArtistName, Component> artistToBroker = new HashMap<ArtistName, Component>();
 
 
-	private ArrayList<MusicFile> chunks;
+	private ArrayList<MusicFile> chunks = new ArrayList<>();
 
 	public Consumer(){}
 
@@ -75,7 +75,7 @@ public class Consumer extends Node implements Serializable {
 				//Waiting for the reply
 				in = new ObjectInputStream(s.getInputStream());
 				reply = (Request.ReplyFromBroker) in.readObject();
-				System.out.printf("[CONSUMER] Got reply from Broker(%s,%d) : %s", ip, port, reply);
+				System.out.printf("[CONSUMER] Got reply from Broker(%s,%d) : %s%n", ip, port, reply);
 				statusCode = reply.statusCode;
 				ip = reply.responsibleBrokerIp;
 				port = reply.responsibleBrokerPort;
@@ -140,6 +140,7 @@ public class Consumer extends Node implements Serializable {
 		for (int i = 0; i < numChunks; i++) {
 			//HandleCHunks
 			MusicFile chunk = (MusicFile) in.readObject();
+			System.out.println("[CONSUMER] got chunk Number " + i);
 			size += chunk.getMusicFileExtract().length;
 			//Add chunk to the icomplete list
 			chunks.add(chunk);
@@ -234,9 +235,7 @@ public class Consumer extends Node implements Serializable {
 			e.printStackTrace();
 		} finally {
 			try {
-				if (in != null) in.close();
-				if (out != null) out.close();
-				if (s != null) s.close();
+				//if (s != null) s.close();
 			}
 			catch(Exception e){
 				System.out.printf("[CONSUMER] Error while closing socket on playData %s " , e.getMessage());
@@ -256,6 +255,7 @@ public class Consumer extends Node implements Serializable {
 		}
 		catch(Exception e){
 			System.err.println("Usage : java Consumer <brokerFile>");
+			e.printStackTrace();
 		}
 	}
 }
