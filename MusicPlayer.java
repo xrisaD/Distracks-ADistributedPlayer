@@ -6,6 +6,7 @@ import javafx.scene.media.MediaPlayer;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Path;
 import javafx.stage.Stage;
+import org.apache.commons.io.IOUtils;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -14,8 +15,6 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-
-import org.apache.commons.io.IOUtils ;
 
 public class MusicPlayer extends Application {
 
@@ -51,7 +50,7 @@ public class MusicPlayer extends Application {
         System.out.println("Getting song metadata");
         List<MusicFileMetaData> songs = new ArrayList<>();
         songs.add(new MusicFileMetaData());
-        songs.get(0).setPath("untitled.mp3");
+        songs.get(0).setPath("dataset1\\Kesha.mp3");
         MusicFile mf = readFully(songs.get(0));
         //Play two songs at the same time
         List<MusicFile> chunks = breakMusicFile(mf , 50000);
