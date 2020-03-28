@@ -211,7 +211,15 @@ public class Consumer extends Node implements Serializable {
 				//Save the information that this broker is responsible for the requested artist
 				register(new Component(ip,port) , artist);
 				//get MetaData of songs
+				System.out.println();
+				System.out.println();
+				System.out.println();
 
+				ArrayList<MusicFileMetaData> metaData = reply.metaData;
+				int i = 0;
+				for(MusicFileMetaData song: metaData){
+					System.out.println("Song with number: "+ (i++) +" is "+song.getTrackName());
+				}
 			}
 			//In this case the status code is MALFORMED_REQUEST
 			else{
@@ -245,7 +253,8 @@ public class Consumer extends Node implements Serializable {
 			Consumer c = new Consumer();
 			c.readBrokers(args[0]); //this shouldn't happen.. and how is the consumer going to know which broker to
 									//send requests to?
-			c.playData(new ArtistName("Kevin MacLeod"),"Painting Room" , false);
+			//c.playData(new ArtistName("Kevin MacLeod"),"Painting Room" , false);
+			c.search(new ArtistName("Kevin MacLeod"));
 		}
 		catch(Exception e){
 			System.err.println("Usage : java Consumer <brokerFile>");
