@@ -27,7 +27,7 @@ public class Consumer extends Node implements Serializable {
 		request.songName = songName;
 		out.writeObject(request);
 	}
-	public void playData(ArtistName artist, String  songName) throws Exception {
+	public void playData(ArtistName artist, String  songName,Boolean download) throws Exception {
 		//set Broker's ip and port
 		String ip = null;
 		int port = 0;
@@ -71,15 +71,22 @@ public class Consumer extends Node implements Serializable {
 			if(statusCode == Request.StatusCodes.OK){
 				//Save the information that this broker is responsible for the requested artist
 				register(new Component(ip,port) , artist);
-				//Start reading chunks
-				int size=0;
-				for(int i = 0 ; i < reply.numChunks ; i++){
-					//HandleCHunks
-					MusicFile chunk = (MusicFile) in.readObject();
-					size+=chunk.getMusicFileExtract().length;
-					chunks.add(chunk);
+				//download mp3 to the device
+				if(download){
+					int size=0;
+					//Start reading chunks
+					for(int i = 0 ; i < reply.numChunks ; i++){
+						//HandleCHunks
+						MusicFile chunk = (MusicFile) in.readObject();
+						size+=chunk.getMusicFileExtract().length;
+						chunks.add(chunk);
+					}
+					download(chunks,size,reply.numChunks);
+
+				}//play the song now
+				else{
+					
 				}
-				save(chunks,size,reply.numChunks);
 			}
 			//In this case the status code is MALFORMED_REQUEST
 			else{
@@ -107,7 +114,7 @@ public class Consumer extends Node implements Serializable {
 		}
 	}
 
-	private void save(ArrayList<MusicFile> chunks,int size,int numChunks) throws IOException {
+	private void download(ArrayList<MusicFile> chunks,int size,int numChunks) throws IOException {
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();//baos stream gia bytes
 		for(int k=0;k<numChunks;k++){
 			baos.write(chunks.get(k).getMusicFileExtract());
@@ -142,7 +149,8 @@ public class Consumer extends Node implements Serializable {
 			Consumer c = new Consumer();
 			c.readBrokers(args[0]); //this shouldn't happen.. and how is the consumer going to know which broker to
 									//send requests to?
-			c.playData(new ArtistName("Kevin MacLeod"),"Painting Room");
+			boolean download = false;
+			c.playData(new ArtistName("Kevin MacLeod"),"Painting Room", download);
 		}
 		catch(Exception e){
 			System.err.println("Usage : java Consumer <brokerFile>");
