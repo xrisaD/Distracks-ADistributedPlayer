@@ -3,6 +3,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.security.NoSuchAlgorithmException;
 import java.util.*;
 
 public class Publisher extends Node implements Serializable {
@@ -36,7 +37,7 @@ public class Publisher extends Node implements Serializable {
 
 	public void hashTopic(ArtistName artist) { }
 
-	public void push(String artist, String song, ObjectOutputStream out) throws IOException {
+	public void push(String artist, String song, ObjectOutputStream out) throws IOException, NoSuchAlgorithmException {
 		ArrayList<MusicFileMetaData> songs = artistToMusicFileMetaData.get(new ArtistName(artist));
 
 		if(songs!=null ){
@@ -53,8 +54,9 @@ public class Publisher extends Node implements Serializable {
 					reply.statusCode = Request.StatusCodes.OK;
 					reply.numChunks = numofchunks;
 					out.writeObject(reply);
+					Utilities ut=new Utilities();
 					for(byte[] b:currentsong){
-						MusicFile finalMF= new MusicFile(s,b);//metadata + kathe chunk
+						MusicFile finalMF= new MusicFile(s,b,ut.getMd5(b));//metadata + kathe chunk
 						out.writeObject(finalMF);
 					}
 					return;
@@ -206,6 +208,8 @@ public class Publisher extends Node implements Serializable {
 				return;
 			} catch (IOException ioException) {
 				ioException.printStackTrace();
+			} catch (NoSuchAlgorithmException e) {
+				e.printStackTrace();
 			}
 			try {
 				if (in != null) in.close();
