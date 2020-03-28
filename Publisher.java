@@ -60,12 +60,21 @@ public class Publisher extends Node implements Serializable {
 					return;
 				}
 			}
-
 		}
 		//Not found means the publisher was unable to find the artist or the songs
 		notifyFailure(Request.StatusCodes.NOT_FOUND, out);
 	}
-
+	public void search(String artist, ObjectOutputStream out) throws IOException {
+		ArrayList<MusicFileMetaData> songs = artistToMusicFileMetaData.get(new ArtistName(artist));
+		if(songs!=null){
+			Request.ReplyFromPublisher reply = new Request.ReplyFromPublisher();
+			reply.statusCode = Request.StatusCodes.OK;
+			reply.metaData = songs;
+			out.writeObject(reply);
+		}
+		//Not found means the publisher was unable to find the artist or the song's metadata
+		notifyFailure(Request.StatusCodes.NOT_FOUND, out);
+	}
 	public void notifyFailure(int statusCode, ObjectOutputStream out) throws IOException {
 		Request.ReplyFromPublisher reply = new Request.ReplyFromPublisher();
 		reply.statusCode = statusCode;
@@ -183,6 +192,14 @@ public class Publisher extends Node implements Serializable {
 					}else {
 						push(req.artistName, req.songName.toLowerCase(), out);
 					}
+				}else if(req.method == Request.Methods.SEARCH){
+					if(req.artistName==null){
+						notifyFailure(Request.StatusCodes.MALFORMED_REQUEST, out);
+					}else{
+						search(req.artistName, out);
+					}
+				}else{
+					notifyFailure(Request.StatusCodes.MALFORMED_REQUEST, out);
 				}
 			}catch (ClassNotFoundException c) {
 				System.out.println("Class not found");

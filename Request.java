@@ -45,8 +45,7 @@ class Request {
         String songName;
 
         //Fields for the search method
-        ArrayList<String> searchArtists;
-        ArrayList<String> searchSongs;
+        ArrayList<MusicFileMetaData> metaData;
 
         @Override
         public String toString() {
@@ -55,8 +54,7 @@ class Request {
                     ", statusCode=" + statusCode +
                     ", artistName='" + artistName + '\'' +
                     ", songName='" + songName + '\'' +
-                    ", searchArtists=" + searchArtists +
-                    ", searchSongs=" + searchSongs +
+                    ", metaData=" + metaData +
                     '}';
         }
     }
@@ -110,8 +108,7 @@ class Request {
         ArrayList<String> artists;
 
         //Fields for the search method
-        ArrayList<String> searchArtists;
-        ArrayList<String> searchSongs;
+        ArrayList<MusicFileMetaData> metaData;
 
         @Override
         public String toString() {
@@ -122,8 +119,7 @@ class Request {
                     ", responsibleBrokerIp='" + responsibleBrokerIp + '\'' +
                     ", responsibleBrokerPort=" + responsibleBrokerPort +
                     ", artists=" + artists +
-                    ", searchArtists=" + searchArtists +
-                    ", searchSongs=" + searchSongs +
+                    ", metaData=" + metaData +
                     '}';
         }
     }

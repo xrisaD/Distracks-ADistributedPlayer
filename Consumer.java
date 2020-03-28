@@ -22,11 +22,17 @@ public class Consumer extends Node implements Serializable {
 
 	public void disconnect(Broker broker, ArtistName artist) { }
 
-	private void requestToBroker(ArtistName artist, String songName, ObjectOutputStream out) throws IOException {
+	private void requestPullToBroker(ArtistName artist, String songName, ObjectOutputStream out) throws IOException {
 		Request.RequestToBroker request = new Request.RequestToBroker();
 		request.method = Request.Methods.PULL;
 		request.pullArtistName = artist.getArtistName();
 		request.songName = songName;
+		out.writeObject(request);
+	}
+	private void requestSearchToBroker(ArtistName artist, ObjectOutputStream out) throws IOException {
+		Request.RequestToBroker request = new Request.RequestToBroker();
+		request.method = Request.Methods.SEARCH;
+		request.pullArtistName = artist.getArtistName();
 		out.writeObject(request);
 	}
 	//set Broker's ip and port
@@ -65,7 +71,7 @@ public class Consumer extends Node implements Serializable {
 				s = new Socket(ip, port);
 				//Creating the request to Broker for this artist
 				out = new ObjectOutputStream(s.getOutputStream());
-				requestToBroker(artist, songName, out);
+				requestPullToBroker(artist, songName, out);
 				//Waiting for the reply
 				in = new ObjectInputStream(s.getInputStream());
 				reply = (Request.ReplyFromBroker) in.readObject();
@@ -175,6 +181,63 @@ public class Consumer extends Node implements Serializable {
 		//set Broker's ip and port
 		String ip = b.getIp();
 		int port = b.getPort();
+		Socket s = null;
+		ObjectInputStream in = null;
+		ObjectOutputStream out = null;
+		try {
+			//While we find a broker who is not responsible for the artistname
+			Request.ReplyFromBroker reply=null;
+			int statusCode = Request.StatusCodes.NOT_RESPONSIBLE;
+			while(statusCode == Request.StatusCodes.NOT_RESPONSIBLE){
+				s = new Socket(ip, port);
+				//Creating the request to Broker for this artist
+				out = new ObjectOutputStream(s.getOutputStream());
+				//search for artist's metadata
+				requestSearchToBroker(artist, out);
+				//Waiting for the reply
+				in = new ObjectInputStream(s.getInputStream());
+				reply = (Request.ReplyFromBroker) in.readObject();
+				System.out.printf("[CONSUMER] Got reply from Broker(%s,%d) : %s", ip, port, reply);
+				statusCode = reply.statusCode;
+				ip = reply.responsibleBrokerIp;
+				port = reply.responsibleBrokerPort;
+			}
+			if(statusCode == Request.StatusCodes.NOT_FOUND){
+				System.out.println("Song or Artist does not exist");
+				throw new Exception("Song or Artist does not exist");
+			}
+			//Song exists and the broker is responsible for the artist
+			else if(statusCode == Request.StatusCodes.OK){
+				//Save the information that this broker is responsible for the requested artist
+				register(new Component(ip,port) , artist);
+				//get MetaData of songs
+
+			}
+			//In this case the status code is MALFORMED_REQUEST
+			else{
+				System.out.println("MALFORMED_REQUEST");
+				throw new Exception("MALFORMED_REQUEST");
+			}
+		}
+		catch(ClassNotFoundException e){
+			//Protocol Error (Unexpected Object Caught) its a protocol error
+			System.out.printf("[CONSUMER] Unexpected object on playData %s " , e.getMessage());
+		}
+		catch (IOException e){
+			System.out.printf("[CONSUMER] Error on playData %s " , e.getMessage());
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				if (in != null) in.close();
+				if (out != null) out.close();
+				if (s != null) s.close();
+			}
+			catch(Exception e){
+				System.out.printf("[CONSUMER] Error while closing socket on playData %s " , e.getMessage());
+			}
+
+		}
 
 	}
 	public static void main(String[] args){

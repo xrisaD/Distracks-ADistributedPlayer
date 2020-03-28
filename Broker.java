@@ -2,6 +2,7 @@ import java.io.*;
 import java.math.BigInteger;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.UnknownHostException;
 import java.util.*;
 
 public class Broker {
@@ -82,32 +83,41 @@ public class Broker {
 	}
 
 	public void  pull(ArtistName artist, String song, ObjectOutputStream  out) throws IOException {
-		//check if th broker is responsible for this artist
-		if(isResponsible(artist.getArtistName())){
-			//find Publisher for this artist
-			Component publisherWithThisArtist = artistToPublisher.get(artist);
-			//open connection with Publisher and request the specific song
-			if(publisherWithThisArtist != null || artistToPublisher.size()==0) {
-				requestSongFromPublisher(publisherWithThisArtist, artist, song, out);
-			}else{
-				//404 : something went wrong
-				replyWithNotFound(out);
-			}
+		//find Publisher for this artist
+		Component publisherWithThisArtist = artistToPublisher.get(artist);
+		//open connection with Publisher and request the specific song
+		if(publisherWithThisArtist != null || artistToPublisher.size()==0) {
+			requestSongFromPublisher(publisherWithThisArtist, artist, song, out);
 		}else{
-			//find responsible Broker and send
-			BigInteger brokersHashValue = findResponsibleBroker(Utilities.getMd5(artist.getArtistName()));
-			//it can't be null, there is at least one Broker, ourself
-			Component broker = hashValueToBroker.get(brokersHashValue);
-			//send message to Consumer with the ip and the port with the responsible broker
-			//consumer will ask this Broker for the song
-			Request.ReplyFromBroker reply = new Request.ReplyFromBroker();
-			reply.statusCode = Request.StatusCodes.NOT_RESPONSIBLE;//300
-			reply.responsibleBrokerIp = broker.getIp();
-			reply.responsibleBrokerPort = broker.getPort();
-			out.writeObject(reply);
+			//404 : something went wrong
+			replyWithNotFound(out);
 		}
 	}
 
+	public void search(ArtistName artist, ObjectOutputStream  out) throws IOException {
+		//find Publisher for this artist
+		Component publisherWithThisArtist = artistToPublisher.get(artist);
+		//open connection with Publisher and request the specific song
+		if(publisherWithThisArtist != null || artistToPublisher.size()==0) {
+			requestMetaDataFromPublisher(publisherWithThisArtist, artist, out);
+		}else{
+			//404 : something went wrong
+			replyWithNotFound(out);
+		}
+	}
+	public void sendResponsibleBroker(ArtistName artist, ObjectOutputStream  out) throws IOException {
+		//find responsible Broker and send
+		BigInteger brokersHashValue = findResponsibleBroker(Utilities.getMd5(artist.getArtistName()));
+		//it can't be null, there is at least one Broker, ourself
+		Component broker = hashValueToBroker.get(brokersHashValue);
+		//send message to Consumer with the ip and the port with the responsible broker
+		//consumer will ask this Broker for the song
+		Request.ReplyFromBroker reply = new Request.ReplyFromBroker();
+		reply.statusCode = Request.StatusCodes.NOT_RESPONSIBLE;//300
+		reply.responsibleBrokerIp = broker.getIp();
+		reply.responsibleBrokerPort = broker.getPort();
+		out.writeObject(reply);
+	}
 	public void requestSongFromPublisher(Component c, ArtistName artistName, String song, ObjectOutputStream  outToConsumer) {
 		Socket s = null;
 		ObjectInputStream inFromPublisher = null;
@@ -121,14 +131,14 @@ public class Broker {
 			request.artistName = artistName.getArtistName();
 			request.songName = song;
 
+			//send request to Publisher
 			outToPublisher = new ObjectOutputStream(s.getOutputStream());
 			outToPublisher.writeObject(request);
 
 			inFromPublisher = new ObjectInputStream(s.getInputStream());
-			//wait from Publisher to send to Broker songs data
 			Request.ReplyFromPublisher reply = (Request.ReplyFromPublisher) inFromPublisher.readObject();
 
-			 //if everithing is ok
+			 //if everything is ok
 			if(reply.statusCode == Request.StatusCodes.OK){
 				int numOfChunks = reply.numChunks;
 				//whatever you receive from Publisher send it to Consumer
@@ -157,6 +167,44 @@ public class Broker {
 			} catch (IOException ioException) {
 				ioException.printStackTrace();
 			}
+		}
+	}
+	public void requestMetaDataFromPublisher(Component c, ArtistName artistName, ObjectOutputStream  outToConsumer){
+		Socket s = null;
+		ObjectInputStream inFromPublisher = null;
+		ObjectOutputStream outToPublisher = null;
+		try {
+			s = new Socket(c.getIp(), c.getPort());
+
+			//Creating the request to the Publisher
+			Request.RequestToPublisher request = new Request.RequestToPublisher();
+			request.method = Request.Methods.SEARCH;
+			request.artistName = artistName.getArtistName();
+
+			//send request to Publisher
+			outToPublisher = new ObjectOutputStream(s.getOutputStream());
+			outToPublisher.writeObject(request);
+
+			inFromPublisher = new ObjectInputStream(s.getInputStream());
+			Request.ReplyFromPublisher reply = (Request.ReplyFromPublisher) inFromPublisher.readObject();
+			//if everything is ok
+			if(reply.statusCode == Request.StatusCodes.OK){
+				//Reply to the consumer
+				Request.ReplyFromBroker replyToConsumer = new Request.ReplyFromBroker();
+				replyToConsumer.statusCode = Request.StatusCodes.OK;
+				replyToConsumer.metaData = reply.metaData;
+				outToConsumer.writeObject(replyToConsumer);
+			}
+			//404 : something went wrong
+			else {
+				replyWithNotFound(outToConsumer);
+			}
+		} catch (UnknownHostException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
 		}
 	}
 	/**
@@ -273,6 +321,36 @@ public class Broker {
 					notifyPublisher(request.publisherIp, request.publisherPort, request.artistNames);
 					//replyWithOK(out); ?
 				}
+				//pull means we got a request from Consumer for an artist's song
+				else if (request.method == Request.Methods.PULL){
+					System.out.println("PULL to Broker with port: "+ getPort());
+					ArtistName artist = new ArtistName(request.pullArtistName);
+					String song = request.songName;
+
+					if(request.pullArtistName ==null || song==null){
+						replyWithMalformedRequest(out);
+					}else {
+						//check if th broker is responsible for this artist
+						if(isResponsible(artist.getArtistName())) {
+							pull(artist, song, out);
+						}else{
+							sendResponsibleBroker(artist, out);
+						}
+					}
+				}
+				else if(request.method == Request.Methods.SEARCH){
+					System.out.println("SEARCH to Broker with port: "+ getPort());
+					ArtistName artist = new ArtistName(request.pullArtistName);
+					if(request.pullArtistName ==null){
+						replyWithMalformedRequest(out);
+					}else{
+						if(isResponsible(artist.getArtistName())) {
+							search(artist, out);
+						}else{
+							sendResponsibleBroker(artist, out);
+						}
+					}
+				}
 				//this  "else if" is for debug purposes
 				else if(request.method == Request.Methods.STATUS){ 				//information querying about broker's state
 					//Returns the names of the artists for whom the broker is responsible
@@ -284,18 +362,6 @@ public class Broker {
 					reply.statusCode = Request.StatusCodes.OK;
 					reply.artists = artists;
 					out.writeObject(reply);
-				}
-				//pull means we got a request from Consumer for an artist's song
-				else if (request.method == Request.Methods.PULL){
-					System.out.println("PULL to Broker with port: "+ getPort());
-					ArtistName artistName = new ArtistName(request.pullArtistName);
-					String song = request.songName;
-
-					if(request.pullArtistName ==null || song==null){
-						replyWithMalformedRequest(out);
-					}else {
-						pull(artistName, song, out);
-					}
 				}
 				//Unknown method so we return a reply informing of a malformed request
 				else{
