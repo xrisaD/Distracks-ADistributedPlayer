@@ -29,8 +29,7 @@ public class Consumer extends Node implements Serializable {
 		request.songName = songName;
 		out.writeObject(request);
 	}
-	public void playData(ArtistName artist, String  songName) throws Exception {
-		//set Broker's ip and port
+	private Component getBroker(ArtistName artist){
 		String ip = null;
 		int port = 0;
 		//try to find the responsible broker
@@ -45,6 +44,14 @@ public class Consumer extends Node implements Serializable {
 			ip = knownBrokers.get(index).getIp();
 			port = knownBrokers.get(index).getPort();
 		}
+		return new Component(ip, port);
+	}
+	public void playData(ArtistName artist, String  songName) throws Exception {
+		Component b = getBroker(artist);
+		//set Broker's ip and port
+		String ip = b.getIp();
+		int port = b.getPort();
+
 		Socket s = null;
 		ObjectInputStream in = null;
 		ObjectOutputStream out = null;
@@ -179,12 +186,18 @@ public class Consumer extends Node implements Serializable {
 			e.printStackTrace();
 		}
 	}
+	private void search(ArtistName artist){
+		Component b = getBroker(artist);
+		//set Broker's ip and port
+		String ip = b.getIp();
+		int port = b.getPort();
+	}
 	public static void main(String[] args){
 		try {
 			Consumer c = new Consumer();
 			c.readBrokers(args[0]); //this shouldn't happen.. and how is the consumer going to know which broker to
 									//send requests to?
-			c.playData(new ArtistName("Kevin MacLeod"),"Painting Room");
+			c.download(new ArtistName("Kevin MacLeod"),"Painting Room","saved.mp3");
 		}
 		catch(Exception e){
 			System.err.println("Usage : java Consumer <brokerFile>");
