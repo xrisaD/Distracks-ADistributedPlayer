@@ -1,4 +1,5 @@
 import java.io.Serializable;
+import java.util.Objects;
 
 public class MusicFileMetaData implements Serializable {
     private String trackName;
@@ -57,5 +58,22 @@ public class MusicFileMetaData implements Serializable {
                 ", genre='" + genre + '\'' +
                 ", path='" + path + '\'' +
                 '}';
+    }
+
+
+    //For use in caches
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        MusicFileMetaData that = (MusicFileMetaData) o;
+        return Objects.equals(trackName, that.trackName) &&
+                Objects.equals(artistName, that.artistName);
+
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(trackName, artistName);
     }
 }
