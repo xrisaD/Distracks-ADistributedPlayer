@@ -91,8 +91,8 @@ public class Publisher extends Node implements Serializable {
 		Socket connection = null;
 		try {
 			providerSocket = new ServerSocket(this.port, 10);
+			System.out.println("Publisher listening on port " + getPort());
 			while (true) {
-				System.out.println("Publisher listening on port " + getPort());
 				connection = providerSocket.accept();
 				//We start a thread
 				//this thread will do the communication
