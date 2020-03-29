@@ -10,10 +10,26 @@ import java.security.NoSuchAlgorithmException;
 
 public class Broker {
 
+	private int CACHE_SIZE = 10;
+
 	//artistName->Publisher's ip and port
-	private Map<ArtistName, Component> artistToPublisher = Collections.synchronizedMap(new HashMap<ArtistName, Component>());
+	private Map<ArtistName, Component> artistToPublisher
+			= Collections.synchronizedMap(new HashMap<ArtistName, Component>());
 	//mapping hashValues->Broker's ip and port
-	private Map<BigInteger, Component> hashValueToBroker = Collections.synchronizedMap(new HashMap<BigInteger, Component>());
+	private Map<BigInteger, Component> hashValueToBroker
+			= Collections.synchronizedMap(new HashMap<BigInteger, Component>());
+
+
+	/**
+	 * A cache that stores mappings from music File meta data to incomplete lists of musicFiles. The key is metaData
+	 * because we would in another  case need a pair of String artistName nad String songname which is troublesome.
+	 * storing Incomplete lists is necessary because another thread might request the same song while it's being streamed
+	 * to another consume. This allows us to start sending all available chunks to te new consumer and block the connection
+	 * while there
+	 */
+	private SynchronizedLRUCache<MusicFileMetaData , IncompleteList<MusicFile>> musicFileCache =
+			new SynchronizedLRUCache<>(CACHE_SIZE);
+
 	//hashValues for all Brokers
 	private List<BigInteger> hashValues = Collections.synchronizedList(new ArrayList<BigInteger>());
 
@@ -37,7 +53,7 @@ public class Broker {
 			return hashValues.get(-index - 1);
 		}
 	}
-	/*
+	/**
 	 * check if this Broker is responsible for this artistName
 	 */
 	public boolean isResponsible(String artistName){
@@ -72,8 +88,9 @@ public class Broker {
 		reply.statusCode = Request.StatusCodes.NOT_FOUND;
 		out.writeObject(reply);
 	}
-	/*
-	 * accept connection with Publicher: notify Publisher
+	/**
+	 *  Choose the artistNames this broker is responsible for and remember which publisher owns them
+	 *
 	 */
 	public void notifyPublisher(String ip, int port,  ArrayList<String> artists) {
 		for(String artistName:artists){
@@ -83,18 +100,37 @@ public class Broker {
 		}
 	}
 
+	/**
+	 * Called after a pull request from a Consuemr
+	 */
 	public void  pull(ArtistName artist, String song, ObjectOutputStream  out) throws IOException {
 		//find Publisher for this artist
 		Component publisherWithThisArtist = artistToPublisher.get(artist);
 		//open connection with Publisher and request the specific song
 		if(publisherWithThisArtist != null || artistToPublisher.size()==0) {
-			requestSongFromPublisher(publisherWithThisArtist, artist, song, out);
+			//If song exists is not in the cache
+			MusicFileMetaData tmp = new MusicFileMetaData(song , artist.getArtistName() , null , null , null);
+			IncompleteList<MusicFile> musicFileChunks = musicFileCache.get(tmp);
+			if(musicFileChunks == null) {
+				System.out.printf("[BROKER %s % d] Song %s not in cache%n"
+						, getIp() , getPort() ,song );
+				requestSongFromPublisher(publisherWithThisArtist, artist, song, out);
+			}
+			//Song is in cache
+			else{
+				System.out.printf("[BROKER %s % d] Song %s in cache%n"
+						, getIp() , getPort() ,song );
+				sendSongToConsumer(musicFileChunks, out);
+			}
 		}else{
 			//404 : something went wrong
 			replyWithNotFound(out);
 		}
 	}
 
+	/**
+	 * Called after a search request from a Consuemr
+	 */
 	public void search(ArtistName artist, ObjectOutputStream  out) throws IOException {
 		//find Publisher for this artist
 		Component publisherWithThisArtist = artistToPublisher.get(artist);
@@ -119,6 +155,26 @@ public class Broker {
 		reply.responsibleBrokerPort = broker.getPort();
 		out.writeObject(reply);
 	}
+	public void sendSongToConsumer(IncompleteList<MusicFile> chunks , ObjectOutputStream  outToConsumer){
+
+		try{
+			//Replying to the consumer and notifying about the number of chunks
+			Request.ReplyFromBroker replyToConsumer = new Request.ReplyFromBroker();
+			replyToConsumer.statusCode = Request.StatusCodes.OK;
+			replyToConsumer.numChunks = chunks.size();
+			outToConsumer.writeObject(replyToConsumer);
+
+			//Writing every chunk to the consumer
+			for(MusicFile chunk : chunks){
+				outToConsumer.writeObject(chunk);
+			}
+		}
+		catch (IOException e){
+			System.err.println("Failed while writing chunks to consumer ");
+		}
+
+	}
+
 	public void requestSongFromPublisher(Component c, ArtistName artistName, String song, ObjectOutputStream  outToConsumer) {
 		Socket s = null;
 		ObjectInputStream inFromPublisher = null;
@@ -141,6 +197,12 @@ public class Broker {
 
 			 //if everything is ok
 			if(reply.statusCode == Request.StatusCodes.OK){
+				//Adding the musicFile to the cache
+				//Music file meta data object only for use with the cache
+				MusicFileMetaData musicFileReference =
+						new MusicFileMetaData(song , artistName.getArtistName(), null , null , null);
+				musicFileCache.put(musicFileReference, new IncompleteList<>(reply.numChunks));
+
 				int numOfChunks = reply.numChunks;
 				//whatever you receive from Publisher send it to Consumer
 				//Reply to the consumer
@@ -148,13 +210,19 @@ public class Broker {
 				replyToConsumer.statusCode = Request.StatusCodes.OK;
 				replyToConsumer.numChunks = numOfChunks;
 				outToConsumer.writeObject(replyToConsumer);
+
+				//Transmitting the chunks
 				Utilities ut=new Utilities();
 				for(int i=0; i<numOfChunks; i++){
+
 					 MusicFile chunk = (MusicFile)inFromPublisher.readObject();
+					 //Adding chunk to the cache
+					 musicFileCache.get(musicFileReference).add(chunk);
 					 BigInteger brokermd5=ut.getMd5(chunk.getMusicFileExtract());
 					 System.out.println(chunk.biggie.compareTo(brokermd5)+"   COMPARE UP TO CHUNK(BROKER) "+i);
 					 outToConsumer.writeObject(chunk);
 				}
+
 			}
 			//404 : something went wrong
 			else {
