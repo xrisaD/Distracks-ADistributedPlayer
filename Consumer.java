@@ -1,16 +1,11 @@
-
-import javafx.scene.media.MediaPlayer;
-
 import java.io.*;
 import java.net.Socket;
-import java.nio.ByteBuffer;
 import java.nio.file.Paths;
 import java.util.*;
 import java.math.BigInteger;
-import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
-public class Consumer extends Node implements Serializable {
+public class Consumer {
 
 	private ArrayList<Component> knownBrokers = new ArrayList<>();
 	private Map<ArtistName, Component> artistToBroker = new HashMap<ArtistName, Component>();
@@ -25,8 +20,6 @@ public class Consumer extends Node implements Serializable {
 		artistToBroker.put(artist,c);
 		this.knownBrokers.add(c);
 	}
-
-	public void disconnect(Broker broker, ArtistName artist) { }
 
 	private void requestPullToBroker(ArtistName artist, String songName, ObjectOutputStream out) throws IOException {
 		Request.RequestToBroker request = new Request.RequestToBroker();
@@ -246,15 +239,14 @@ public class Consumer extends Node implements Serializable {
 			System.out.printf("[CONSUMER] Error on playData %s " , e.getMessage());
 		} catch (Exception e) {
 			e.printStackTrace();
-		} finally {
-			try {
-				//if (s != null) s.close();
-			}
-			catch(Exception e){
-				System.out.printf("[CONSUMER] Error while closing socket on playData %s " , e.getMessage());
-			}
-
 		}
+		try {
+			if (s != null) s.close();
+		}
+		catch(Exception e){
+			System.out.printf("[CONSUMER] Error while closing socket on playData %s " , e.getMessage());
+		}
+
 		return null;
 
 	}
@@ -263,7 +255,7 @@ public class Consumer extends Node implements Serializable {
 			Consumer c = new Consumer();
 			c.readBrokers(args[0]); //this shouldn't happen.. and how is the consumer going to know which broker to
 									//send requests to?
-			c.playData(new ArtistName("Kevin MacLeod"),"Painting Room" , false);
+			c.playData(new ArtistName("Komiku"),"A good bass for gambling" , false);
 
 		}
 		catch(Exception e){

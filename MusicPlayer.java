@@ -1,27 +1,21 @@
 import javafx.application.Application;
 import javafx.collections.ObservableMap;
 import javafx.event.EventHandler;
-import javafx.scene.Group;
-import javafx.scene.Scene;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaMarkerEvent;
 import javafx.scene.media.MediaPlayer;
-import javafx.scene.shape.Circle;
-import javafx.scene.shape.Path;
 import javafx.stage.Stage;
 import org.apache.commons.io.IOUtils;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.nio.file.Paths;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
 import javafx.util.Duration;
-import org.apache.commons.io.IOUtils ;
 
 public class MusicPlayer extends Application {
 

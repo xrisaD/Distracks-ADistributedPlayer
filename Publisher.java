@@ -1,21 +1,14 @@
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.security.NoSuchAlgorithmException;
 import java.util.*;
 
-public class Publisher extends Node implements Serializable {
+public class Publisher {
 	//ArtistName -> MusicFileMetaDatas of this artist
 	private Map<ArtistName, ArrayList<MusicFileMetaData>> artistToMusicFileMetaData = Collections.synchronizedMap(new HashMap<>());
-	private MP3Cutter cutter;
 	private String ip;
 	private int port;
-	private String first;
-	private String last;
-	private String fileWithBrokers;
-	private List<byte[]> currentsong;
 
 	public void getBrokerList(String filename)  {
 		Scanner myReader = null;
@@ -35,27 +28,24 @@ public class Publisher extends Node implements Serializable {
 		}
 	}
 
-	public void hashTopic(ArtistName artist) { }
-
 	public void push(String artist, String song, ObjectOutputStream out) throws IOException, NoSuchAlgorithmException {
 		ArrayList<MusicFileMetaData> songs = artistToMusicFileMetaData.get(new ArtistName(artist));
 
 		if(songs!=null ){
-			//&& songs.size()>0
 			System.out.println("IN search for song");
 			for (MusicFileMetaData s : songs) {
 				if (s.getTrackName().toLowerCase().equals(song)) {
 					String path = s.getPath();
-					cutter = new MP3Cutter(new File(path));
+					MP3Cutter cutter = new MP3Cutter(new File(path));
 
-					currentsong = cutter.splitFile();//returns arraylist with byte[]. So size of arraylist is number of chunks
+					List<byte[]> currentsong = cutter.splitFile();//returns arraylist with byte[]. So size of arraylist is number of chunks
 					int numofchunks = currentsong.size();//arithmos chunks
 					Request.ReplyFromPublisher reply = new Request.ReplyFromPublisher();
 					reply.statusCode = Request.StatusCodes.OK;
 					reply.numChunks = numofchunks;
 					out.writeObject(reply);
 					Utilities ut=new Utilities();
-					for(byte[] b:currentsong){
+					for(byte[] b: currentsong){
 						MusicFile finalMF= new MusicFile(s,b,ut.getMd5(b));//metadata + kathe chunk
 						out.writeObject(finalMF);
 					}
@@ -98,7 +88,6 @@ public class Publisher extends Node implements Serializable {
 				//this thread will do the communication
 				PublisherHandler ph = new PublisherHandler(connection);
 				ph.start();
-
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -136,7 +125,6 @@ public class Publisher extends Node implements Serializable {
 			}
 			System.out.printf("[PUBLISHER %d] Sending message \"%s\" to broker on port %d , ip %s%n" ,getPort(), request , port , ip);
 			out.writeObject(request);
-			//read Ok?
 		}
 		catch(Exception e){
 			System.out.printf("[PUBLISHER %d] Failure on notifybroker Broker(ip = %s port = %d  %n)" , getPort() , ip , port);
@@ -160,8 +148,7 @@ public class Publisher extends Node implements Serializable {
 			// arg[0]: ip arg[1]:port
 			// arg[2]: first letter of responsible artistname arg[3]: last letter of responsible artistname
 			// arg[4]: file with Broker's information
-			Publisher p = new Publisher(args[0],Integer.parseInt(args[1]) , args[2], args[3],args[4]);
-			Path currentRelativePath = Paths.get("");
+			Publisher p = new Publisher(args[0],Integer.parseInt(args[1]) , args[2], args[3]);
 			p.getBrokerList(args[4]);
 			p.startServer();
 
@@ -223,19 +210,14 @@ public class Publisher extends Node implements Serializable {
 	}
 
 	//constructor
-	public Publisher(String ip, int port , String first, String last, String fileWithBrokers){
+	public Publisher(String ip, int port , String first, String last){
 		this.ip = ip;
 		this.port = port;
-		this.first = first;
-		this.last = last;
-		this.fileWithBrokers = fileWithBrokers;
 		//Read file with artists and music file info
 		//initialize HashTable
 		List<MusicFileMetaData> allMetaData= MP3Cutter.getSongsMetaData(first, last);
 		//create artistToMusicFileMetaData Hashtable by parsing allMetaData
-
 		for (MusicFileMetaData song : allMetaData) {
-
 			if(artistToMusicFileMetaData.get(new ArtistName(song.getArtistName()))==null){
 				//initialize artist
 				artistToMusicFileMetaData.put(new ArtistName(song.getArtistName()), new ArrayList<MusicFileMetaData>());

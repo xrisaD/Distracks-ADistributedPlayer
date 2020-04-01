@@ -16,7 +16,7 @@ public class Utilities {
             byte[] messageDigest = md.digest(input.getBytes());
 
             // Convert byte array into signum representation
-            BigInteger no = new BigInteger(1, messageDigest);
+            BigInteger no = new BigInteger(messageDigest);
 
             return  no;
         }

@@ -4,8 +4,6 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.*;
-import java.math.BigInteger;
-import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
 public class Broker {
@@ -64,23 +62,27 @@ public class Broker {
 	}
 
 
-	public void acceptConnection(Publisher p) {
-
-	}
-
-	public Consumer acceptConnection(Consumer consumer) {
-		return consumer;
-	}
-
-
 	public void replyWithMalformedRequest(ObjectOutputStream out) throws IOException{
 		Request.ReplyFromBroker reply = new Request.ReplyFromBroker();
 		reply.statusCode = Request.StatusCodes.MALFORMED_REQUEST;
 		out.writeObject(reply);
 	}
-	public void replyWithOK(ObjectOutputStream out) throws IOException{
+	public void replyWithOK(ObjectOutputStream out, int numOfChunks) throws IOException{
 		Request.ReplyFromBroker reply = new Request.ReplyFromBroker();
 		reply.statusCode = Request.StatusCodes.OK;
+		reply.numChunks = numOfChunks;
+		out.writeObject(reply);
+	}
+	public void replyWithOKmetaData(ObjectOutputStream out, ArrayList<MusicFileMetaData> metaData) throws IOException{
+		Request.ReplyFromBroker reply = new Request.ReplyFromBroker();
+		reply.statusCode = Request.StatusCodes.OK;
+		reply.metaData = metaData;
+		out.writeObject(reply);
+	}
+	public void replyWithOKartists(ObjectOutputStream out, ArrayList<String> artists) throws IOException{
+		Request.ReplyFromBroker reply = new Request.ReplyFromBroker();
+		reply.statusCode = Request.StatusCodes.OK;
+		reply.artists = artists;
 		out.writeObject(reply);
 	}
 	public void replyWithNotFound(ObjectOutputStream out) throws IOException{
@@ -156,14 +158,9 @@ public class Broker {
 		out.writeObject(reply);
 	}
 	public void sendSongToConsumer(IncompleteList<MusicFile> chunks , ObjectOutputStream  outToConsumer){
-
 		try{
 			//Replying to the consumer and notifying about the number of chunks
-			Request.ReplyFromBroker replyToConsumer = new Request.ReplyFromBroker();
-			replyToConsumer.statusCode = Request.StatusCodes.OK;
-			replyToConsumer.numChunks = chunks.size();
-			outToConsumer.writeObject(replyToConsumer);
-
+			replyWithOK(outToConsumer, chunks.size());
 			//Writing every chunk to the consumer
 			for(MusicFile chunk : chunks){
 				outToConsumer.writeObject(chunk);
@@ -206,11 +203,7 @@ public class Broker {
 				int numOfChunks = reply.numChunks;
 				//whatever you receive from Publisher send it to Consumer
 				//Reply to the consumer
-				Request.ReplyFromBroker replyToConsumer = new Request.ReplyFromBroker();
-				replyToConsumer.statusCode = Request.StatusCodes.OK;
-				replyToConsumer.numChunks = numOfChunks;
-				outToConsumer.writeObject(replyToConsumer);
-
+				replyWithOK(outToConsumer,  numOfChunks);
 				//Transmitting the chunks
 				Utilities ut=new Utilities();
 				for(int i=0; i<numOfChunks; i++){
@@ -261,10 +254,7 @@ public class Broker {
 			//if everything is ok
 			if(reply.statusCode == Request.StatusCodes.OK){
 				//Reply to the consumer
-				Request.ReplyFromBroker replyToConsumer = new Request.ReplyFromBroker();
-				replyToConsumer.statusCode = Request.StatusCodes.OK;
-				replyToConsumer.metaData = reply.metaData;
-				outToConsumer.writeObject(replyToConsumer);
+				replyWithOKmetaData(outToConsumer, reply.metaData);
 			}
 			//404 : something went wrong
 			else {
@@ -420,14 +410,11 @@ public class Broker {
 				//this  "else if" is for debug purposes
 				else if(request.method == Request.Methods.STATUS){ 				//information querying about broker's state
 					//Returns the names of the artists for whom the broker is responsible
-					Request.ReplyFromBroker reply = new Request.ReplyFromBroker();
 					ArrayList<String> artists = new ArrayList<>();
 					for (ArtistName a : artistToPublisher.keySet()){
 						artists.add(a.getArtistName());
 					}
-					reply.statusCode = Request.StatusCodes.OK;
-					reply.artists = artists;
-					out.writeObject(reply);
+					replyWithOKartists(out, artists);
 				}
 				//Unknown method so we return a reply informing of a malformed request
 				else{
@@ -452,8 +439,7 @@ public class Broker {
 		}
 	}
 
-	//constructors
-
+	//constructor
 	public Broker(String ip, int port){
 		this.ip = ip;
 		this.port = port;
