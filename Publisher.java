@@ -10,7 +10,9 @@ public class Publisher {
 	private String ip;
 	private int port;
 
-	public void getBrokerList(String filename)  {
+
+	// Notifies all brokers in the system of this publisher's artists
+	public void notifyAllBrokers(String filename)  {
 		Scanner myReader = null;
 		try {
 			myReader = new Scanner(new File(filename));
@@ -28,6 +30,7 @@ public class Publisher {
 		}
 	}
 
+	// Push a songs data to the broker that requested it
 	public void push(String artist, String song, ObjectOutputStream out) throws IOException, NoSuchAlgorithmException {
 		ArrayList<MusicFileMetaData> songs = artistToMusicFileMetaData.get(new ArtistName(artist));
 
@@ -36,9 +39,8 @@ public class Publisher {
 			for (MusicFileMetaData s : songs) {
 				if (s.getTrackName().toLowerCase().equals(song)) {
 					String path = s.getPath();
-					MP3Cutter cutter = new MP3Cutter(new File(path));
-
-					List<byte[]> currentsong = cutter.splitFile();//returns arraylist with byte[]. So size of arraylist is number of chunks
+					List<byte[]> currentsong = MP3Cutter.splitFile(new File(path));
+					//returns arraylist with byte[]. So size of arraylist is number of chunks
 					int numofchunks = currentsong.size();//arithmos chunks
 					Request.ReplyFromPublisher reply = new Request.ReplyFromPublisher();
 					reply.statusCode = Request.StatusCodes.OK;
@@ -56,6 +58,7 @@ public class Publisher {
 		//Not found means the publisher was unable to find the artist or the songs
 		notifyFailure(Request.StatusCodes.NOT_FOUND, out);
 	}
+	// Reply to a broker's search request
 	public void search(String artist, ObjectOutputStream out) throws IOException {
 		ArrayList<MusicFileMetaData> songs = artistToMusicFileMetaData.get(new ArtistName(artist));
 		if(songs!=null){
@@ -67,6 +70,7 @@ public class Publisher {
 		//Not found means the publisher was unable to find the artist or the song's metadata
 		notifyFailure(Request.StatusCodes.NOT_FOUND, out);
 	}
+	// Sends a reply with one of the failure status codes
 	public void notifyFailure(int statusCode, ObjectOutputStream out) throws IOException {
 		Request.ReplyFromPublisher reply = new Request.ReplyFromPublisher();
 		reply.statusCode = statusCode;
@@ -149,7 +153,7 @@ public class Publisher {
 			// arg[2]: first letter of responsible artistname arg[3]: last letter of responsible artistname
 			// arg[4]: file with Broker's information
 			Publisher p = new Publisher(args[0],Integer.parseInt(args[1]) , args[2], args[3]);
-			p.getBrokerList(args[4]);
+			p.notifyAllBrokers(args[4]);
 			p.startServer();
 
 		}catch (Exception e) {

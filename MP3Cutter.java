@@ -4,10 +4,8 @@ import java.nio.file.*;
 import com.mpatric.mp3agic.*;
 import  java.util.stream.*;
 class MP3Cutter{
-	private File mp3ToCut;
-	public MP3Cutter(File f){
-		this.mp3ToCut = f;
-	}
+
+	//Get the metadata of songs whose artists names is between the first and last string
 	public static ArrayList<MusicFileMetaData> getSongsMetaData(String first, String last){
 		//A first letter, Z last letter, closed set
 		ArrayList <MusicFileMetaData> AllMetadata = new ArrayList<MusicFileMetaData>();
@@ -30,7 +28,8 @@ class MP3Cutter{
 		return AllMetadata;
 	}
 
-	public ArrayList<byte[]> splitFile() throws IOException {
+	//Splits file into an array of chunks
+	public static ArrayList<byte[]> splitFile(File mp3ToCut) throws IOException {
 		int sizeOfFiles = 1024 * 512;
 		ArrayList<byte[]> chunklist=new ArrayList<byte[]> ();
 		String fileName = mp3ToCut.getName();//onoma tou arxeiou/mp3
@@ -49,16 +48,6 @@ class MP3Cutter{
 				}
 				bytesAmount = bis.read(buffer);
 				chunklist.add(buffer);
-				/**
-				 int partCounter=0;
-				 int indexOfMp3 = fileName.indexOf(".mp3");
-				 String newName = fileName.substring(0,indexOfMp3);
-				 String filePartName = String.format("%s%03d.mp3", newName, partCounter++);
-				 File newFile = new File(mp3ToCut.getParent(), filePartName);
-				 try (FileOutputStream out = new FileOutputStream(newFile)) {
-				 out.write(buffer, 0, bytesAmount);
-				 }
-				 **/
 			}
 		}
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();//baos stream gia bytes
@@ -118,15 +107,6 @@ class MP3Cutter{
 					//if it is null, set is as unknown
 					MFD.setGenre("Unknown Genre");
 				}
-				/**
-				 System.out.println("Track: " + id3v1Tag.getTrack());
-				 System.out.println("Artist: " + id3v1Tag.getArtist());
-				 System.out.println("Title: " + id3v1Tag.getTitle());
-				 System.out.println("Album: " + id3v1Tag.getAlbum());
-				 System.out.println("Year: " + id3v1Tag.getYear());
-				 System.out.println("Genre: " + id3v1Tag.getGenre() + " (" + id3v1Tag.getGenreDescription() + ")");
-				 System.out.println("Comment: " + id3v1Tag.getComment());
-				 **/
 			}
 			//if hasId3v2Tag it means that it have Id3v2Tag metadata
 			else if (mp3file.hasId3v2Tag()) {
@@ -163,22 +143,6 @@ class MP3Cutter{
 					MFD.setGenre("Unknown Genre");
 				}
 
-				/**
-				 System.out.println("Track: " + id3v2Tag.getTrack());
-				 System.out.println("Artist: " + id3v2Tag.getArtist());
-				 System.out.println("Title: " + id3v2Tag.getTitle());
-				 System.out.println("Album: " + id3v2Tag.getAlbum());
-				 System.out.println("Year: " + id3v2Tag.getYear());
-				 System.out.println("Genre: " + id3v2Tag.getGenre() + " (" + id3v2Tag.getGenreDescription() + ")");
-				 System.out.println("Comment: " + id3v2Tag.getComment());
-				 System.out.println("Composer: " + id3v2Tag.getComposer());
-				 System.out.println("Publisher: " + id3v2Tag.getPublisher());
-				 System.out.println("Original artist: " + id3v2Tag.getOriginalArtist());
-				 System.out.println("Album artist: " + id3v2Tag.getAlbumArtist());
-				 System.out.println("Copyright: " + id3v2Tag.getCopyright());
-				 System.out.println("URL: " + id3v2Tag.getUrl());
-				 System.out.println("Encoder: " + id3v2Tag.getEncoder());
-				 **/
 			}
 			else{
 				//no metadata occasion

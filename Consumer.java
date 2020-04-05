@@ -15,12 +15,13 @@ public class Consumer {
 	private MusicPlayer mp;
 
 	public Consumer(){}
-
+	// Register the broker with ip c.getIp , port c.getPort as responsible for thie artistname
 	public void register(Component c, ArtistName artist) {
 		artistToBroker.put(artist,c);
 		this.knownBrokers.add(c);
 	}
 
+	//Send a pull request to the broker at the end of the stream
 	private void requestPullToBroker(ArtistName artist, String songName, ObjectOutputStream out) throws IOException {
 		Request.RequestToBroker request = new Request.RequestToBroker();
 		request.method = Request.Methods.PULL;
@@ -28,13 +29,14 @@ public class Consumer {
 		request.songName = songName;
 		out.writeObject(request);
 	}
+	// Send a search request to the broker at the end of the outputstream
 	private void requestSearchToBroker(ArtistName artist, ObjectOutputStream out) throws IOException {
 		Request.RequestToBroker request = new Request.RequestToBroker();
 		request.method = Request.Methods.SEARCH;
 		request.pullArtistName = artist.getArtistName();
 		out.writeObject(request);
 	}
-	//set Broker's ip and port
+	//Find the reposible broker for this artist , or, If he is not yet known return a random known Broker
 	private Component getBroker(ArtistName artist){
 		String ip = null;
 		int port = 0;
@@ -54,6 +56,7 @@ public class Consumer {
 		return new Component(ip, port);
 	}
 
+	// Method that downloads the song if download == true or streams the song if download == false
 	public void playData(ArtistName artist, String  songName , boolean download) throws Exception {
 		Component b = getBroker(artist);
 		//set Broker's ip and port
@@ -124,6 +127,7 @@ public class Consumer {
 
 		}
 	}
+	// Stream the song that is coming from the input stream
 	private void stream(int numChunks, ObjectInputStream in) throws IOException, ClassNotFoundException, NoSuchAlgorithmException {
 		int size = 0;
 		mp = new MusicPlayer(numChunks);
@@ -139,6 +143,7 @@ public class Consumer {
 			mp.addChunk(chunk);
 		}
 	}
+	//Download song and save to filename
 	private void download(int numChunks, ObjectInputStream in, String filename) throws IOException, ClassNotFoundException {
 		int size = 0;
 		//Start reading chunks
@@ -152,6 +157,7 @@ public class Consumer {
 		}
 		save(chunks, filename + ".mp3");
 	}
+	// Save a list of music files as entire mp3 with the given filename
 	private void save(ArrayList<MusicFile> chunks , String filename) throws IOException {
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();//baos stream gia bytes
 		for(int k = 0 ; k < chunks.size() ; k++){
@@ -163,7 +169,8 @@ public class Consumer {
 		}
 	}
 
-	public void readBrokers(String fileName) {
+	// Reads information about the first broker in the file name
+	public void readBroker(String fileName) {
 		try {
 			File myObj = new File(fileName);
 			Scanner myReader = new Scanner(myObj);
@@ -182,6 +189,7 @@ public class Consumer {
 			e.printStackTrace();
 		}
 	}
+	// Search for an artists and return all the metadata of the artist's songs
 	public List<MusicFileMetaData> search(ArtistName artist){
 		Component b = getBroker(artist);
 		//set Broker's ip and port
@@ -253,7 +261,7 @@ public class Consumer {
 	public static void main(String[] args){
 		try {
 			Consumer c = new Consumer();
-			c.readBrokers(args[0]); //this shouldn't happen.. and how is the consumer going to know which broker to
+			c.readBroker(args[0]); //this shouldn't happen.. and how is the consumer going to know which broker to
 									//send requests to?
 			c.playData(new ArtistName("Komiku"),"A good bass for gambling" , false);
 
