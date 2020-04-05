@@ -123,8 +123,7 @@ public class RunBrokers {
     }
 
     public static void main(String[] args) throws IOException {
-
-        initializeFile();
+        //initializeFile();
         //Array list containing the processes created
         Scanner sc = new Scanner(System.in);
         //Program loop watining for commands
@@ -137,6 +136,7 @@ public class RunBrokers {
                     System.out.println("Bye");
                     break;
                 } else if (line.trim().toLowerCase().startsWith("start_broker")) {
+                    initializeFile();
                     startBrokers(Integer.parseInt(params[1]));
                 } else if (line.trim().toLowerCase().startsWith("start_publisher")) {
                     startPublisher(params[1], params[2]);
