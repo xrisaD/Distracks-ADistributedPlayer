@@ -8,6 +8,7 @@ import java.security.NoSuchAlgorithmException;
 
 public class Broker {
 
+	// Max number of songs that the broker maintaings in his cache
 	private int CACHE_SIZE = 10;
 
 	//artistName->Publisher's ip and port
@@ -20,10 +21,10 @@ public class Broker {
 
 	/**
 	 * A cache that stores mappings from music File meta data to incomplete lists of musicFiles. The key is metaData
-	 * because we would in another  case need a pair of String artistName nad String songname which is troublesome.
+	 * because we would in another  case need a pair of String artistName and String songname which is troublesome.
 	 * storing Incomplete lists is necessary because another thread might request the same song while it's being streamed
 	 * to another consume. This allows us to start sending all available chunks to te new consumer and block the connection
-	 * while there
+	 * if chunks of a song are still being transported to the Broker
 	 */
 	private SynchronizedLRUCache<MusicFileMetaData , IncompleteList<MusicFile>> musicFileCache =
 			new SynchronizedLRUCache<>(CACHE_SIZE);
@@ -36,9 +37,7 @@ public class Broker {
 	private BigInteger hashValue;
 
 	/**
-	 *
-	 * @param md5 hash value
-	 * @return hash value to repsonsible broker
+	 * returns the responsible broker's hash value
 	 */
 	public BigInteger findResponsibleBroker(BigInteger md5){
 		if( md5.compareTo(hashValues.get(hashValues.size() - 1))>0){
@@ -92,7 +91,6 @@ public class Broker {
 	}
 	/**
 	 *  Choose the artistNames this broker is responsible for and remember which publisher owns them
-	 *
 	 */
 	public void notifyPublisher(String ip, int port,  ArrayList<String> artists) {
 		for(String artistName:artists){
@@ -109,7 +107,7 @@ public class Broker {
 		//find Publisher for this artist
 		Component publisherWithThisArtist = artistToPublisher.get(artist);
 		//open connection with Publisher and request the specific song
-		if(publisherWithThisArtist != null || artistToPublisher.size()==0) {
+		if(publisherWithThisArtist != null && artistToPublisher.size() !=0 ) {
 			//If song exists is not in the cache
 			MusicFileMetaData tmp = new MusicFileMetaData(song , artist.getArtistName() , null , null , null);
 			IncompleteList<MusicFile> musicFileChunks = musicFileCache.get(tmp);
@@ -137,7 +135,7 @@ public class Broker {
 		//find Publisher for this artist
 		Component publisherWithThisArtist = artistToPublisher.get(artist);
 		//open connection with Publisher and request the specific song
-		if(publisherWithThisArtist != null || artistToPublisher.size()==0) {
+		if(publisherWithThisArtist != null && artistToPublisher.size() != 0 ) {
 			requestMetaDataFromPublisher(publisherWithThisArtist, artist, out);
 		}else{
 			//404 : something went wrong
@@ -171,7 +169,8 @@ public class Broker {
 		}
 
 	}
-
+	// Request song's data from the appropriate publisher. Each chunk we get is transmitted to the consumer via the
+	// outToConsumer outputStream
 	public void requestSongFromPublisher(Component c, ArtistName artistName, String song, ObjectOutputStream  outToConsumer) {
 		Socket s = null;
 		ObjectInputStream inFromPublisher = null;

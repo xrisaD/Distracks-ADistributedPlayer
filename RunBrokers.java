@@ -149,7 +149,7 @@ public class RunBrokers {
                 }
                 else if (line.trim().toLowerCase().startsWith("start_consumer")) {
                     c = new Consumer();
-                    c.readBrokers("brokers.txt");
+                    c.readBroker("brokers.txt");
                 } else if (line.trim().toLowerCase().startsWith("stream")) {
                     if(consumerHasStarted()){
                         System.out.print("Artist name : ");
