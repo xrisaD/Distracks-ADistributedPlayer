@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/first_page">
+    <!-- Start Page -->
+    <fragment
+        android:name="com.world.myapplication.FirstPage"
+        android:id="@+id/first_page"
+        tools:layout="@layout/first_page" >
+    </fragment>
+    <!-- Search for an artist fragment -->
+    <fragment
+        android:name="com.world.myapplication.SearchFragment"
+        android:id="@+id/search_fragment"
+        tools:layout="@layout/search_fragment" >
+        <action
+            android:id="@+id/action_search_fragment_to_blankFragment2"
+            app:destination="@id/search_result" />
+    </fragment>
+    <!-- Search Result for an artist fragment -->
+    <fragment
+        android:name="com.world.myapplication.SearchResult"
+        android:id="@+id/search_result"
+        android:label="aloha"
+        tools:layout="@layout/search_result" />
+</navigation>

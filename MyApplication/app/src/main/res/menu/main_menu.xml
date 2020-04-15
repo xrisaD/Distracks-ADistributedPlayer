@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@id/search_fragment"
+        android:title="Search for an artist.."
+        android:checked="true"/>
+    <item
+        android:id="@id/first_page"
+        android:title="Play now"/>
+    <item
+        android:id="@id/first_page"
+        android:title="Saved Songs"/>
+    <item
+        android:id="@id/first_page"
+        android:title="Recently Played"/>
+    <item
+        android:id="@id/first_page"
+        android:title="About Us"/>
+</menu>

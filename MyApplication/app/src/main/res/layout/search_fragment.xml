@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <!-- Input-->
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/textField"
+        android:layout_width="354dp"
+        android:layout_height="74dp"
+        android:layout_centerHorizontal="true"
+
+        android:layout_marginTop="20dp"
+        android:hint="Search for an Artist..."
+        android:orientation="vertical"
+        app:counterEnabled="false"
+        app:counterMaxLength="20"
+
+        app:endIconMode="clear_text"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/button"
+        app:startIconDrawable="@drawable/ic_audiotrack_dark">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/textInputEditText"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:maxLines="1"
+            android:textColor="@color/colorPrimaryDark" />
+    </com.google.android.material.textfield.TextInputLayout>
+    <!-- Search Button -->
+    <Button
+        android:id="@+id/button"
+        android:layout_width="1000dp"
+        android:layout_height="64dp"
+        android:layout_centerHorizontal="true"
+        android:layout_marginStart="250dp"
+        android:layout_marginTop="100dp"
+        app:icon="@drawable/ic_search_black_24dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:text="Search"/>
+
+
+</RelativeLayout>
