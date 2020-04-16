@@ -108,12 +108,13 @@ public class SearchResult extends Fragment {
 
         }
     }
+    //TODO: 1 Search for metadata
     private class AsyncSearchResult extends AsyncTask<String, String, String> {
         ProgressDialog progressDialog;
 
         @Override
         protected String doInBackground(String... strings) {
-            //TODO: Search for metadata
+
             return null;
         }
 
@@ -123,7 +124,39 @@ public class SearchResult extends Fragment {
                     "ProgressDialog",
                     "Searching for "+ artist + "...");
         }
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+        }
 
+        @Override
+        protected void onProgressUpdate(String... values) {
+            super.onProgressUpdate(values);
+        }
+    }
+    //TODO: 2 Download Song + Notifiction oti katevike to tragoudi
+    private class AsyncDownload extends AsyncTask<String, String, String> {
+
+        @Override
+        protected String doInBackground(String... strings) {
+
+            return null;
+        }
+
+        @Override
+        protected void onPreExecute() {
+
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+        }
+
+        @Override
+        protected void onProgressUpdate(String... values) {
+            super.onProgressUpdate(values);
+        }
     }
 
 }

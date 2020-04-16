@@ -23,6 +23,9 @@
     <fragment
         android:name="com.world.myapplication.SearchResult"
         android:id="@+id/search_result"
-        android:label="aloha"
         tools:layout="@layout/search_result" />
+    <fragment
+        android:name="com.world.myapplication.PlayerFragment"
+        android:id="@+id/player_fragment"
+        tools:layout="@layout/player_fragment" />ss
 </navigation>
