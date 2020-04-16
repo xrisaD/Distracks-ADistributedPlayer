@@ -51,7 +51,7 @@ public class SearchResult extends Fragment {
 
         TextView downloadText = new TextView(getContext());
         downloadText.setText("Download");
-        downloadText.setTextSize(30);
+        downloadText.setTextSize(20);
         downloadText.setTextColor(colorText);
         downloadLayout.addView(downloadText);
         //switch for download or stream
@@ -61,8 +61,13 @@ public class SearchResult extends Fragment {
 
 
         ArrayList<LinearLayout> mySongs = new ArrayList<LinearLayout>();
-        final int N = 10; // total number of textviews to add
+        final  int N = 10; // total number of textviews to add
 
+        //set margin
+        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
+        layoutParams.setMargins(0, 0, 0, 30);
+        //set padding
+        int padding = 30;
         for (int i = 0; i < N; i++) {
             // create a new textview
             // Create LinearLayout
@@ -71,11 +76,13 @@ public class SearchResult extends Fragment {
             newLayout.setBackgroundColor(colorBackground);
 
             // Add title
-            TextView title = new TextView(getContext());
-            title.setText("Title "+i);
-            title.setTextSize(30);
-            title.setTextColor(colorText);
-            newLayout.addView(title);
+            // Create Button
+            final Button btn = new Button(getContext());
+            btn.setBackgroundColor(colorBackground);
+            btn.setText("TITLE "+i);
+            btn.setTextSize(15);
+            btn.setTextColor(colorText);
+            newLayout.addView(btn);
 
             //Add
             TextView data = new TextView(getContext());
@@ -84,16 +91,12 @@ public class SearchResult extends Fragment {
             data.setTextColor(colorText);
             newLayout.addView(data);
 
-            // Create Button
-            final Button btn = new Button(getContext());
-            newLayout.addView(btn);
-            btn.setBackgroundColor(colorBackground);
-            btn.setText("TITLE");
+            newLayout.setLayoutParams(layoutParams);
+
+            newLayout.setPadding(padding,padding,padding,padding);
             // add the textview to the linearlayout
             myLayout.addView(newLayout);
 
-            // save a reference to the textview for later
-            //myTextViews[i] = rowTextView;
         }
 
         return rootView;
