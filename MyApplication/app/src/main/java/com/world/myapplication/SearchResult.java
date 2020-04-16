@@ -5,6 +5,7 @@ import android.app.ProgressDialog;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.text.Layout;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,6 +14,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.Switch;
 import android.widget.TextView;
 
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -36,8 +38,28 @@ public class SearchResult extends Fragment {
         //AsyncSearchResult runner = new AsyncSearchResult();
         //runner.execute();
 
+
         LinearLayout myLayout = rootView.findViewById(R.id.search_layout);
+        //color
         int colorBackground = Color.parseColor("#5F021F");
+        int colorText = Color.parseColor("#ffffff");
+
+        //download option Layout
+        LinearLayout downloadLayout = new LinearLayout(getContext());
+        downloadLayout.setOrientation(LinearLayout.HORIZONTAL);
+
+
+        TextView downloadText = new TextView(getContext());
+        downloadText.setText("Download");
+        downloadText.setTextSize(30);
+        downloadText.setTextColor(colorText);
+        downloadLayout.addView(downloadText);
+        //switch for download or stream
+        Switch download = new Switch(getContext());
+        downloadLayout.addView(download);
+        myLayout.addView(downloadLayout);
+
+
         ArrayList<LinearLayout> mySongs = new ArrayList<LinearLayout>();
         final int N = 10; // total number of textviews to add
 
@@ -48,23 +70,25 @@ public class SearchResult extends Fragment {
             newLayout.setOrientation(LinearLayout.VERTICAL);
             newLayout.setBackgroundColor(colorBackground);
 
-
             // Add title
             TextView title = new TextView(getContext());
             title.setText("Title "+i);
             title.setTextSize(30);
+            title.setTextColor(colorText);
             newLayout.addView(title);
 
             //Add
             TextView data = new TextView(getContext());
             data.setText("data");
             data.setTextSize(10);
+            data.setTextColor(colorText);
             newLayout.addView(data);
 
             // Create Button
             final Button btn = new Button(getContext());
             newLayout.addView(btn);
-
+            btn.setBackgroundColor(colorBackground);
+            btn.setText("TITLE");
             // add the textview to the linearlayout
             myLayout.addView(newLayout);
 
