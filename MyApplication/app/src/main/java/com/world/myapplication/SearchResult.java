@@ -39,32 +39,33 @@ public class SearchResult extends Fragment {
         LinearLayout myLayout = rootView.findViewById(R.id.search_layout);
         int colorBackground = Color.parseColor("#5F021F");
         ArrayList<LinearLayout> mySongs = new ArrayList<LinearLayout>();
-        final int N = 100; // total number of textviews to add
+        final int N = 10; // total number of textviews to add
 
         for (int i = 0; i < N; i++) {
             // create a new textview
             // Create LinearLayout
             LinearLayout newLayout = new LinearLayout(getContext());
-            newLayout.setOrientation(LinearLayout.HORIZONTAL);
+            newLayout.setOrientation(LinearLayout.VERTICAL);
             newLayout.setBackgroundColor(colorBackground);
+
 
             // Add title
             TextView title = new TextView(getContext());
-            title.setText("TITLE");
-            title.setTextSize(100);
+            title.setText("Title "+i);
+            title.setTextSize(30);
             newLayout.addView(title);
 
             //Add
             TextView data = new TextView(getContext());
-            title.setText("data");
-            data.setTextSize(70);
+            data.setText("data");
+            data.setTextSize(10);
             newLayout.addView(data);
 
             // Create Button
             final Button btn = new Button(getContext());
+            newLayout.addView(btn);
 
             // add the textview to the linearlayout
-            myLayout.addView(btn);
             myLayout.addView(newLayout);
 
             // save a reference to the textview for later
