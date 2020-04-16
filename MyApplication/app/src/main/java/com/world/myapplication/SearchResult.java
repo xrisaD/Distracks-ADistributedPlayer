@@ -32,22 +32,34 @@ public class SearchResult extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         rootView = inflater.inflate(R.layout.search_result, container, false);
+        return rootView;
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
         //get argmunets from search
         artist = getArguments().getString ("artist", "");
         //search for songs
         //AsyncSearchResult runner = new AsyncSearchResult();
         //runner.execute();
+        setUI(artist);
 
+    }
 
+    private void setUI(String title){
         LinearLayout myLayout = rootView.findViewById(R.id.search_layout);
         //color
         int colorBackground = Color.parseColor("#5F021F");
         int colorText = Color.parseColor("#ffffff");
 
+        //create margin
+        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
+        layoutParams.setMargins(0, 0, 0, 30);
+
         //download option Layout
         LinearLayout downloadLayout = new LinearLayout(getContext());
         downloadLayout.setOrientation(LinearLayout.HORIZONTAL);
-
 
         TextView downloadText = new TextView(getContext());
         downloadText.setText("Download");
@@ -57,15 +69,12 @@ public class SearchResult extends Fragment {
         //switch for download or stream
         Switch download = new Switch(getContext());
         downloadLayout.addView(download);
+        downloadLayout.setLayoutParams(layoutParams);
         myLayout.addView(downloadLayout);
-
 
         ArrayList<LinearLayout> mySongs = new ArrayList<LinearLayout>();
         final  int N = 10; // total number of textviews to add
 
-        //set margin
-        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
-        layoutParams.setMargins(0, 0, 0, 30);
         //set padding
         int padding = 30;
         for (int i = 0; i < N; i++) {
@@ -79,7 +88,7 @@ public class SearchResult extends Fragment {
             // Create Button
             final Button btn = new Button(getContext());
             btn.setBackgroundColor(colorBackground);
-            btn.setText("TITLE "+i);
+            btn.setText(title+" "+i);
             btn.setTextSize(15);
             btn.setTextColor(colorText);
             newLayout.addView(btn);
@@ -98,10 +107,7 @@ public class SearchResult extends Fragment {
             myLayout.addView(newLayout);
 
         }
-
-        return rootView;
     }
-
     private class AsyncSearchResult extends AsyncTask<String, String, String> {
         ProgressDialog progressDialog;
 

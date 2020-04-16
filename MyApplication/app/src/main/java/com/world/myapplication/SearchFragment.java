@@ -23,6 +23,12 @@ public class SearchFragment extends Fragment {
                              Bundle savedInstanceState) {
 
         rootView = inflater.inflate(R.layout.search_fragment, container, false);
+        return rootView;
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
         //search button
         Button mButton = (Button)rootView.findViewById(R.id.button);
         text = "";
@@ -50,8 +56,8 @@ public class SearchFragment extends Fragment {
                         transaction.commit();
                     }
                 });
-        return rootView;
     }
+
     //hide keybord
     public static void hideSoftKeyboard(Activity activity) {
         InputMethodManager inputMethodManager =
