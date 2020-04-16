@@ -17,6 +17,7 @@ import com.google.android.material.textfield.TextInputLayout;
 public class SearchFragment extends Fragment {
     // Declare Variables
     View rootView;
+    String text;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -24,6 +25,7 @@ public class SearchFragment extends Fragment {
         rootView = inflater.inflate(R.layout.search_fragment, container, false);
         //search button
         Button mButton = (Button)rootView.findViewById(R.id.button);
+        text = "";
         mButton.setOnClickListener(
                 new View.OnClickListener()
                 {
@@ -31,7 +33,7 @@ public class SearchFragment extends Fragment {
                     {
                         //get users input
                         TextInputLayout textInputLayout = rootView.findViewById(R.id.textField);
-                        String text = textInputLayout.getEditText().getText().toString();
+                        text = textInputLayout.getEditText().getText().toString();
                         //new fragment
                         //search for arist's songs
                         SearchResult firstFragment = new SearchResult();
@@ -42,7 +44,9 @@ public class SearchFragment extends Fragment {
                         transaction.replace(R.id.nav_host_fragment, firstFragment);
                         transaction.addToBackStack(null);
                         //hide keyboard before go to the next fragment
-                        hideSoftKeyboard(getActivity());
+                        if(!text.equals("")) {
+                            hideSoftKeyboard(getActivity());
+                        }
                         transaction.commit();
                     }
                 });
