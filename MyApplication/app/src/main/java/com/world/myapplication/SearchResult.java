@@ -2,6 +2,7 @@ package com.world.myapplication;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -9,12 +10,15 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
+
+import java.util.ArrayList;
 
 //result: all artist's song
 public class SearchResult extends Fragment {
@@ -33,22 +37,38 @@ public class SearchResult extends Fragment {
         //runner.execute();
 
         LinearLayout myLayout = rootView.findViewById(R.id.search_layout);
+        int colorBackground = Color.parseColor("#5F021F");
+        ArrayList<LinearLayout> mySongs = new ArrayList<LinearLayout>();
         final int N = 100; // total number of textviews to add
-
-        final TextView[] myTextViews = new TextView[N]; // create an empty array;
 
         for (int i = 0; i < N; i++) {
             // create a new textview
-            final TextView rowTextView = new TextView(getContext());
+            // Create LinearLayout
+            LinearLayout newLayout = new LinearLayout(getContext());
+            newLayout.setOrientation(LinearLayout.HORIZONTAL);
+            newLayout.setBackgroundColor(colorBackground);
 
-            // set some properties of rowTextView or something
-            rowTextView.setText("This is row #" + i);
+            // Add title
+            TextView title = new TextView(getContext());
+            title.setText("TITLE");
+            title.setTextSize(100);
+            newLayout.addView(title);
+
+            //Add
+            TextView data = new TextView(getContext());
+            title.setText("data");
+            data.setTextSize(70);
+            newLayout.addView(data);
+
+            // Create Button
+            final Button btn = new Button(getContext());
 
             // add the textview to the linearlayout
-            myLayout.addView(rowTextView);
+            myLayout.addView(btn);
+            myLayout.addView(newLayout);
 
             // save a reference to the textview for later
-            myTextViews[i] = rowTextView;
+            //myTextViews[i] = rowTextView;
         }
 
         return rootView;

@@ -9,7 +9,5 @@
     android:layout_height="match_parent"
     android:id="@+id/search_layout"
     android:orientation="vertical">
-
-
     </LinearLayout>
 </ScrollView>
