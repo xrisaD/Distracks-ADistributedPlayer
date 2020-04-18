@@ -19,7 +19,6 @@
     </fragment>
     <!-- Search for an artist fragment -->
     <fragment
-        android:label="hey"
         android:name="com.world.myapplication.SearchFragment"
         android:id="@+id/search_fragment"
         tools:layout="@layout/search_fragment" >
