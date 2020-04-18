@@ -9,15 +9,27 @@
         android:name="com.world.myapplication.FirstPage"
         android:id="@+id/first_page"
         tools:layout="@layout/first_page" >
+        <argument
+            android:name="myArg"
+            app:argType="integer"
+            android:defaultValue="1" />
+        <action
+            android:id="@+id/action_first_page_to_search_fragment"
+            app:destination="@id/search_fragment" />
     </fragment>
     <!-- Search for an artist fragment -->
     <fragment
+        android:label="hey"
         android:name="com.world.myapplication.SearchFragment"
         android:id="@+id/search_fragment"
         tools:layout="@layout/search_fragment" >
         <action
             android:id="@+id/action_search_fragment_to_blankFragment2"
             app:destination="@id/search_result" />
+        <argument
+            android:name="justAString"
+            app:argType="string"
+            android:defaultValue="def" />
     </fragment>
     <!-- Search Result for an artist fragment -->
     <fragment
@@ -27,5 +39,5 @@
     <fragment
         android:name="com.world.myapplication.PlayerFragment"
         android:id="@+id/player_fragment"
-        tools:layout="@layout/player_fragment" />ss
+        tools:layout="@layout/player_fragment" />
 </navigation>

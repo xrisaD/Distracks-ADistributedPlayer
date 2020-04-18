@@ -3,7 +3,7 @@
     <item
         android:id="@id/search_fragment"
         android:title="Search for an artist.."
-        android:checked="true"/>
+        android:checked="true" />
     <item
         android:id="@id/first_page"
         android:title="Play now"/>
