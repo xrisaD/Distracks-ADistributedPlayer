@@ -142,8 +142,23 @@ public class Broker {
     public void search(ArtistName artist, ObjectOutputStream  out) throws IOException {
         //find Publisher for this artist
         Component publisherWithThisArtist = artistToPublisher.get(artist);
+
+        //DEBUG COMMENTS!!!!!!!
+        if(publisherWithThisArtist == null){
+            System.out.println("ALOHA: NULL PUBLISHER WITH THIS ARTIST");
+        }
+        for(ArtistName x: artistToPublisher.keySet()){
+            System.out.println(artist.getArtistName());
+            System.out.println(x.getArtistName());
+            if(x.equals(artist)){
+                System.out.println("den katalabainei");
+            }
+        }
+
+        System.out.println("edw1");
         //open connection with Publisher and request the specific song
-        if(publisherWithThisArtist != null && artistToPublisher.size() != 0 ) {
+        if(publisherWithThisArtist != null) {
+            System.out.println("edw1234");
             requestMetaDataFromPublisher(publisherWithThisArtist, artist, out);
         }else{
             //404 : something went wrong
@@ -241,6 +256,7 @@ public class Broker {
         }
     }
     public void requestMetaDataFromPublisher(Component c, ArtistName artistName, ObjectOutputStream  outToConsumer){
+        System.out.println("edw2");
         Socket s = null;
         ObjectInputStream inFromPublisher = null;
         ObjectOutputStream outToPublisher = null;

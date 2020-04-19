@@ -117,7 +117,7 @@ public class SearchResult extends Fragment {
 
         @Override
         protected ArrayList<MusicFileMetaData> doInBackground(String... params) {
-            String artistname = params[0].toLowerCase();
+            String artistname = params[0];
             Consumer c = ((Consumer) getActivity().getApplication());
             ArtistName artist = new ArtistName(artistname);
             Component b = c.getBroker(artist);
