@@ -1,3 +1,4 @@
+package com.world.myapplication;
 
 public class Component {
     private String ip;

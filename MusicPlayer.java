@@ -1,3 +1,4 @@
+
 import javafx.application.Application;
 import javafx.collections.ObservableMap;
 import javafx.event.EventHandler;
@@ -5,7 +6,6 @@ import javafx.scene.media.Media;
 import javafx.scene.media.MediaMarkerEvent;
 import javafx.scene.media.MediaPlayer;
 import javafx.stage.Stage;
-import org.apache.commons.io.IOUtils;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -169,16 +169,7 @@ public class MusicPlayer extends Application {
         }
         return mfs;
     }
-    public static MusicFile readFully(MusicFileMetaData md){
-        byte[] res = null;
-        try (FileInputStream fos = new FileInputStream(md.getPath())) {
-            res = IOUtils.toByteArray(fos);
-        }
-        catch(Exception e){
-            System.err.println(e.getMessage());
-        }
-        return new MusicFile(md,res);
-    }
+    
     public void play(MusicFile file , String tempFileName, Runnable next) {
         System.out.println(file);
         createTempFile(tempFileName);

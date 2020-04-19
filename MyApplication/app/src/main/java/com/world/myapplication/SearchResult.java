@@ -24,7 +24,7 @@ import java.util.ArrayList;
 public class SearchResult extends Fragment {
     private View rootView;
     private String artist;
-    private ArrayList<MusicFileMetaData> resultMetaData;
+    private ArrayList<MusicFileMetaData> resultMetaData = new ArrayList<MusicFileMetaData>();
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -42,10 +42,13 @@ public class SearchResult extends Fragment {
         //search for songs
         AsyncSearchResult runner = new AsyncSearchResult();
         runner.execute(artist);
-        setUI(artist);
+        if(resultMetaData.size()>0){
+            setUI(artist);
+        }
+
     }
 
-    private void setUI(String title){
+    private void setUI(String artist){
         LinearLayout myLayout = rootView.findViewById(R.id.search_layout);
         //color
         int colorBackground = Color.parseColor("#5F021F");
@@ -75,7 +78,7 @@ public class SearchResult extends Fragment {
 
         //set padding
         int padding = 30;
-        for (int i = 0; i < N; i++) {
+        for (int i = 0; i < resultMetaData.size(); i++) {
             // create a new textview
             // Create LinearLayout
             LinearLayout newLayout = new LinearLayout(getContext());
@@ -86,14 +89,16 @@ public class SearchResult extends Fragment {
             // Create Button
             final Button btn = new Button(getContext());
             btn.setBackgroundColor(colorBackground);
-            btn.setText(title+" "+i);
+            btn.setText(resultMetaData.get(i).getTrackName());
             btn.setTextSize(15);
             btn.setTextColor(colorText);
             newLayout.addView(btn);
 
+
             //Add
+            String info = "AlbumInfo: " + resultMetaData.get(i).getAlbumInfo() + "\n"+"Genre: " + resultMetaData.get(i).getGenre();
             TextView data = new TextView(getContext());
-            data.setText("data");
+            data.setText(info);
             data.setTextSize(10);
             data.setTextColor(colorText);
             newLayout.addView(data);
@@ -112,7 +117,7 @@ public class SearchResult extends Fragment {
 
         @Override
         protected ArrayList<MusicFileMetaData> doInBackground(String... params) {
-            String artistname = params[0];
+            String artistname = params[0].toLowerCase();
             Consumer c = ((Consumer) getActivity().getApplication());
             ArtistName artist = new ArtistName(artistname);
             Component b = c.getBroker(artist);
@@ -216,6 +221,7 @@ public class SearchResult extends Fragment {
         @Override
         protected void onPostExecute(String s) {
             super.onPostExecute(s);
+
         }
 
         @Override
