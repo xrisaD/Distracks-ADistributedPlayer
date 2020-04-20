@@ -48,6 +48,7 @@ public class SearchResult extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
+        createNotificationChannel();
         //get argmunets from search
         artist = getArguments().getString ("artist", "");
         //search for songs
@@ -195,38 +196,51 @@ public class SearchResult extends Fragment {
         }
     }
 
-    //TODO: 2 Download Song + Notifiction oti katevike to tragoudi
+    //TODO: 2 Download Song
     private class AsyncDownload extends AsyncTask<MusicFileMetaData, String, String> {
-
+        int PROGRESS_MAX;
+        int PROGRESS_CURRENT;
+        int notificationId;
+        NotificationManagerCompat notificationManager;
+        NotificationCompat.Builder builder;
         @Override
         protected String doInBackground(MusicFileMetaData... artistAndSong) {
+            MusicFileMetaData artistname = artistAndSong[0];
+
             return "";
         }
 
         @Override
         protected void onPreExecute() {
+            notificationManager = NotificationManagerCompat.from(getContext());
+            builder = new NotificationCompat.Builder(getContext(), CHANNEL_ID)
+                    .setSmallIcon(R.drawable.ic_audiotrack_light)
+                    .setContentTitle("Download Song")
+                    .setContentText("Download in progress...")
+                    .setPriority(NotificationCompat.PRIORITY_DEFAULT);
+            PROGRESS_MAX = 100;
+            PROGRESS_CURRENT = 0;
+            builder.setProgress(PROGRESS_MAX, PROGRESS_CURRENT, false);
+            notificationId = 1;
+            // notificationId is a unique int for each notification that you must define
+            notificationManager.notify(1, builder.build());
 
         }
 
         @Override
         protected void onPostExecute(String s) {
             super.onPostExecute(s);
-            String textTitle="Download";
-            NotificationCompat.Builder builder = new NotificationCompat.Builder(getContext(), CHANNEL_ID)
-                    .setSmallIcon(R.drawable.ic_audiotrack_light)
-                    .setContentTitle(textTitle)
-                    .setContentText(textTitle)
-                    .setPriority(NotificationCompat.PRIORITY_DEFAULT);
-            NotificationManagerCompat notificationManager = NotificationManagerCompat.from(getContext());
-
-            // notificationId is a unique int for each notification that you must define
-            notificationManager.notify(1, builder.build());
+            builder.setContentText("Download complete")
+                    .setProgress(0,0,false);
+            notificationManager.notify(notificationId, builder.build());
         }
 
 
         @Override
         protected void onProgressUpdate(String... values) {
             super.onProgressUpdate(values);
+            builder.setProgress(PROGRESS_MAX, PROGRESS_CURRENT, false);
+            notificationManager.notify(notificationId, builder.build());
         }
     }
     private void createNotificationChannel() {
