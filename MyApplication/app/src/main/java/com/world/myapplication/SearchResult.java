@@ -1,8 +1,11 @@
 package com.world.myapplication;
 
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.app.ProgressDialog;
 import android.graphics.Color;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -13,6 +16,8 @@ import android.widget.LinearLayout;
 import android.widget.Switch;
 import android.widget.TextView;
 
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
@@ -26,6 +31,7 @@ import java.util.ArrayList;
 
 //result: all artist's song
 public class SearchResult extends Fragment {
+    private static final String CHANNEL_ID = "BasicChannel";
     private View rootView;
     private String artist;
     Switch download;
@@ -49,101 +55,6 @@ public class SearchResult extends Fragment {
         runner.execute(artist);
     }
 
-    private void setUI(final String artist, ArrayList<MusicFileMetaData> resultMetaData){
-        LinearLayout myLayout = rootView.findViewById(R.id.search_layout);
-        //color
-        int colorBackground = Color.parseColor("#5F021F");
-        int colorText = Color.parseColor("#ffffff");
-
-        //create margin
-        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
-        layoutParams.setMargins(0, 0, 0, 30);
-
-        //download option Layout
-        LinearLayout downloadLayout = new LinearLayout(getContext());
-        downloadLayout.setOrientation(LinearLayout.HORIZONTAL);
-
-        TextView downloadText = new TextView(getContext());
-        downloadText.setText("Download");
-        downloadText.setTextSize(20);
-        downloadText.setTextColor(colorText);
-        downloadLayout.addView(downloadText);
-        //switch for download or stream
-        download = new Switch(getContext());
-        downloadLayout.addView(download);
-        downloadLayout.setLayoutParams(layoutParams);
-        myLayout.addView(downloadLayout);
-
-        ArrayList<Button> mySongs = new ArrayList<Button>();
-        //set padding
-        int padding = 30;
-        for (int i = 0; i < resultMetaData.size(); i++) {
-            // create a new textview
-            // Create LinearLayout
-            LinearLayout newLayout = new LinearLayout(getContext());
-            newLayout.setOrientation(LinearLayout.VERTICAL);
-            newLayout.setBackgroundColor(colorBackground);
-
-            // Add title
-            // Create Button
-            final Button btn = new Button(getContext());
-            btn.setBackgroundColor(colorBackground);
-            btn.setText(resultMetaData.get(i).getTrackName());
-            btn.setTextSize(12);
-            btn.setTextColor(colorText);
-            btn.setLayoutParams (new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 100));
-            newLayout.addView(btn);
-            mySongs.add(btn);
-
-            //Add
-            String info = "AlbumInfo: " + resultMetaData.get(i).getAlbumInfo() + "\n"+"Genre: " + resultMetaData.get(i).getGenre();
-            TextView data = new TextView(getContext());
-            data.setText(info);
-            data.setTextSize(10);
-            data.setTextColor(colorText);
-            newLayout.addView(data);
-
-            newLayout.setLayoutParams(layoutParams);
-
-            newLayout.setPadding(padding,padding,padding,padding);
-            // add the textview to the linearlayout
-            myLayout.addView(newLayout);
-
-        }
-        //click buttons
-        for(Button b: mySongs){
-            b.setOnClickListener(
-                    new View.OnClickListener()
-                    {
-                        public void onClick(View view)
-                        {
-                            Button thisBtn = (Button) view;
-                            String song = thisBtn.getText().toString();
-                            if(download.isChecked()){
-                                //download async: download song
-                                AsyncDownload runner = new AsyncDownload();
-                                MusicFileMetaData artistAndSong = new MusicFileMetaData();
-                                artistAndSong.setArtistName(artist);
-                                artistAndSong.setTrackName(song);
-                                runner.execute(artistAndSong);
-
-                            }else{
-                                //go to player fragment
-                                PlayerFragment playerFragment = new PlayerFragment();
-                                Bundle args = new Bundle();
-                                args.putString("artist", artist);
-                                args.putString("song", song);
-                                playerFragment.setArguments(args);
-                                FragmentTransaction transaction = getFragmentManager().beginTransaction();
-                                transaction.replace(R.id.nav_host_fragment, playerFragment);
-                                transaction.addToBackStack(null);
-                                transaction.commit();
-                            }
-
-                        }
-                    });
-        }
-    }
     private class AsyncSearchResult extends AsyncTask<String, String, ArrayList<MusicFileMetaData>> {
         ProgressDialog progressDialog;
 
@@ -206,7 +117,13 @@ public class SearchResult extends Fragment {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-
+            finally {
+                try {
+                    if (s != null) s.close();
+                } catch (Exception e) {
+                    System.out.printf("[CONSUMER] Error while closing socket on search %s ", e.getMessage());
+                }
+            }
             return new ArrayList<MusicFileMetaData>();
         }
 
@@ -228,9 +145,48 @@ public class SearchResult extends Fragment {
         protected void onPostExecute(ArrayList<MusicFileMetaData> s) {
             progressDialog.dismiss();
             if(s.size()>0){
-                setUI(artist,s);
-                Log.e("yeah", "yeah");
+                ArrayList<Button> mySongs = SongsUI.setUI(artist,s,getContext(), rootView);
+                //get switch
+                download = SongsUI.download;
+
+                for(Button b: mySongs){
+                    b.setOnClickListener(
+                            new View.OnClickListener()
+                            {
+                                public void onClick(View view)
+                                {
+                                    Button thisBtn = (Button) view;
+                                    String song = thisBtn.getText().toString();
+                                    if(download.isChecked()){
+                                        //download async: download song
+                                        SearchResult.AsyncDownload runner = new SearchResult.AsyncDownload();
+                                        MusicFileMetaData artistAndSong = new MusicFileMetaData();
+                                        artistAndSong.setArtistName(artist);
+                                        artistAndSong.setTrackName(song);
+                                        runner.execute(artistAndSong);
+
+                                    }else{
+                                        //go to player fragment
+                                        PlayerFragment playerFragment = new PlayerFragment();
+                                        Bundle args = new Bundle();
+                                        args.putString("artist", artist);
+                                        args.putString("song", song);
+                                        playerFragment.setArguments(args);
+                                        FragmentTransaction transaction = getFragmentManager().beginTransaction();
+                                        transaction.replace(R.id.nav_host_fragment, playerFragment);
+                                        transaction.addToBackStack(null);
+                                        transaction.commit();
+                                    }
+
+                                }
+                            });
+                }
+            }else{
+                //set null ui
+                Log.e("null","null");
+                SongsUI.setNullUI("No songs for artist: "+ artist,getContext(), rootView);
             }
+
         }
 
         @Override
@@ -244,7 +200,7 @@ public class SearchResult extends Fragment {
 
         @Override
         protected String doInBackground(MusicFileMetaData... artistAndSong) {
-            return null;
+            return "";
         }
 
         @Override
@@ -255,13 +211,39 @@ public class SearchResult extends Fragment {
         @Override
         protected void onPostExecute(String s) {
             super.onPostExecute(s);
+            String textTitle="Download";
+            NotificationCompat.Builder builder = new NotificationCompat.Builder(getContext(), CHANNEL_ID)
+                    .setSmallIcon(R.drawable.ic_audiotrack_light)
+                    .setContentTitle(textTitle)
+                    .setContentText(textTitle)
+                    .setPriority(NotificationCompat.PRIORITY_DEFAULT);
+            NotificationManagerCompat notificationManager = NotificationManagerCompat.from(getContext());
 
+            // notificationId is a unique int for each notification that you must define
+            notificationManager.notify(1, builder.build());
         }
+
 
         @Override
         protected void onProgressUpdate(String... values) {
             super.onProgressUpdate(values);
         }
     }
-
+    private void createNotificationChannel() {
+        String channel_name = "Basic chanel";
+        String channel_description = "Download";
+        // Create the NotificationChannel, but only on API 26+ because
+        // the NotificationChannel class is new and not in the support library
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            CharSequence name = channel_name;
+            String description = channel_description;
+            int importance = NotificationManager.IMPORTANCE_DEFAULT;
+            NotificationChannel channel = new NotificationChannel(CHANNEL_ID, name, importance);
+            channel.setDescription(description);
+            // Register the channel with the system; you can't change the importance
+            // or other notification behaviors after this
+            NotificationManager notificationManager = getContext().getSystemService(NotificationManager.class);
+            notificationManager.createNotificationChannel(channel);
+        }
+    }
 }
