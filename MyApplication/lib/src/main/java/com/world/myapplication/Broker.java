@@ -347,7 +347,7 @@ public class Broker {
         try{
             //arg[0]:ip
             //arg[1]:port
-            //arg[2]:hashValue
+            //arg[2]:brokers.txt
             Broker b = new Broker(args[0],Integer.parseInt(args[1]));
             ArrayList<Component> brokers = b.saveBrokersData(args[2]);
             b.calculateKeys(brokers);

@@ -3,7 +3,6 @@ package com.world.myapplication;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.ProgressDialog;
-import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
@@ -12,17 +11,17 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.LinearLayout;
 import android.widget.Switch;
-import android.widget.TextView;
 
+import androidx.annotation.RequiresApi;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
-import com.google.android.material.textfield.TextInputLayout;
-
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -136,6 +135,7 @@ public class SearchResult extends Fragment {
             out.writeObject(request);
         }
 
+
         @Override
         protected void onPreExecute() {
             progressDialog = ProgressDialog.show(getContext(),
@@ -203,13 +203,118 @@ public class SearchResult extends Fragment {
         int notificationId;
         NotificationManagerCompat notificationManager;
         NotificationCompat.Builder builder;
+        @RequiresApi(api = Build.VERSION_CODES.O)
         @Override
         protected String doInBackground(MusicFileMetaData... artistAndSong) {
-            MusicFileMetaData artistname = artistAndSong[0];
+            MusicFileMetaData artistMusicFile = artistAndSong[0];
+            Consumer c = ((Consumer) getActivity().getApplication());
+            ArtistName artist = new ArtistName(artistMusicFile.getArtistName());
+            Component b = c.getBroker(artist);
+            String songName =artistMusicFile.getTrackName();
 
+            //set Broker's ip and port
+            String ip = b.getIp();
+            int port = b.getPort();
+
+            Socket s = null;
+            ObjectInputStream in = null;
+            ObjectOutputStream out = null;
+            try {
+                //While we find a broker who is not responsible for the artistname
+                Request.ReplyFromBroker reply=null;
+                int statusCode = Request.StatusCodes.NOT_RESPONSIBLE;
+                while(statusCode == Request.StatusCodes.NOT_RESPONSIBLE){
+                    s = new Socket(ip, port);
+                    //Creating the request to Broker for this artist
+                    out = new ObjectOutputStream(s.getOutputStream());
+                    requestPullToBroker(artist, songName, out);
+                    //Waiting for the reply
+                    in = new ObjectInputStream(s.getInputStream());
+                    reply = (Request.ReplyFromBroker) in.readObject();
+                    System.out.printf("[CONSUMER] Got reply from Broker(%s,%d) : %s%n", ip, port, reply);
+                    statusCode = reply.statusCode;
+                    ip = reply.responsibleBrokerIp;
+                    port = reply.responsibleBrokerPort;
+                }
+                if(statusCode == Request.StatusCodes.NOT_FOUND){
+                    System.out.println("Song or Artist does not exist");
+                    throw new Exception("Song or Artist does not exist");
+                }
+                //Song exists and the broker is responsible for the artist
+                else if(statusCode == Request.StatusCodes.OK){
+                    //Save the information that this broker is responsible for the requested artist
+                    c.register(new Component(s.getInetAddress().getHostAddress(),s.getPort()) , artist);
+                    //download mp3 to the device
+                     download(reply.numChunks, in ,songName);
+                }
+                //In this case the status code is MALFORMED_REQUEST
+                else{
+                    System.out.println("MALFORMED_REQUEST");
+                    throw new Exception("MALFORMED_REQUEST");
+                }
+            }
+            catch(ClassNotFoundException e){
+                //Protocol Error (Unexpected Object Caught) its a protocol error
+                System.out.printf("[CONSUMER] Unexpected object on playData %s " , e.getMessage());
+            }
+            catch (IOException e){
+                System.out.printf("[CONSUMER] Error on playData %s " , e.getMessage());
+            } catch (Exception e) {
+                e.printStackTrace();
+            } finally {
+                try {
+                    if (in != null) in.close();
+                    if (out != null) out.close();
+                    if (s != null) s.close();
+                }
+                catch(Exception e){
+                    System.out.printf("[CONSUMER] Error while closing socket on playData %s " , e.getMessage());
+                }
+
+            }
             return "";
         }
+        //Send a pull request to the broker at the end of the stream
+        private void requestPullToBroker(ArtistName artist, String songName, ObjectOutputStream out) throws IOException {
+            Request.RequestToBroker request = new Request.RequestToBroker();
+            request.method = Request.Methods.PULL;
+            request.pullArtistName = artist.getArtistName();
+            request.songName = songName;
+            out.writeObject(request);
+        }
+        //Download song and save to filename
+        private void download(int numChunks, ObjectInputStream in, String filename) throws IOException, ClassNotFoundException {
+            ArrayList<MusicFile> chunks = new ArrayList<>();
+            int size = 0;
+            //Start reading chunks
+            for (int i = 0; i < numChunks-1; i++) {
+                //HandleCHunks
+                MusicFile chunk = (MusicFile) in.readObject();
+                System.out.println("[CONSUMER] got chunk Number " + i);
+                size += chunk.getMusicFileExtract().length;
+                //Add chunk to the icomplete list
+                chunks.add(chunk);
+                Log.e("aloha2","aloh2a");
+            }
+            Log.e("aloha2","aloh33333a");
+            save(chunks, filename + ".mp3");
 
+        }
+        // Save a list of music files as entire mp3 with the given filename
+        private void save(ArrayList<MusicFile> chunks , String filename) throws IOException {
+            Log.e("aloha200",filename);
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();//baos stream gia bytes
+            for(int k = 0 ; k < chunks.size() ; k++){
+                baos.write(chunks.get(k).getMusicFileExtract());
+            }
+            byte[] concatenated_byte_array = baos.toByteArray();//metatrepei to stream se array
+            File path = getContext().getFilesDir();
+            Log.e("pathaki", path + filename);
+            Log.e("aloha",filename);
+            try (FileOutputStream fos = new FileOutputStream(path + filename)) {
+                fos.write(concatenated_byte_array);
+            }
+        }
         @Override
         protected void onPreExecute() {
             notificationManager = NotificationManagerCompat.from(getContext());
