@@ -197,7 +197,7 @@ public class SearchResult extends Fragment {
     }
 
     //TODO: 2 Download Song
-    private class AsyncDownload extends AsyncTask<MusicFileMetaData, String, String> {
+    private class AsyncDownload extends AsyncTask<MusicFileMetaData, Integer, String> {
         int PROGRESS_MAX;
         int PROGRESS_CURRENT;
         int notificationId;
@@ -238,19 +238,52 @@ public class SearchResult extends Fragment {
                 }
                 if(statusCode == Request.StatusCodes.NOT_FOUND){
                     System.out.println("Song or Artist does not exist");
-                    throw new Exception("Song or Artist does not exist");
+                    return "";
+
                 }
                 //Song exists and the broker is responsible for the artist
                 else if(statusCode == Request.StatusCodes.OK){
+                    int progress = PROGRESS_MAX/(reply.numChunks*2);
                     //Save the information that this broker is responsible for the requested artist
                     c.register(new Component(s.getInetAddress().getHostAddress(),s.getPort()) , artist);
                     //download mp3 to the device
-                     download(reply.numChunks, in ,songName);
+                     //download(reply.numChunks, in ,songName);
+                    ArrayList<MusicFile> chunks = new ArrayList<>();
+                    int size = 0;
+                    //Start reading chunks
+                    for (int i = 0; i < reply.numChunks; i++) {
+                        //HandleCHunks
+                        publishProgress(PROGRESS_CURRENT + progress);
+                        MusicFile chunk = (MusicFile) in.readObject();
+                        System.out.println("[CONSUMER] got chunk Number " + i);
+                        size += chunk.getMusicFileExtract().length;
+                        //Add chunk to the icomplete list
+                        chunks.add(chunk);
+
+                    }
+                    String filename = songName +".mp3";
+                    //save chunk
+                    Log.e("aloha200",filename);
+                    ByteArrayOutputStream baos = new ByteArrayOutputStream();//baos stream gia bytes
+                    for(int k = 0 ; k < chunks.size() ; k++){
+                        publishProgress(PROGRESS_CURRENT + progress);
+                        baos.write(chunks.get(k).getMusicFileExtract());
+                    }
+                    byte[] concatenated_byte_array = baos.toByteArray();//metatrepei to stream se array
+                    File path = getContext().getFilesDir();
+                    Log.e("pathaki", path + filename);
+                    Log.e("aloha",filename);
+                    try (FileOutputStream fos = new FileOutputStream(path + filename)) {
+                        fos.write(concatenated_byte_array);
+                    }catch (Exception e){
+                        return "";
+                    }
+                    return "ok";
                 }
                 //In this case the status code is MALFORMED_REQUEST
                 else{
                     System.out.println("MALFORMED_REQUEST");
-                    throw new Exception("MALFORMED_REQUEST");
+                    return "";
                 }
             }
             catch(ClassNotFoundException e){
@@ -282,39 +315,7 @@ public class SearchResult extends Fragment {
             request.songName = songName;
             out.writeObject(request);
         }
-        //Download song and save to filename
-        private void download(int numChunks, ObjectInputStream in, String filename) throws IOException, ClassNotFoundException {
-            ArrayList<MusicFile> chunks = new ArrayList<>();
-            int size = 0;
-            //Start reading chunks
-            for (int i = 0; i < numChunks-1; i++) {
-                //HandleCHunks
-                MusicFile chunk = (MusicFile) in.readObject();
-                System.out.println("[CONSUMER] got chunk Number " + i);
-                size += chunk.getMusicFileExtract().length;
-                //Add chunk to the icomplete list
-                chunks.add(chunk);
-                Log.e("aloha2","aloh2a");
-            }
-            Log.e("aloha2","aloh33333a");
-            save(chunks, filename + ".mp3");
 
-        }
-        // Save a list of music files as entire mp3 with the given filename
-        private void save(ArrayList<MusicFile> chunks , String filename) throws IOException {
-            Log.e("aloha200",filename);
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();//baos stream gia bytes
-            for(int k = 0 ; k < chunks.size() ; k++){
-                baos.write(chunks.get(k).getMusicFileExtract());
-            }
-            byte[] concatenated_byte_array = baos.toByteArray();//metatrepei to stream se array
-            File path = getContext().getFilesDir();
-            Log.e("pathaki", path + filename);
-            Log.e("aloha",filename);
-            try (FileOutputStream fos = new FileOutputStream(path + filename)) {
-                fos.write(concatenated_byte_array);
-            }
-        }
         @Override
         protected void onPreExecute() {
             notificationManager = NotificationManagerCompat.from(getContext());
@@ -335,16 +336,25 @@ public class SearchResult extends Fragment {
         @Override
         protected void onPostExecute(String s) {
             super.onPostExecute(s);
-            builder.setContentText("Download complete")
-                    .setProgress(0,0,false);
-            notificationManager.notify(notificationId, builder.build());
+            if(s.equals("ok")){
+                builder.setContentText("Download complete")
+                        .setProgress(0, 0, false);
+                notificationManager.notify(notificationId, builder.build());
+            }else{
+                builder.setContentText("Can't download")
+                        .setProgress(0, 0, false);
+                notificationManager.notify(notificationId, builder.build());
+            }
         }
 
 
         @Override
-        protected void onProgressUpdate(String... values) {
+        protected void onProgressUpdate(Integer... values) {
             super.onProgressUpdate(values);
-            builder.setProgress(PROGRESS_MAX, PROGRESS_CURRENT, false);
+            if(values[0]>0) {
+                PROGRESS_CURRENT = values[0];
+                builder.setProgress(PROGRESS_MAX, PROGRESS_CURRENT, false);
+            }
             notificationManager.notify(notificationId, builder.build());
         }
     }
