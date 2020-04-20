@@ -1,18 +1,11 @@
 package com.world.myapplication;
-
-
 import java.io.*;
 import java.math.BigInteger;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.UnknownHostException;
-import java.nio.file.FileSystems;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.*;
 import java.security.NoSuchAlgorithmException;
-
-import sun.rmi.runtime.Log;
 
 public class Broker {
 
@@ -142,23 +135,17 @@ public class Broker {
     public void search(ArtistName artist, ObjectOutputStream  out) throws IOException {
         //find Publisher for this artist
         Component publisherWithThisArtist = artistToPublisher.get(artist);
-
-        //DEBUG COMMENTS!!!!!!!
-        if(publisherWithThisArtist == null){
-            System.out.println("ALOHA: NULL PUBLISHER WITH THIS ARTIST");
-        }
-        for(ArtistName x: artistToPublisher.keySet()){
-            System.out.println(artist.getArtistName());
-            System.out.println(x.getArtistName());
-            if(x.equals(artist)){
-                System.out.println("den katalabainei");
+        //DEBUG CODE!!! #DEBUG
+        if(publisherWithThisArtist==null) {
+            for (ArtistName x : artistToPublisher.keySet()) {
+                if (x.equals(artist)) {
+                    System.out.println("se vrika");
+                    publisherWithThisArtist = artistToPublisher.get(x);
+                }
             }
         }
-
-        System.out.println("edw1");
         //open connection with Publisher and request the specific song
-        if(publisherWithThisArtist != null) {
-            System.out.println("edw1234");
+        if(publisherWithThisArtist != null && artistToPublisher.size() != 0 ) {
             requestMetaDataFromPublisher(publisherWithThisArtist, artist, out);
         }else{
             //404 : something went wrong
@@ -256,13 +243,12 @@ public class Broker {
         }
     }
     public void requestMetaDataFromPublisher(Component c, ArtistName artistName, ObjectOutputStream  outToConsumer){
-        System.out.println("edw2");
         Socket s = null;
         ObjectInputStream inFromPublisher = null;
         ObjectOutputStream outToPublisher = null;
         try {
             s = new Socket(c.getIp(), c.getPort());
-
+            System.out.println("as anazhthsoyme ston publisher");
             //Creating the request to the Publisher
             Request.RequestToPublisher request = new Request.RequestToPublisher();
             request.method = Request.Methods.SEARCH;
@@ -325,10 +311,9 @@ public class Broker {
      * @param fileName ip port hashValue
      */
     private ArrayList<Component> saveBrokersData(String fileName) {
-        Path path = Paths.get("brokers.txt").toAbsolutePath();
         ArrayList<Component> brokers = new ArrayList<>();
         try {
-            File myObj = new File(String.valueOf(path));
+            File myObj = new File(fileName);
             Scanner myReader = new Scanner(myObj);
             while (myReader.hasNextLine()) {
                 String data = myReader.nextLine();
@@ -491,4 +476,3 @@ public class Broker {
         return hashValue;
     }
 }
-

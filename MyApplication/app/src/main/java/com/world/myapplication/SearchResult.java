@@ -4,6 +4,7 @@ import android.app.ProgressDialog;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -42,13 +43,11 @@ public class SearchResult extends Fragment {
         //search for songs
         AsyncSearchResult runner = new AsyncSearchResult();
         runner.execute(artist);
-        if(resultMetaData.size()>0){
-            setUI(artist);
-        }
+
 
     }
 
-    private void setUI(String artist){
+    private void setUI(String artist, ArrayList<MusicFileMetaData> resultMetaData){
         LinearLayout myLayout = rootView.findViewById(R.id.search_layout);
         //color
         int colorBackground = Color.parseColor("#5F021F");
@@ -175,7 +174,7 @@ public class SearchResult extends Fragment {
                 e.printStackTrace();
             }
 
-            return null;
+            return new ArrayList<MusicFileMetaData>();
         }
 
         // Send a search request to the broker at the end of the outputstream
@@ -195,7 +194,10 @@ public class SearchResult extends Fragment {
         @Override
         protected void onPostExecute(ArrayList<MusicFileMetaData> s) {
             progressDialog.dismiss();
-            resultMetaData = s;
+            if(s.size()>0){
+                setUI(artist,s);
+                Log.e("yeah", "yeah");
+            }
         }
 
         @Override

@@ -65,6 +65,7 @@ public class Publisher {
     public void search(String artist, ObjectOutputStream out) throws IOException {
         ArrayList<MusicFileMetaData> songs = artistToMusicFileMetaData.get(new ArtistName(artist));
         if(songs!=null){
+            System.out.println("not null songs");
             Request.ReplyFromPublisher reply = new Request.ReplyFromPublisher();
             reply.statusCode = Request.StatusCodes.OK;
             reply.metaData = songs;
