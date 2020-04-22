@@ -4,6 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
+    android:gravity="center"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
     <SeekBar
@@ -14,7 +15,13 @@
         android:layout_marginTop="200dp"
         android:layout_marginRight="20dp"
         />
-    
+    <TextView
+        android:id="@+id/artistsong"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="You have no calls for "
+        android:textSize="25sp" />
     <ImageButton
         android:id="@+id/start"
         android:layout_width="wrap_content"

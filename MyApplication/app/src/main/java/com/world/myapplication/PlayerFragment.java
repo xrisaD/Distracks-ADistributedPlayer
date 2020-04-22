@@ -12,6 +12,7 @@ import android.media.MediaPlayer;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.SeekBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
@@ -27,6 +28,7 @@ public class PlayerFragment extends Fragment {
     private View rootView;
     private MediaPlayer musicPlayer;
     private ImageButton playButton;
+    private TextView titleText;
     private SeekBar seek;
     private Runnable runnable;
     private Handler handler;
@@ -58,6 +60,8 @@ public class PlayerFragment extends Fragment {
 
         playButton = (ImageButton) rootView.findViewById(R.id.start);
         seek = (SeekBar)  rootView.findViewById(R.id.seekbar);
+        titleText = (TextView) rootView.findViewById(R.id.artistsong);
+        titleText.setText(artist+ " - "+song);
         handler=new Handler();
         musicPlayer = MediaPlayer.create(getActivity(), R.raw.kk);
         PlayerFragment.AsyncPlaySong runner = new PlayerFragment.AsyncPlaySong();
@@ -125,13 +129,13 @@ public class PlayerFragment extends Fragment {
                     int size = 0;
 
                     //Utilities util=new Utilities();
-                    for (int i = 0; i < numChunks; i++) {
+                    for (int i = 0; i <= numChunks; i++) {
                         //HandleCHunks
                         MusicFile chunk = (MusicFile) in.readObject();
                         size += chunk.getMusicFileExtract().length;
                         //BigInteger brokermd5=util.getMd5(chunk.getMusicFileExtract());
                         //System.out.println(chunk.biggie.compareTo(brokermd5)+"   COMPARE UP TO CHUNK CONSUMER"+i);
-                        Log.e("check", String.valueOf(size));
+                        Log.e("check", i +" " + String.valueOf(size));
                         //Add chunk to the icomplete list
 
                         //mp.addChunk(chunk);
