@@ -129,13 +129,14 @@ public class PlayerFragment extends Fragment {
                     int size = 0;
 
                     //Utilities util=new Utilities();
-                    for (int i = 0; i <= numChunks; i++) {
+                    for (int i = 0; i < numChunks; i++) {
                         //HandleCHunks
                         MusicFile chunk = (MusicFile) in.readObject();
+                        Log.e("checker", String.valueOf(i));
                         size += chunk.getMusicFileExtract().length;
                         //BigInteger brokermd5=util.getMd5(chunk.getMusicFileExtract());
                         //System.out.println(chunk.biggie.compareTo(brokermd5)+"   COMPARE UP TO CHUNK CONSUMER"+i);
-                        Log.e("check", i +" " + String.valueOf(size));
+                        Log.e("check", i +"/"+numChunks+": " + String.valueOf(size));
                         //Add chunk to the icomplete list
 
                         //mp.addChunk(chunk);
@@ -255,20 +256,9 @@ public class PlayerFragment extends Fragment {
         }
         private void stopPlaying(final ImageButton playButton) {
             if (musicPlayer != null) {
-                musicPlayer.release();
-                musicPlayer = null;
-                musicPlayer = MediaPlayer.create(getActivity(), R.raw.kk);
-                musicPlayer.setLooping(false);
-                musicPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-                    @Override
-                    public void onCompletion(MediaPlayer mp) {
-                        playButton.setImageResource(R.drawable.play);
-                        flag=!flag;
-                        Toast.makeText(getActivity(), "The Song is Over", Toast.LENGTH_SHORT).show();
-                        stopPlaying(playButton);
-
-                    }
-                });
+                musicPlayer.seekTo(0);
+                musicPlayer.start();
+                musicPlayer.pause();
             }
         }
 
