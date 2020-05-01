@@ -210,7 +210,7 @@ public class SearchResult extends Fragment {
 
         @Override
         protected String doInBackground(MusicFileMetaData... artistAndSong) {
-            Log.e("AsyncDownload" , "Downloading artistandSong " + artistAndSong);
+            Log.e("AsyncDownload" , "Downloading artistandSong " + artistAndSong[0]);
             MusicFileMetaData artistMusicFile = artistAndSong[0];
             Consumer c = ((Consumer) getActivity().getApplication());
             ArtistName artist = new ArtistName(artistMusicFile.getArtistName());

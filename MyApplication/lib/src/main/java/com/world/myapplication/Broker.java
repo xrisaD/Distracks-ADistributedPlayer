@@ -174,7 +174,7 @@ public class Broker {
             //Writing every chunk to the consumer
             int i = 0;
             for(MusicFile chunk : chunks){
-                System.out.println("Sending song chunk "+i++);
+                System.out.println("Sending song chunk "+i++ + "with hashval " + Arrays.hashCode(chunk.getMusicFileExtract()));
                 outToConsumer.writeObject(chunk);
             }
         }
@@ -200,6 +200,7 @@ public class Broker {
 
             //send request to Publisher
             outToPublisher = new ObjectOutputStream(s.getOutputStream());
+            System.out.println("CREATING OUTPUT STREAM " + s.getInetAddress().toString());
             outToPublisher.writeObject(request);
 
             inFromPublisher = new ObjectInputStream(s.getInputStream());
@@ -225,7 +226,7 @@ public class Broker {
                     //Adding chunk to the cache
                     musicFileCache.get(musicFileReference).add(chunk);
                     BigInteger brokermd5=ut.getMd5(chunk.getMusicFileExtract());
-                    System.out.println(chunk.biggie.compareTo(brokermd5)+"   COMPARE UP TO CHUNK(BROKER) "+i);
+                    System.out.println("Sending song chunk "+i + "with hashval " + Arrays.hashCode(chunk.getMusicFileExtract()));
                     outToConsumer.writeObject(chunk);
                 }
 
@@ -260,6 +261,7 @@ public class Broker {
 
             //send request to Publisher
             outToPublisher = new ObjectOutputStream(s.getOutputStream());
+            System.out.println("CREATING OUTPUT STREAM " + s.getInetAddress().toString());
             outToPublisher.writeObject(request);
 
             inFromPublisher = new ObjectInputStream(s.getInputStream());
@@ -374,6 +376,7 @@ public class Broker {
             ObjectOutputStream out = null;
             try{
                 out = new ObjectOutputStream(socket.getOutputStream());
+                System.out.println("CREATING OUTPUT STREAM " + socket.getInetAddress().toString());
                 in = new ObjectInputStream(socket.getInputStream());
 
                 Request.RequestToBroker request = (Request.RequestToBroker) in.readObject();

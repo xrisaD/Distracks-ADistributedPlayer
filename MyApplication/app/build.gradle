@@ -4,7 +4,7 @@ android {
     buildToolsVersion "29.0.3"
     defaultConfig {
         applicationId "com.world.myapplication"
-        minSdkVersion 23
+        minSdkVersion 26
         targetSdkVersion 29
         versionCode 1
         versionName "1.0"

@@ -13,6 +13,7 @@ import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
@@ -97,20 +98,20 @@ public class Consumer extends Application {
     //Download song and save to filename
     public void download(int numChunks, ObjectInputStream in, String filename,File path) throws IOException, ClassNotFoundException {
         ArrayList<MusicFile> chunks = new ArrayList<>();
+        Log.e("E","STARTED DOWNLOAD METHOD");
         int size = 0;
         //Start reading chunks
         for (int i = 0; i < numChunks; i++) {
             //HandleCHunks
             Object input = in.readObject();
 
-            //System.out.println(input.getClass().getName());
-            // System.out.println(MusicFile.class.getClass().getName());
-
+            System.out.println(input.getClass().getCanonicalName());
+            System.out.println(MusicFile.class.getCanonicalName());
             MusicFile chunk = (MusicFile) input;
-            System.out.println(chunk.getMetaData());
-            System.out.println(chunk.biggie);
-            System.out.println();
+            //System.out.println(chunk.getMetaData());
+            //System.out.println(Arrays.hashCode(chunk.getMusicFileExtract()));
             System.out.println("[CONSUMER] got chunk Number " + i);
+            System.out.println();
             size += chunk.getMusicFileExtract().length;
             //Add chunk to the icomplete list
             chunks.add(chunk);
