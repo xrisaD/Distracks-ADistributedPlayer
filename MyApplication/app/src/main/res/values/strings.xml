@@ -2,4 +2,6 @@
     <string name="app_name">DISTRACKS</string>
     <string name="drawer_open">Open</string>
     <string name="drawer_close">Close</string>
+    <string name="play">play</string>
+    <string name="pause">pause</string>
 </resources>

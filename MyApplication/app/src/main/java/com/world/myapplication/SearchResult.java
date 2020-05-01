@@ -107,6 +107,8 @@ public class SearchResult extends Fragment {
 
     private class AsyncSearchResult extends AsyncTask<String, String, ArrayList<MusicFileMetaData>> {
         ProgressDialog progressDialog;
+        String BrokerIp;
+        int BrokerPort;
 
         @Override
         protected ArrayList<MusicFileMetaData> doInBackground(String... params) {
@@ -146,6 +148,8 @@ public class SearchResult extends Fragment {
 
                     //Save the information that this broker is responsible for the requested artist
                     c.register(new Component(s.getInetAddress().getHostAddress(),s.getPort()) , artist);
+                    BrokerIp=s.getInetAddress().getHostAddress();
+                    BrokerPort=s.getPort();
                     //get MetaData of songs
                     ArrayList<MusicFileMetaData> metaData = reply.metaData;
                     int i = 0;
