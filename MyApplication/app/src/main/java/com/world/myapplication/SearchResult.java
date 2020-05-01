@@ -120,7 +120,7 @@ public class SearchResult extends Fragment {
             //set Broker's ip and port
             String ip = b.getIp();
             int port = b.getPort();
-
+            Log.e("SearchResult" , "Connecting to broker ip = " + ip + " port = " + port);
             try {
                 //While we find a broker who is not responsible for the artistname
                 Request.ReplyFromBroker reply=null;
@@ -210,6 +210,7 @@ public class SearchResult extends Fragment {
 
         @Override
         protected String doInBackground(MusicFileMetaData... artistAndSong) {
+            Log.e("AsyncDownload" , "Downloading artistandSong " + artistAndSong);
             MusicFileMetaData artistMusicFile = artistAndSong[0];
             Consumer c = ((Consumer) getActivity().getApplication());
             ArtistName artist = new ArtistName(artistMusicFile.getArtistName());

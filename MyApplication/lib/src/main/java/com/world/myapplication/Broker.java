@@ -78,6 +78,7 @@ public class Broker {
         reply.statusCode = Request.StatusCodes.OK;
         reply.metaData = metaData;
         out.writeObject(reply);
+        System.out.printf("BROKER(%s , %d) Sent metadata %s \n" , getIp() , getPort() , metaData);
     }
     public void replyWithOKartists(ObjectOutputStream out, ArrayList<String> artists) throws IOException{
         Request.ReplyFromBroker reply = new Request.ReplyFromBroker();

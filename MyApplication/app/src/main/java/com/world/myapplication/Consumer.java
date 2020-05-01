@@ -25,7 +25,7 @@ public class Consumer extends Application {
     public void onCreate() {
         super.onCreate();
 
-        knownBrokers.add(new Component("192.168.1.2", 5000));
+        knownBrokers.add(new Component("192.168.1.8", 5000));
         //this.readBroker(getFilesDir().getAbsolutePath()+"brokers.txt");
     }
     // Send a search request to the broker at the end of the outputstream
@@ -101,7 +101,15 @@ public class Consumer extends Application {
         //Start reading chunks
         for (int i = 0; i < numChunks; i++) {
             //HandleCHunks
-            MusicFile chunk = (MusicFile) in.readObject();
+            Object input = in.readObject();
+
+            //System.out.println(input.getClass().getName());
+            // System.out.println(MusicFile.class.getClass().getName());
+
+            MusicFile chunk = (MusicFile) input;
+            System.out.println(chunk.getMetaData());
+            System.out.println(chunk.biggie);
+            System.out.println();
             System.out.println("[CONSUMER] got chunk Number " + i);
             size += chunk.getMusicFileExtract().length;
             //Add chunk to the icomplete list
