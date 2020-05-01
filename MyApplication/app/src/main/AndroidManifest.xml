@@ -10,7 +10,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
-        android:name=".Consumer"
+        android:name=".Distracks"
         tools:ignore="GoogleAppIndexingWarning">
         <activity android:name=".MainActivity" android:theme="@style/AppTheme">
             <intent-filter>
