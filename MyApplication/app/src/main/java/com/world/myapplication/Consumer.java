@@ -156,6 +156,7 @@ public class Consumer {
         }
     }*/
     //Download song and save to filename
+
     private void download(int numChunks, ObjectInputStream in, String filename) throws IOException, ClassNotFoundException {
         int size = 0;
         //Start reading chunks
@@ -163,6 +164,7 @@ public class Consumer {
             //HandleCHunks
             MusicFile chunk = (MusicFile) in.readObject();
             System.out.println("[CONSUMER] got chunk Number " + i);
+            System.out.println();
             size += chunk.getMusicFileExtract().length;
             //Add chunk to the icomplete list
             chunks.add(chunk);

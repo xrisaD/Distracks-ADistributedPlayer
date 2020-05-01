@@ -50,6 +50,7 @@ class MP3Cutter{
                     buffer= new byte[sizeOfFiles];
                 }
                 bytesAmount = bis.read(buffer);
+                System.out.println("bytesAmount :" + bytesAmount + "bufferSize : " + buffer.length);
                 chunklist.add(buffer);
             }
         }
