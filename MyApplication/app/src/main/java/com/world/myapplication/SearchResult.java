@@ -13,15 +13,13 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.Switch;
 
-import androidx.annotation.RequiresApi;
+
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -30,11 +28,17 @@ import java.util.ArrayList;
 
 //result: all artist's song
 public class SearchResult extends Fragment {
+
     private static final String CHANNEL_ID = "BasicChannel";
+
     private View rootView;
     private String artist;
     Switch download;
-    private ArrayList<MusicFileMetaData> resultMetaData = new ArrayList<MusicFileMetaData>();
+    SearchResult.AsyncDownload runner;
+
+    Socket s = null;
+    ObjectInputStream in = null;
+    ObjectOutputStream out = null;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -51,8 +55,54 @@ public class SearchResult extends Fragment {
         //get argmunets from search
         artist = getArguments().getString ("artist", "");
         //search for songs
-        AsyncSearchResult runner = new AsyncSearchResult();
-        runner.execute(artist);
+        AsyncSearchResult runnerSearch = new AsyncSearchResult();
+        runnerSearch.execute(artist);
+    }
+
+    private void setSongs(ArrayList<MusicFileMetaData> resultMetaData) {
+        if(resultMetaData.size()>0){
+            Log.e("size of meta data songs", String.valueOf(resultMetaData.size()));
+            ArrayList<Button> mySongs = SongsUI.setUI(artist,resultMetaData,getContext(), rootView);
+            //get switch
+            download = SongsUI.download;
+
+            for(Button b: mySongs){
+                b.setOnClickListener(
+                        new View.OnClickListener()
+                        {
+                            public void onClick(View view)
+                            {
+                                Button thisBtn = (Button) view;
+                                String song = thisBtn.getText().toString();
+                                if(download.isChecked()){
+                                    //download async: download song
+                                    runner = new SearchResult.AsyncDownload();
+                                    MusicFileMetaData artistAndSong = new MusicFileMetaData();
+                                    artistAndSong.setArtistName(artist);
+                                    artistAndSong.setTrackName(song);
+                                    runner.execute(artistAndSong);
+
+                                }else{
+                                    //go to player fragment
+                                    PlayerFragment playerFragment = new PlayerFragment();
+                                    Bundle args = new Bundle();
+                                    args.putString("artist", artist);
+                                    args.putString("song", song);
+                                    playerFragment.setArguments(args);
+                                    FragmentTransaction transaction = getFragmentManager().beginTransaction();
+                                    transaction.replace(R.id.nav_host_fragment, playerFragment);
+                                    transaction.addToBackStack(null);
+                                    transaction.commit();
+                                }
+
+                            }
+                        });
+            }
+        }else{
+            //set null ui
+            Log.e("null","null");
+            SongsUI.setNullUI("No songs for artist: "+ artist,getContext(), rootView);
+        }
     }
 
     private class AsyncSearchResult extends AsyncTask<String, String, ArrayList<MusicFileMetaData>> {
@@ -68,9 +118,7 @@ public class SearchResult extends Fragment {
             //set Broker's ip and port
             String ip = b.getIp();
             int port = b.getPort();
-            Socket s = null;
-            ObjectInputStream in = null;
-            ObjectOutputStream out = null;
+
             try {
                 //While we find a broker who is not responsible for the artistname
                 Request.ReplyFromBroker reply=null;
@@ -80,7 +128,7 @@ public class SearchResult extends Fragment {
                     //Creating the request to Broker for this artist
                     out = new ObjectOutputStream(s.getOutputStream());
                     //search for artist's metadata
-                    requestSearchToBroker(artist, out);
+                    c.requestSearchToBroker(artist, out);
                     //Waiting for the reply
                     in = new ObjectInputStream(s.getInputStream());
                     reply = (Request.ReplyFromBroker) in.readObject();
@@ -119,20 +167,14 @@ public class SearchResult extends Fragment {
             }
             finally {
                 try {
+                    if(in!=null ) in.close();
+                    if(out!=null) out.close();
                     if (s != null) s.close();
                 } catch (Exception e) {
                     System.out.printf("[CONSUMER] Error while closing socket on search %s ", e.getMessage());
                 }
             }
             return new ArrayList<MusicFileMetaData>();
-        }
-
-        // Send a search request to the broker at the end of the outputstream
-        private void requestSearchToBroker(ArtistName artist, ObjectOutputStream out) throws IOException {
-            Request.RequestToBroker request = new Request.RequestToBroker();
-            request.method = Request.Methods.SEARCH;
-            request.pullArtistName = artist.getArtistName();
-            out.writeObject(request);
         }
 
 
@@ -145,49 +187,7 @@ public class SearchResult extends Fragment {
         @Override
         protected void onPostExecute(ArrayList<MusicFileMetaData> s) {
             progressDialog.dismiss();
-            if(s.size()>0){
-                ArrayList<Button> mySongs = SongsUI.setUI(artist,s,getContext(), rootView);
-                //get switch
-                download = SongsUI.download;
-
-                for(Button b: mySongs){
-                    b.setOnClickListener(
-                            new View.OnClickListener()
-                            {
-                                public void onClick(View view)
-                                {
-                                    Button thisBtn = (Button) view;
-                                    String song = thisBtn.getText().toString();
-                                    if(download.isChecked()){
-                                        //download async: download song
-                                        SearchResult.AsyncDownload runner = new SearchResult.AsyncDownload();
-                                        MusicFileMetaData artistAndSong = new MusicFileMetaData();
-                                        artistAndSong.setArtistName(artist);
-                                        artistAndSong.setTrackName(song);
-                                        runner.execute(artistAndSong);
-
-                                    }else{
-                                        //go to player fragment
-                                        PlayerFragment playerFragment = new PlayerFragment();
-                                        Bundle args = new Bundle();
-                                        args.putString("artist", artist);
-                                        args.putString("song", song);
-                                        playerFragment.setArguments(args);
-                                        FragmentTransaction transaction = getFragmentManager().beginTransaction();
-                                        transaction.replace(R.id.nav_host_fragment, playerFragment);
-                                        transaction.addToBackStack(null);
-                                        transaction.commit();
-                                    }
-
-                                }
-                            });
-                }
-            }else{
-                //set null ui
-                Log.e("null","null");
-                SongsUI.setNullUI("No songs for artist: "+ artist,getContext(), rootView);
-            }
-
+            setSongs(s);
         }
 
         @Override
@@ -196,14 +196,14 @@ public class SearchResult extends Fragment {
         }
     }
 
-    //TODO: 2 Download Song
+
     private class AsyncDownload extends AsyncTask<MusicFileMetaData, Integer, String> {
         int PROGRESS_MAX;
         int PROGRESS_CURRENT;
         int notificationId;
         NotificationManagerCompat notificationManager;
         NotificationCompat.Builder builder;
-        @RequiresApi(api = Build.VERSION_CODES.O)
+
         @Override
         protected String doInBackground(MusicFileMetaData... artistAndSong) {
             MusicFileMetaData artistMusicFile = artistAndSong[0];
@@ -216,9 +216,6 @@ public class SearchResult extends Fragment {
             String ip = b.getIp();
             int port = b.getPort();
 
-            Socket s = null;
-            ObjectInputStream in = null;
-            ObjectOutputStream out = null;
             try {
                 //While we find a broker who is not responsible for the artistname
                 Request.ReplyFromBroker reply=null;
@@ -227,7 +224,7 @@ public class SearchResult extends Fragment {
                     s = new Socket(ip, port);
                     //Creating the request to Broker for this artist
                     out = new ObjectOutputStream(s.getOutputStream());
-                    requestPullToBroker(artist, songName, out);
+                    c.requestPullToBroker(artist, songName, out);
                     //Waiting for the reply
                     in = new ObjectInputStream(s.getInputStream());
                     reply = (Request.ReplyFromBroker) in.readObject();
@@ -243,41 +240,12 @@ public class SearchResult extends Fragment {
                 }
                 //Song exists and the broker is responsible for the artist
                 else if(statusCode == Request.StatusCodes.OK){
-                    int progress = PROGRESS_MAX/(reply.numChunks*2);
+                    //int progress = PROGRESS_MAX/(reply.numChunks*2);
                     //Save the information that this broker is responsible for the requested artist
                     c.register(new Component(s.getInetAddress().getHostAddress(),s.getPort()) , artist);
                     //download mp3 to the device
-                     //download(reply.numChunks, in ,songName);
-                    ArrayList<MusicFile> chunks = new ArrayList<>();
-                    int size = 0;
-                    //Start reading chunks
-                    for (int i = 0; i < reply.numChunks; i++) {
-                        //HandleCHunks
-                        publishProgress(PROGRESS_CURRENT + progress);
-                        MusicFile chunk = (MusicFile) in.readObject();
-                        System.out.println("[CONSUMER] got chunk Number " + i);
-                        size += chunk.getMusicFileExtract().length;
-                        //Add chunk to the icomplete list
-                        chunks.add(chunk);
-
-                    }
-                    String filename = songName +".mp3";
-                    //save chunk
-                    Log.e("aloha200",filename);
-                    ByteArrayOutputStream baos = new ByteArrayOutputStream();//baos stream gia bytes
-                    for(int k = 0 ; k < chunks.size() ; k++){
-                        publishProgress(PROGRESS_CURRENT + progress);
-                        baos.write(chunks.get(k).getMusicFileExtract());
-                    }
-                    byte[] concatenated_byte_array = baos.toByteArray();//metatrepei to stream se array
                     File path = getContext().getFilesDir();
-                    Log.e("pathaki", path + filename);
-                    Log.e("aloha",filename);
-                    try (FileOutputStream fos = new FileOutputStream(path + filename)) {
-                        fos.write(concatenated_byte_array);
-                    }catch (Exception e){
-                        return "";
-                    }
+                    c.download(reply.numChunks, in ,songName,path);
                     return "ok";
                 }
                 //In this case the status code is MALFORMED_REQUEST
@@ -292,6 +260,7 @@ public class SearchResult extends Fragment {
             }
             catch (IOException e){
                 System.out.printf("[CONSUMER] Error on playData %s " , e.getMessage());
+                e.printStackTrace();
             } catch (Exception e) {
                 e.printStackTrace();
             } finally {
@@ -307,18 +276,10 @@ public class SearchResult extends Fragment {
             }
             return "";
         }
-        //Send a pull request to the broker at the end of the stream
-        private void requestPullToBroker(ArtistName artist, String songName, ObjectOutputStream out) throws IOException {
-            Request.RequestToBroker request = new Request.RequestToBroker();
-            request.method = Request.Methods.PULL;
-            request.pullArtistName = artist.getArtistName();
-            request.songName = songName;
-            out.writeObject(request);
-        }
 
         @Override
         protected void onPreExecute() {
-            notificationManager = NotificationManagerCompat.from(getContext());
+            /*notificationManager = NotificationManagerCompat.from(getContext());
             builder = new NotificationCompat.Builder(getContext(), CHANNEL_ID)
                     .setSmallIcon(R.drawable.ic_audiotrack_light)
                     .setContentTitle("Download Song")
@@ -329,14 +290,14 @@ public class SearchResult extends Fragment {
             builder.setProgress(PROGRESS_MAX, PROGRESS_CURRENT, false);
             notificationId = 1;
             // notificationId is a unique int for each notification that you must define
-            notificationManager.notify(1, builder.build());
+            notificationManager.notify(1, builder.build());*/
 
         }
 
         @Override
         protected void onPostExecute(String s) {
             super.onPostExecute(s);
-            if(s.equals("ok")){
+            /*if(s.equals("ok")){
                 builder.setContentText("Download complete")
                         .setProgress(0, 0, false);
                 notificationManager.notify(notificationId, builder.build());
@@ -344,18 +305,17 @@ public class SearchResult extends Fragment {
                 builder.setContentText("Can't download")
                         .setProgress(0, 0, false);
                 notificationManager.notify(notificationId, builder.build());
-            }
+            }*/
         }
-
 
         @Override
         protected void onProgressUpdate(Integer... values) {
             super.onProgressUpdate(values);
-            if(values[0]>0) {
+            /*if(values[0]>0) {
                 PROGRESS_CURRENT = values[0];
                 builder.setProgress(PROGRESS_MAX, PROGRESS_CURRENT, false);
             }
-            notificationManager.notify(notificationId, builder.build());
+            notificationManager.notify(notificationId, builder.build());*/
         }
     }
     private void createNotificationChannel() {

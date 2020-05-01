@@ -1,9 +1,9 @@
 package com.world.myapplication;
 
 
+
 import java.io.Serializable;
 import java.math.BigInteger;
-import java.util.Arrays;
 
 public class MusicFile implements Serializable {
     private byte[] musicFileExtract;
@@ -48,4 +48,3 @@ public class MusicFile implements Serializable {
         this.numChunk = numChunk;
     }
 }
-

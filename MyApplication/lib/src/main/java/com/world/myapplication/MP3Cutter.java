@@ -53,15 +53,6 @@ class MP3Cutter{
                 chunklist.add(buffer);
             }
         }
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();//baos stream gia bytes
-        for(int k=0;k<numOfChunks;k++){
-            baos.write(chunklist.get(k));
-        }
-        byte[] concatenated_byte_array = baos.toByteArray();//metatrepei to stream se array
-        Path path = Paths.get("").toAbsolutePath();
-        try (FileOutputStream fos = new FileOutputStream(path+"splittested.mp3")) {
-            fos.write(concatenated_byte_array);
-        }
         return chunklist;//gyrnaei lista me ta chunks
     }
 

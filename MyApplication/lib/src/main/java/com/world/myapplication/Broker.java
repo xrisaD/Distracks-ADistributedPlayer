@@ -169,8 +169,11 @@ public class Broker {
         try{
             //Replying to the consumer and notifying about the number of chunks
             replyWithOK(outToConsumer, chunks.size());
+            System.out.println("Sending song with size "+chunks.size());
             //Writing every chunk to the consumer
+            int i = 0;
             for(MusicFile chunk : chunks){
+                System.out.println("Sending song chunk "+i++);
                 outToConsumer.writeObject(chunk);
             }
         }
