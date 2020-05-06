@@ -1,8 +1,10 @@
 package com.world.myapplication;
+
 import java.io.Serializable;
 import java.util.Objects;
 
 public class MusicFileMetaData implements Serializable {
+    private static long serialVersionUID  = 6L;
     private String trackName;
     private String artistName;
     private String albumInfo;

@@ -24,7 +24,7 @@ public class Distracks extends Application {
     public void onCreate() {
         super.onCreate();
         consumer = new Consumer();
-        consumer.addBroker(new Component("192.168.1.2", 5000));
+        consumer.addBroker(new Component("192.168.1.13", 5000));
         //this.readBroker(getFilesDir().getAbsolutePath()+"brokers.txt");
     }
 

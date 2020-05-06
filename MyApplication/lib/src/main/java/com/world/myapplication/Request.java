@@ -3,7 +3,8 @@ package com.world.myapplication;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-class Request {
+class Request implements Serializable{
+    private static long serialVersionUID  = 1L;
     class Methods{
         public static final int PULL = 0;
         public static final int NOTIFY = 1;
@@ -20,6 +21,7 @@ class Request {
         public static final int NOT_RESPONSIBLE = 300;
     }
     static class RequestToPublisher implements Serializable{
+        private static long serialVersionUID  = 2L;
         int method; //can be null
 
         //Fields for the pull method
@@ -40,6 +42,7 @@ class Request {
         }
     }
     static class ReplyFromPublisher implements Serializable{
+        private static long serialVersionUID  = 3L;
         int numChunks;
         int statusCode;
 
@@ -62,7 +65,7 @@ class Request {
         }
     }
     static class RequestToBroker implements Serializable {
-
+        private static long serialVersionUID  = 4L;
         int method; //Request.Methods.PULL L or Request.Methods.NOTIFY
         // or Request.Methods.STATUS  or Request.Methods.SEARCH
 
@@ -96,7 +99,7 @@ class Request {
     }
 
     static class ReplyFromBroker implements Serializable {
-
+        private static long serialVersionUID  = 5L;
         int method; //METHOD_PULL or METHOD_NOTIFY or METHOD_STATUS  or (METHOD_SEARCH)
         int statusCode;
         //Fields for the notify method

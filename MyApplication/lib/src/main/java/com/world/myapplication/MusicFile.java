@@ -1,17 +1,17 @@
 package com.world.myapplication;
 
-
-
 import java.io.Serializable;
 import java.math.BigInteger;
 
 public class MusicFile implements Serializable {
+    private static long serialVersionUID  = 7L;
+
     private byte[] musicFileExtract;
     private MusicFileMetaData metaData;
     private int numChunk;
     public BigInteger biggie;
     //constructor
-    public MusicFile( MusicFileMetaData metaData ,byte[] musicFileExtract){
+    public MusicFile(MusicFileMetaData metaData ,byte[] musicFileExtract){
         this.metaData = metaData;
         this.musicFileExtract=musicFileExtract;
         numChunk=0;

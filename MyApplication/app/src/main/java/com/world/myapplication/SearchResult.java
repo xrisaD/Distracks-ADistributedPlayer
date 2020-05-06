@@ -99,24 +99,12 @@ public class SearchResult extends Fragment {
 
         @Override
         protected String doInBackground(MusicFileMetaData... artistAndSong) {
-<<<<<<< HEAD
+
             MusicFileMetaData musicFileMetaData = artistAndSong[0];
             Distracks distracks = ((Distracks) getActivity().getApplication());
             File path = getContext().getFilesDir();
             distracks.getConsumer().setPath(path);
-=======
-            Log.e("AsyncDownload" , "Downloading artistandSong " + artistAndSong[0]);
-            MusicFileMetaData artistMusicFile = artistAndSong[0];
-            Consumer c = ((Consumer) getActivity().getApplication());
-            ArtistName artist = new ArtistName(artistMusicFile.getArtistName());
-            Component b = c.getBroker(artist);
-            String songName =artistMusicFile.getTrackName();
 
-            //set Broker's ip and port
-            String ip = b.getIp();
-            int port = b.getPort();
-
->>>>>>> 410c655f761e1865c9eb969ac60b9c3d9b517fbd
             try {
                 distracks.getConsumer().playData(new ArtistName(musicFileMetaData.getArtistName()), musicFileMetaData.getTrackName() , true);
             } catch (Exception e) {
@@ -168,7 +156,7 @@ public class SearchResult extends Fragment {
     }
     private void setSongs(ArrayList<MusicFileMetaData> resultMetaData) {
 
-        if(resultMetaData.size()>0){
+        if(resultMetaData!=null && resultMetaData.size()>0){
             Log.e("size of meta data songs", String.valueOf(resultMetaData.size()));
             ArrayList<Button> mySongs = SongsUI.setUI(artist, resultMetaData, getContext(), rootView);
             //get switch

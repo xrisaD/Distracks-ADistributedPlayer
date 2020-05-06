@@ -1,13 +1,9 @@
 package com.world.myapplication;
 
-import android.content.Context;
 
 import java.io.*;
 import java.net.Socket;
-import java.nio.file.Paths;
 import java.util.*;
-import java.math.BigInteger;
-import java.security.NoSuchAlgorithmException;
 
 public class Consumer {
 
@@ -29,7 +25,7 @@ public class Consumer {
     public Consumer(){}
     // Register the broker with ip c.getIp , port c.getPort as responsible for thie artistname
     public void register(Component c, ArtistName artist) {
-        artistToBroker.put(artist,c);
+        artistToBroker.put(artist, c);
         this.knownBrokers.add(c);
     }
 
@@ -162,12 +158,18 @@ public class Consumer {
         //Start reading chunks
         for (int i = 0; i < numChunks; i++) {
             //HandleCHunks
-            MusicFile chunk = (MusicFile) in.readObject();
-            System.out.println("[CONSUMER] got chunk Number " + i);
-            System.out.println();
-            size += chunk.getMusicFileExtract().length;
-            //Add chunk to the icomplete list
-            chunks.add(chunk);
+            Object object = in.readObject();
+            if(object instanceof MusicFile) {
+                MusicFile chunk = (MusicFile) object;
+
+                System.out.println("[CONSUMER] got chunk Number " + i);
+                System.out.println();
+                size += chunk.getMusicFileExtract().length;
+                //Add chunk to the icomplete list
+                chunks.add(chunk);
+            }else{
+                System.out.println("No no no");
+            }
         }
         save(chunks, filename + ".mp3");
     }
@@ -217,6 +219,7 @@ public class Consumer {
             Request.ReplyFromBroker reply=null;
             int statusCode = Request.StatusCodes.NOT_RESPONSIBLE;
             while(statusCode == Request.StatusCodes.NOT_RESPONSIBLE){
+                System.out.println("NOT RESPONSIBLE");
                 s = new Socket(ip, port);
                 //Creating the request to Broker for this artist
                 out = new ObjectOutputStream(s.getOutputStream());
@@ -275,17 +278,17 @@ public class Consumer {
     public void addBroker(Component c){
         knownBrokers.add(c);
     }
-    public static void main(String[] args){
-        try {
-            Consumer c = new Consumer();
-            c.readBroker(args[0]); //this shouldn't happen.. and how is the consumer going to know which broker to
-            //send requests to?
-            c.playData(new ArtistName("Komiku"),"A good bass for gambling" , false);
-
-        }
-        catch(Exception e){
-            System.err.println("Usage : java Consumer <brokerFile>");
-            e.printStackTrace();
-        }
-    }
+//    public static void main(String[] args){
+//        try {
+//            Consumer c = new Consumer();
+//            c.readBroker(args[0]); //this shouldn't happen.. and how is the consumer going to know which broker to
+//            //send requests to?
+//            c.playData(new ArtistName("Komiku"),"A good bass for gambling" , false);
+//
+//        }
+//        catch(Exception e){
+//            System.err.println("Usage : java Consumer <brokerFile>");
+//            e.printStackTrace();
+//        }
+//    }
 }
