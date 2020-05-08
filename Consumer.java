@@ -13,7 +13,6 @@ public class Consumer {
 
 
 	private ArrayList<MusicFile> chunks = new ArrayList<>();
-	private MusicPlayer mp;
 
 	public Consumer(){}
 	// Register the broker with ip c.getIp , port c.getPort as responsible for thie artistname
@@ -59,6 +58,7 @@ public class Consumer {
 
 	// Method that downloads the song if download == true or streams the song if download == false
 	public void playData(ArtistName artist, String  songName , boolean download) throws Exception {
+		chunks = new ArrayList<>();
 		Component b = getBroker(artist);
 		//set Broker's ip and port
 		String ip = b.getIp();
@@ -97,11 +97,7 @@ public class Consumer {
 				if(download) {
 					download(reply.numChunks, in ,songName);
 				}
-				//Play the music now
-				else{
-					stream(reply.numChunks, in);
 
-				}
 			}
 			//In this case the status code is MALFORMED_REQUEST
 			else{
@@ -126,22 +122,6 @@ public class Consumer {
 				System.out.printf("[CONSUMER] Error while closing socket on playData %s " , e.getMessage());
 			}
 
-		}
-	}
-	// Stream the song that is coming from the input stream
-	private void stream(int numChunks, ObjectInputStream in) throws IOException, ClassNotFoundException, NoSuchAlgorithmException {
-		int size = 0;
-		mp = new MusicPlayer(numChunks);
-		mp.play();
-		Utilities util=new Utilities();
-		for (int i = 0; i < numChunks; i++) {
-			//HandleCHunks
-			MusicFile chunk = (MusicFile) in.readObject();
-			size += chunk.getMusicFileExtract().length;
-			BigInteger brokermd5=util.getMd5(chunk.getMusicFileExtract());
-			System.out.println(chunk.biggie.compareTo(brokermd5)+"   COMPARE UP TO CHUNK CONSUMER"+i);
-			//Add chunk to the icomplete list
-			mp.addChunk(chunk);
 		}
 	}
 	//Download song and save to filename
