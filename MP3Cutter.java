@@ -1,5 +1,6 @@
 
 import java.io.*;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.*;
 import java.nio.file.*;
 import com.mpatric.mp3agic.*;
@@ -11,20 +12,46 @@ class MP3Cutter{
 		//A first letter, Z last letter, closed set
 		ArrayList <MusicFileMetaData> AllMetadata = new ArrayList<MusicFileMetaData>();
 		Path path = Paths.get("dataset").toAbsolutePath();
-		try (Stream<Path> walk = Files.walk(path)) {
-			List<String> temp = walk.map(x -> x.toString()).filter(f -> (f.endsWith(".mp3"))).collect(Collectors.toList());
-			for(String s: temp){
-				if(!s.contains("._")){
-					//create music file with meta data
-					MusicFileMetaData MFD = ID3(new File(s));
-					if((MFD.getArtistName().toLowerCase().compareTo(first.toLowerCase())>=0) && (MFD.getArtistName().toLowerCase().compareTo(last.toLowerCase())<=0)){
-						//if artistName is in this range, then this Publisher is responsible for this artist
-						AllMetadata.add(MFD);
+		List<String> temp = new ArrayList<>();
+		try {
+			Files.walkFileTree(Paths.get("dataset"), new FileVisitor<Path>() {
+				@Override
+				public FileVisitResult preVisitDirectory(Path path, BasicFileAttributes basicFileAttributes) throws IOException {
+					return FileVisitResult.CONTINUE;
+				}
+
+				@Override
+				public FileVisitResult visitFile(Path path, BasicFileAttributes basicFileAttributes) throws IOException {
+					if (path.toString().endsWith(".mp3")) {
+						temp.add(path.toString());
 					}
+					return FileVisitResult.CONTINUE;
+				}
+
+				@Override
+				public FileVisitResult visitFileFailed(Path path, IOException e) throws IOException {
+					return FileVisitResult.CONTINUE;
+				}
+
+				@Override
+				public FileVisitResult postVisitDirectory(Path path, IOException e) throws IOException {
+					return FileVisitResult.CONTINUE;
+				}
+			});
+		}
+		catch (IOException e){
+			e.printStackTrace();
+		}
+		for(String s: temp){
+			if(!s.contains("._")){
+				//create music file with meta data
+				MusicFileMetaData MFD = ID3(new File(s));
+				if((MFD.getArtistName().toLowerCase().compareTo(first.toLowerCase())>=0) && (MFD.getArtistName().toLowerCase().compareTo(last.toLowerCase())<=0)){
+					//if artistName is in this range, then this Publisher is responsible for this artist
+					AllMetadata.add(MFD);
+					System.out.println(MFD.getArtistName()+" " +MFD.getTrackName());
 				}
 			}
-		} catch (IOException e) {
-			e.printStackTrace();
 		}
 		return AllMetadata;
 	}
