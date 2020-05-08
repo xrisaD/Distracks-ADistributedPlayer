@@ -4,6 +4,8 @@ import java.math.BigInteger;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.security.NoSuchAlgorithmException;
 
@@ -444,9 +446,13 @@ public class Broker {
             }
             finally {
                 try {
-                    if (in != null) in.close();
-                    if (out != null) out.close();
-                    if(socket != null) socket.close();
+                    DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
+                    LocalDateTime now = LocalDateTime.now();
+                    System.out.println(dtf.format(now));
+
+                    //if (in != null) in.close();
+                    //if (out != null) out.close();
+                    //if(socket != null) socket.close();
                 }
                 catch(Exception e){
                     throw new RuntimeException(e);

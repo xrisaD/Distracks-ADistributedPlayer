@@ -3,6 +3,8 @@ package com.world.myapplication;
 
 import java.io.*;
 import java.net.Socket;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 public class Consumer {
@@ -119,9 +121,11 @@ public class Consumer {
         catch(ClassNotFoundException e){
             //Protocol Error (Unexpected Object Caught) its a protocol error
             System.out.printf("[CONSUMER] Unexpected object on playData %s " , e.getMessage());
+            e.printStackTrace();
         }
         catch (IOException e){
             System.out.printf("[CONSUMER] Error on playData %s " , e.getMessage());
+            e.printStackTrace();
         }
         finally {
             try {
@@ -131,6 +135,7 @@ public class Consumer {
             }
             catch(Exception e){
                 System.out.printf("[CONSUMER] Error while closing socket on playData %s " , e.getMessage());
+                e.printStackTrace();
             }
 
         }
@@ -167,6 +172,10 @@ public class Consumer {
                 size += chunk.getMusicFileExtract().length;
                 //Add chunk to the icomplete list
                 chunks.add(chunk);
+
+                DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
+                LocalDateTime now = LocalDateTime.now();
+                System.out.println(dtf.format(now));
             }else{
                 System.out.println("No no no");
             }
@@ -175,6 +184,7 @@ public class Consumer {
     }
     // Save a list of music files as entire mp3 with the given filename
     private void save(ArrayList<MusicFile> chunks , String filename) throws IOException {
+        System.out.println("pathakiiiii   "+getPath());
         ByteArrayOutputStream baos = new ByteArrayOutputStream();//baos stream gia bytes
         for(int k = 0 ; k < chunks.size() ; k++){
             baos.write(chunks.get(k).getMusicFileExtract());
@@ -259,10 +269,13 @@ public class Consumer {
         catch(ClassNotFoundException e){
             //Protocol Error (Unexpected Object Caught) its a protocol error
             System.out.printf("[CONSUMER] Unexpected object on playData %s " , e.getMessage());
+            e.printStackTrace();
         }
         catch (IOException e){
             System.out.printf("[CONSUMER] Error on playData %s " , e.getMessage());
+            e.printStackTrace();
         } catch (Exception e) {
+            e.printStackTrace();
             e.printStackTrace();
         }
         try {
@@ -270,6 +283,7 @@ public class Consumer {
         }
         catch(Exception e){
             System.out.printf("[CONSUMER] Error while closing socket on playData %s " , e.getMessage());
+            e.printStackTrace();
         }
 
         return null;
