@@ -7,6 +7,8 @@ import java.net.Socket;
 import java.security.NoSuchAlgorithmException;
 import java.util.*;
 
+import jdk.nashorn.internal.ir.RuntimeNode;
+
 public class Publisher {
     //ArtistName -> MusicFileMetaDatas of this artist
     private Map<ArtistName, ArrayList<MusicFileMetaData>> artistToMusicFileMetaData = Collections.synchronizedMap(new HashMap<>());
@@ -34,7 +36,7 @@ public class Publisher {
     }
 
     // Push a songs data to the broker that requested it
-    public void push(String artist, String song, ObjectOutputStream out) throws IOException, NoSuchAlgorithmException {
+    public void push(String artist, String song, ObjectOutputStream out, ObjectInputStream in) throws IOException, NoSuchAlgorithmException, ClassNotFoundException {
         ArrayList<MusicFileMetaData> songs = artistToMusicFileMetaData.get(new ArtistName(artist));
 
         if(songs!=null ){
@@ -45,14 +47,21 @@ public class Publisher {
                     List<byte[]> currentsong = MP3Cutter.splitFile(new File(path));
                     //returns arraylist with byte[]. So size of arraylist is number of chunks
                     int numofchunks = currentsong.size();//arithmos chunks
+                    //reply with ok
                     Request.ReplyFromPublisher reply = new Request.ReplyFromPublisher();
                     reply.statusCode = Request.StatusCodes.OK;
                     reply.numChunks = numofchunks;
                     out.writeObject(reply);
+                    //send cunk
                     Utilities ut=new Utilities();
                     for(byte[] b: currentsong){
-                        MusicFile finalMF= new MusicFile(s,b,ut.getMd5(b));//metadata + kathe chunk
-                        out.writeObject(finalMF);
+                        Request.RequestToPublisher requestToPublisher = (Request.RequestToPublisher)in.readObject();
+                        if(requestToPublisher.method == Request.Methods.NEXT_CHUNK){
+                            MusicFile finalMF= new MusicFile(s, b, ut.getMd5(b));//metadata + kathe chunk
+                            out.writeObject(finalMF);
+                        }else{
+                            break;
+                        }
                     }
                     return;
                 }
@@ -187,7 +196,7 @@ public class Publisher {
                     if(req.artistName==null || req.songName==null){
                         notifyFailure(Request.StatusCodes.MALFORMED_REQUEST, out);
                     }else {
-                        push(req.artistName, req.songName.toLowerCase(), out);
+                        push(req.artistName, req.songName.toLowerCase(), out, in);
                     }
                 }else if(req.method == Request.Methods.SEARCH){
                     if(req.artistName==null){

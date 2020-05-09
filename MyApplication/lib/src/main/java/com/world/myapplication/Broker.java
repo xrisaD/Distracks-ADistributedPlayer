@@ -4,8 +4,6 @@ import java.math.BigInteger;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.UnknownHostException;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.security.NoSuchAlgorithmException;
 
@@ -105,9 +103,11 @@ public class Broker {
     }
 
     /**
-     * Called after a pull request from a Consuemr
+     * Called after a pull request from a Consumer
+     * Return true if everything ok
+     * @return
      */
-    public void  pull(ArtistName artist, String song, ObjectOutputStream  out) throws IOException {
+    public boolean pull(ArtistName artist, String song, ObjectOutputStream out, ObjectInputStream in) throws IOException, ClassNotFoundException {
         //find Publisher for this artist
         Component publisherWithThisArtist = artistToPublisher.get(artist);
         //open connection with Publisher and request the specific song
@@ -118,18 +118,19 @@ public class Broker {
             if(musicFileChunks == null) {
                 System.out.printf("[BROKER %s % d] Song %s not in cache%n"
                         , getIp() , getPort() ,song );
-                requestSongFromPublisher(publisherWithThisArtist, artist, song, out);
+                 return requestSongFromPublisher(publisherWithThisArtist, artist, song, out, in);
             }
             //Song is in cache
             else{
                 System.out.printf("[BROKER %s % d] Song %s in cache%n"
                         , getIp() , getPort() ,song );
-                sendSongToConsumer(musicFileChunks, out);
+                return sendSongToConsumer(musicFileChunks, out);
             }
         }else{
             //404 : something went wrong
             replyWithNotFound(out);
         }
+        return false;
     }
 
     /**
@@ -168,7 +169,7 @@ public class Broker {
         reply.responsibleBrokerPort = broker.getPort();
         out.writeObject(reply);
     }
-    public void sendSongToConsumer(IncompleteList<MusicFile> chunks , ObjectOutputStream  outToConsumer){
+    public boolean sendSongToConsumer(IncompleteList<MusicFile> chunks , ObjectOutputStream  outToConsumer){
         try{
             //Replying to the consumer and notifying about the number of chunks
             replyWithOK(outToConsumer, chunks.size());
@@ -182,15 +183,22 @@ public class Broker {
         }
         catch (IOException e){
             System.err.println("Failed while writing chunks to consumer ");
+            return false;
         }
 
+        return true;
     }
     // Request song's data from the appropriate publisher. Each chunk we get is transmitted to the consumer via the
     // outToConsumer outputStream
-    public void requestSongFromPublisher(Component c, ArtistName artistName, String song, ObjectOutputStream  outToConsumer) {
+    // retur true if everything was ok
+    public boolean requestSongFromPublisher(Component c, ArtistName artistName, String song, ObjectOutputStream outToConsumer, ObjectInputStream in) throws IOException, ClassNotFoundException {
         Socket s = null;
         ObjectInputStream inFromPublisher = null;
         ObjectOutputStream outToPublisher = null;
+        int i = 0;
+        int numOfChunks = 0;
+        MusicFileMetaData musicFileReference = null;
+        Utilities ut = null;
         try {
             s = new Socket(c.getIp(), c.getPort());
 
@@ -207,31 +215,42 @@ public class Broker {
 
             inFromPublisher = new ObjectInputStream(s.getInputStream());
             Request.ReplyFromPublisher reply = (Request.ReplyFromPublisher) inFromPublisher.readObject();
-
             //if everything is ok
             if(reply.statusCode == Request.StatusCodes.OK){
                 //Adding the musicFile to the cache
                 //Music file meta data object only for use with the cache
-                MusicFileMetaData musicFileReference =
+                musicFileReference =
                         new MusicFileMetaData(song , artistName.getArtistName(), null , null , null);
                 musicFileCache.put(musicFileReference, new IncompleteList<>(reply.numChunks));
 
-                int numOfChunks = reply.numChunks;
+                numOfChunks = reply.numChunks;
                 //whatever you receive from Publisher send it to Consumer
                 //Reply to the consumer
                 replyWithOK(outToConsumer,  numOfChunks);
                 //Transmitting the chunks
-                Utilities ut=new Utilities();
-                for(int i=0; i<numOfChunks; i++){
+                ut = new Utilities();
 
-                    MusicFile chunk = (MusicFile)inFromPublisher.readObject();
-                    //Adding chunk to the cache
-                    musicFileCache.get(musicFileReference).add(chunk);
-                    BigInteger brokermd5=ut.getMd5(chunk.getMusicFileExtract());
-                    System.out.println("Sending song chunk "+i + "with hashval " + Arrays.hashCode(chunk.getMusicFileExtract()));
-                    outToConsumer.writeObject(chunk);
+                while(i<numOfChunks){
+                    //consumer ask for the next chunk
+                    Request.RequestToBroker requestToBroker = (Request.RequestToBroker) in.readObject();
+                    if(requestToBroker.method == Request.Methods.NEXT_CHUNK){
+                        //ask chunk from Publisher
+                        Request.RequestToPublisher requestToPublisher = new Request.RequestToPublisher();
+                        requestToPublisher.method = Request.Methods.NEXT_CHUNK;
+                        outToPublisher.writeObject(requestToPublisher);
+                        outToPublisher.flush();
+
+                        MusicFile chunk = (MusicFile) inFromPublisher.readObject();
+                        //Adding chunk to the cache
+                        musicFileCache.get(musicFileReference).add(chunk);
+                        BigInteger brokermd5 = ut.getMd5(chunk.getMusicFileExtract());
+                        System.out.println("Sending song chunk " + i + "with hashval " + Arrays.hashCode(chunk.getMusicFileExtract()));
+
+                        outToConsumer.writeObject(chunk);
+                        outToConsumer.flush();
+                        i++;
+                    }
                 }
-
             }
             //404 : something went wrong
             else {
@@ -239,6 +258,24 @@ public class Broker {
             }
         } catch (IOException | ClassNotFoundException | NoSuchAlgorithmException e ) {
             System.out.println("[BROKER] Error while requesting song from publisher " + e.getMessage());
+
+            //consumer stop unexpected
+            //we will continue cache all the elements from Publisher form future usage
+            while(i<numOfChunks){
+                //ask chunk from Publisher
+                Request.RequestToPublisher requestToPublisher =  new Request.RequestToPublisher();
+                requestToPublisher.method = Request.Methods.NEXT_CHUNK;
+                outToPublisher.writeObject(requestToPublisher);
+                outToPublisher.flush();
+
+                MusicFile chunk = (MusicFile)inFromPublisher.readObject();
+                //Adding chunk to the cache
+                musicFileCache.get(musicFileReference).add(chunk);
+                BigInteger brokermd5=ut.getMd5(chunk.getMusicFileExtract());
+                System.out.println("Sending song chunk "+i + "with hashval " + Arrays.hashCode(chunk.getMusicFileExtract()));
+                i++;
+            }
+            return false;
         } finally{
             try {
                 if(inFromPublisher!=null) inFromPublisher.close();
@@ -248,6 +285,7 @@ public class Broker {
                 ioException.printStackTrace();
             }
         }
+        return true;
     }
     public void requestMetaDataFromPublisher(Component c, ArtistName artistName, ObjectOutputStream  outToConsumer){
         Socket s = null;
@@ -374,6 +412,8 @@ public class Broker {
 
         @Override
         public void run(){ //Protocol
+            boolean everyThingOk = false;
+
             ObjectInputStream in = null;
             ObjectOutputStream out = null;
             try{
@@ -392,7 +432,7 @@ public class Broker {
                             request.publisherPort <= 0 ||
                             request.artistNames == null) {
                         replyWithMalformedRequest(out);
-
+                        everyThingOk = false;
                     }
                     notifyPublisher(request.publisherIp, request.publisherPort, request.artistNames);
                     //replyWithOK(out); ?
@@ -404,12 +444,15 @@ public class Broker {
 
                     if(request.pullArtistName ==null || song==null){
                         replyWithMalformedRequest(out);
+                        everyThingOk = false;
                     }else {
                         //check if th broker is responsible for this artist
                         if(isResponsible(artist.getArtistName())) {
-                            pull(artist, song, out);
+                            everyThingOk = pull(artist, song, out, in);
                         }else{
                             sendResponsibleBroker(artist, out);
+                            //we want to close socket without ok from consumer
+                            everyThingOk = false;
                         }
                     }
                 }
@@ -417,6 +460,7 @@ public class Broker {
                     ArtistName artist = new ArtistName(request.pullArtistName);
                     if(request.pullArtistName ==null){
                         replyWithMalformedRequest(out);
+                        everyThingOk = false;
                     }else{
                         if(isResponsible(artist.getArtistName())) {
                             search(artist, out);
@@ -424,6 +468,8 @@ public class Broker {
                             sendResponsibleBroker(artist, out);
                         }
                     }
+                    //we want to close socket without ok from consumer
+                    everyThingOk = false;
                 }
                 //this  "else if" is for debug purposes
                 else if(request.method == Request.Methods.STATUS){ 				//information querying about broker's state
@@ -437,6 +483,8 @@ public class Broker {
                 //Unknown method so we return a reply informing of a malformed request
                 else{
                     replyWithMalformedRequest(out);
+                    //we want to close socket without ok from consumer
+                    everyThingOk = false;
                 }
 
 
@@ -446,13 +494,11 @@ public class Broker {
             }
             finally {
                 try {
-                    DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
-                    LocalDateTime now = LocalDateTime.now();
-                    System.out.println(dtf.format(now));
-
-                    //if (in != null) in.close();
-                    //if (out != null) out.close();
-                    //if(socket != null) socket.close();
+                    if(!everyThingOk || ((Request.RequestToBroker) in.readObject()).method == Request.Methods.THE_END ) {
+                        if (in != null) in.close();
+                        if (out != null) out.close();
+                        if (socket != null) socket.close();
+                    }
                 }
                 catch(Exception e){
                     throw new RuntimeException(e);

@@ -172,23 +172,21 @@ public class SearchResult extends Fragment {
                                 String song = thisBtn.getText().toString();
                                 if(download.isChecked()){
                                     //download async: download song
-                                    runner = new SearchResult.AsyncDownload();
+                                    Distracks distracks= (Distracks) getActivity().getApplication();
                                     MusicFileMetaData artistAndSong = new MusicFileMetaData();
                                     artistAndSong.setArtistName(artist);
                                     artistAndSong.setTrackName(song);
+
+                                    runner = new SearchResult.AsyncDownload();
                                     runner.execute(artistAndSong);
 
                                 }else{
-                                    //go to player fragment
-                                    PlayerFragment playerFragment = new PlayerFragment();
-                                    Bundle args = new Bundle();
-                                    args.putString("artist", artist);
-                                    args.putString("song", song);
-                                    playerFragment.setArguments(args);
-                                    FragmentTransaction transaction = getFragmentManager().beginTransaction();
-                                    transaction.replace(R.id.nav_host_fragment, playerFragment);
-                                    transaction.addToBackStack(null);
-                                    transaction.commit();
+                                    //StreamImmediately
+                                    Distracks distracks= (Distracks) getActivity().getApplication();
+                                    MusicFileMetaData artistAndSong = new MusicFileMetaData();
+                                    artistAndSong.setArtistName(artist);
+                                    artistAndSong.setTrackName(song);
+                                    distracks.streamSong(artistAndSong);
                                 }
 
                             }
@@ -220,4 +218,5 @@ public class SearchResult extends Fragment {
             notificationManager.createNotificationChannel(channel);
         }
     }
+
 }

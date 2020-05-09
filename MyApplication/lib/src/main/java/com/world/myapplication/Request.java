@@ -11,6 +11,8 @@ class Request implements Serializable{
         public static final int STATUS = 2;
         public static final int SEARCH = 3;
         public static final int PUSH = 4;
+        public static final int NEXT_CHUNK = 5;
+        public static final int THE_END = 6;
     }
     class StatusCodes {
         public static final int MALFORMED_REQUEST = 400;

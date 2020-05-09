@@ -12,16 +12,15 @@ public class Consumer {
     private ArrayList<Component> knownBrokers = new ArrayList<>();
     private Map<ArtistName, Component> artistToBroker = new HashMap<ArtistName, Component>();
     private File path;
-
+    private ArrayList<MusicFile> chunks = new ArrayList<>();
     public void setPath(File path) {
         this.path = path;
     }
 
-    public File getPath() {
-        return path;
+    public String getPath() {
+        return path + "/";
     }
 
-    private ArrayList<MusicFile> chunks = new ArrayList<>();
     //private MusicPlayer mp;
 
     public Consumer(){}
@@ -65,9 +64,9 @@ public class Consumer {
         }
         return new Component(ip, port);
     }
-
     // Method that downloads the song if download == true or streams the song if download == false
-    public void playData(ArtistName artist, String  songName , boolean download ) throws Exception {
+    public synchronized void playData(ArtistName artist, String  songName , boolean download ) throws Exception {
+        chunks = null;
         Component b = getBroker(artist);
         //set Broker's ip and port
         String ip = b.getIp();
@@ -104,11 +103,11 @@ public class Consumer {
                 //download mp3 to the device
 
                 if(download) {
-                    download(reply.numChunks, in ,songName);
+                    download(reply.numChunks, in , out,songName);
                 }
                 //Play the music now
                 else{
-                    //stream(reply.numChunks, in);
+                    stream(reply.numChunks, in , songName);
 
                 }
             }
@@ -158,36 +157,85 @@ public class Consumer {
     }*/
     //Download song and save to filename
 
-    private void download(int numChunks, ObjectInputStream in, String filename) throws IOException, ClassNotFoundException {
+    private void download(int numChunks, ObjectInputStream in, ObjectOutputStream out, String filename) throws IOException, ClassNotFoundException {
+        //Initializing donwload incomplete list
+        chunks = new ArrayList<>(numChunks);
         int size = 0;
         //Start reading chunks
+
         for (int i = 0; i < numChunks; i++) {
+            //ask for the next chunk
+            Request.RequestToBroker requestToBroker= new Request.RequestToBroker();
+            requestToBroker.method = Request.Methods.NEXT_CHUNK;
+            out.writeObject(requestToBroker);
+            out.flush();
+
             //HandleCHunks
             Object object = in.readObject();
             if(object instanceof MusicFile) {
+
                 MusicFile chunk = (MusicFile) object;
 
                 System.out.println("[CONSUMER] got chunk Number " + i);
                 System.out.println();
+
                 size += chunk.getMusicFileExtract().length;
                 //Add chunk to the icomplete list
                 chunks.add(chunk);
+            }
 
-                DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
-                LocalDateTime now = LocalDateTime.now();
-                System.out.println(dtf.format(now));
-            }else{
-                System.out.println("No no no");
+        }
+
+        Request.RequestToBroker requestToBroker= new Request.RequestToBroker();
+        requestToBroker.method = Request.Methods.THE_END;
+        out.writeObject(requestToBroker);
+        out.flush();
+
+        if(chunks.size() == numChunks) {
+            save(chunks, filename + ".mp3");
+        }
+    }
+
+    private void stream(int numChunks, ObjectInputStream in, String filename) throws IOException, ClassNotFoundException {
+        //Initializing donwload incomplete list
+        chunks = new ArrayList<>(numChunks);
+        int size = 0;
+        //Start reading chunks
+        System.out.println("Created output file " + getPath() + filename);
+        try(FileOutputStream fos = new FileOutputStream(getPath() + filename)){
+            for (int i = 0; i < numChunks; i++) {
+                //HandleCHunks
+                Object object = in.readObject();
+                if (object instanceof MusicFile) {
+                    MusicFile chunk = (MusicFile) object;
+
+                    //System.out.println("[CONSUMER] got chunk Number " + i);
+                    System.out.println();
+                    size += chunk.getMusicFileExtract().length;
+                    //Add chunk to the icomplete list
+                    chunks.add(chunk);
+                    fos.write(chunk.getMusicFileExtract());
+                    DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
+                    LocalDateTime now = LocalDateTime.now();
+                    //System.out.println(dtf.format(now));
+                } else {
+                    System.out.println("No no no");
+                }
             }
         }
-        save(chunks, filename + ".mp3");
+        catch(Exception e) {
+            e.printStackTrace();
+        }
+    }
+    public boolean hasReadFirstChunk(){
+        return chunks!=null && chunks.size() > 0;
     }
     // Save a list of music files as entire mp3 with the given filename
     private void save(ArrayList<MusicFile> chunks , String filename) throws IOException {
-        System.out.println("pathakiiiii   "+getPath());
+        System.out.println("Saving a song to " + getPath()+filename);
         ByteArrayOutputStream baos = new ByteArrayOutputStream();//baos stream gia bytes
-        for(int k = 0 ; k < chunks.size() ; k++){
-            baos.write(chunks.get(k).getMusicFileExtract());
+        for(MusicFile chunk : chunks){
+            baos.write(chunk.getMusicFileExtract());
         }
         byte[] concatenated_byte_array = baos.toByteArray();//metatrepei to stream se array
         try (FileOutputStream fos = new FileOutputStream(getPath()+filename)) {
