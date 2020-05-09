@@ -1,0 +1,12 @@
+<component name="libraryTable">
+  <library name="Gradle: androidx.navigation:navigation-dynamic-features-fragment:2.3.0-alpha04@aar">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/../../../ERGASIA KATANEMHMENA/DistributedSystemsAssignment/caches/transforms-2/files-2.1/13bed7c1e94b9e69621673ae754f738b/jetified-navigation-dynamic-features-fragment-2.3.0-alpha04/jars/classes.jar!/" />
+      <root url="file://$PROJECT_DIR$/../../../ERGASIA KATANEMHMENA/DistributedSystemsAssignment/caches/transforms-2/files-2.1/13bed7c1e94b9e69621673ae754f738b/jetified-navigation-dynamic-features-fragment-2.3.0-alpha04/res" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$PROJECT_DIR$/../../../ERGASIA KATANEMHMENA/DistributedSystemsAssignment/caches/modules-2/files-2.1/androidx.navigation/navigation-dynamic-features-fragment/2.3.0-alpha04/d4ff934acf7bc32cc9a39a4d1ed9448b2ad187b9/navigation-dynamic-features-fragment-2.3.0-alpha04-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

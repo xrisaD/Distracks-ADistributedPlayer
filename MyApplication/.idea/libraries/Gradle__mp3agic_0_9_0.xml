@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="Gradle: mp3agic-0.9.0">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/lib/libs/mp3agic-0.9.0.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

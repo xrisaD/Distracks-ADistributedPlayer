@@ -31,7 +31,7 @@ public class Consumer {
     }
 
     //Send a pull request to the broker at the end of the stream
-    private void requestPullToBroker(ArtistName artist, String songName, ObjectOutputStream out) throws IOException {
+    public void requestPullToBroker(ArtistName artist, String songName, ObjectOutputStream out) throws IOException {
         Request.RequestToBroker request = new Request.RequestToBroker();
         request.method = Request.Methods.PULL;
         request.pullArtistName = artist.getArtistName();
@@ -46,7 +46,7 @@ public class Consumer {
         out.writeObject(request);
     }
     //Find the reposible broker for this artist , or, If he is not yet known return a random known Broker
-    private Component getBroker(ArtistName artist){
+    public Component getBroker(ArtistName artist){
         String ip = null;
         int port = 0;
         //try to find the responsible broker
@@ -66,7 +66,7 @@ public class Consumer {
     }
     // Method that downloads the song if download == true or streams the song if download == false
     public synchronized void playData(ArtistName artist, String  songName , boolean download ) throws Exception {
-        chunks = null;
+
         Component b = getBroker(artist);
         //set Broker's ip and port
         String ip = b.getIp();

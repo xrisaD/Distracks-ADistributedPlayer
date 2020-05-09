@@ -1,0 +1,19 @@
+{
+    "logs": [
+        {
+            "outputFile": "C:\\Users\\Xrisa\\Desktop\\katan\\DistributedSystemsAssignment\\MyApplication\\app\\build\\intermediates\\incremental\\mergeDebugResources\\merged.dir\\values-sw720dp-v13\\values-sw720dp-v13.xml",
+            "map": [
+                {
+                    "source": "C:\\Users\\Xrisa\\Desktop\\ERGASIA KATANEMHMENA\\DistributedSystemsAssignment\\caches\\transforms-2\\files-2.1\\e39c40433607a8e9bbd21da8c129b490\\mediarouter-1.1.0\\res\\values-sw720dp-v13\\values-sw720dp-v13.xml",
+                    "from": {
+                        "startLines": "2,3",
+                        "startColumns": "4,4",
+                        "startOffsets": "55,124",
+                        "endColumns": "68,68",
+                        "endOffsets": "119,188"
+                    }
+                }
+            ]
+        }
+    ]
+}

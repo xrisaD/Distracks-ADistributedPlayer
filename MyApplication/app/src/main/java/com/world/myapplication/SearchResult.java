@@ -30,8 +30,6 @@ import java.util.List;
 //result: all artist's song
 public class SearchResult extends Fragment {
 
-    private static final String CHANNEL_ID = "BasicChannel";
-
     private View rootView;
     private String artist;
     Switch download;
@@ -39,7 +37,6 @@ public class SearchResult extends Fragment {
     Socket s = null;
     ObjectInputStream in = null;
     ObjectOutputStream out = null;
-    AsyncDownload runner;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -51,7 +48,7 @@ public class SearchResult extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-        createNotificationChannel();
+        //createNotificationChannel();
         //get argmunets from search
         artist = getArguments().getString ("artist", "");
         //search for songs
@@ -89,73 +86,8 @@ public class SearchResult extends Fragment {
         }
     }
 
-
-    public class AsyncDownload extends AsyncTask<MusicFileMetaData, Integer, String> {
-        int PROGRESS_MAX;
-        int PROGRESS_CURRENT;
-        int notificationId;
-        NotificationManagerCompat notificationManager;
-        NotificationCompat.Builder builder;
-
-        @Override
-        protected String doInBackground(MusicFileMetaData... artistAndSong) {
-
-            MusicFileMetaData musicFileMetaData = artistAndSong[0];
-            Distracks distracks = ((Distracks) getActivity().getApplication());
-            File path = getContext().getFilesDir();
-            distracks.getConsumer().setPath(path);
-
-            try {
-                distracks.getConsumer().playData(new ArtistName(musicFileMetaData.getArtistName()), musicFileMetaData.getTrackName() , true);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            return null;
-        }
-
-        @Override
-        protected void onPreExecute() {
-            /*notificationManager = NotificationManagerCompat.from(getContext());
-            builder = new NotificationCompat.Builder(getContext(), CHANNEL_ID)
-                    .setSmallIcon(R.drawable.ic_audiotrack_light)
-                    .setContentTitle("Download Song")
-                    .setContentText("Download in progress...")
-                    .setPriority(NotificationCompat.PRIORITY_DEFAULT);
-            PROGRESS_MAX = 100;
-            PROGRESS_CURRENT = 0;
-            builder.setProgress(PROGRESS_MAX, PROGRESS_CURRENT, false);
-            notificationId = 1;
-            // notificationId is a unique int for each notification that you must define
-            notificationManager.notify(1, builder.build());*/
-
-        }
-
-        @Override
-        protected void onPostExecute(String s) {
-            super.onPostExecute(s);
-            /*if(s.equals("ok")){
-                builder.setContentText("Download complete")
-                        .setProgress(0, 0, false);
-                notificationManager.notify(notificationId, builder.build());
-            }else{
-                builder.setContentText("Can't download")
-                        .setProgress(0, 0, false);
-                notificationManager.notify(notificationId, builder.build());
-            }*/
-        }
-
-        @Override
-        protected void onProgressUpdate(Integer... values) {
-            super.onProgressUpdate(values);
-            /*if(values[0]>0) {
-                PROGRESS_CURRENT = values[0];
-                builder.setProgress(PROGRESS_MAX, PROGRESS_CURRENT, false);
-            }
-            notificationManager.notify(notificationId, builder.build());*/
-        }
-    }
+    //set songs on screen and set onclick listener
     private void setSongs(ArrayList<MusicFileMetaData> resultMetaData) {
-
         if(resultMetaData!=null && resultMetaData.size()>0){
             Log.e("size of meta data songs", String.valueOf(resultMetaData.size()));
             ArrayList<Button> mySongs = SongsUI.setUI(artist, resultMetaData, getContext(), rootView);
@@ -177,8 +109,7 @@ public class SearchResult extends Fragment {
                                     artistAndSong.setArtistName(artist);
                                     artistAndSong.setTrackName(song);
 
-                                    runner = new SearchResult.AsyncDownload();
-                                    runner.execute(artistAndSong);
+                                    distracks.download(artistAndSong);
 
                                 }else{
                                     //StreamImmediately
@@ -200,23 +131,5 @@ public class SearchResult extends Fragment {
     }
 
 
-
-    private void createNotificationChannel() {
-        String channel_name = "Basic chanel";
-        String channel_description = "Download";
-        // Create the NotificationChannel, but only on API 26+ because
-        // the NotificationChannel class is new and not in the support library
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            CharSequence name = channel_name;
-            String description = channel_description;
-            int importance = NotificationManager.IMPORTANCE_DEFAULT;
-            NotificationChannel channel = new NotificationChannel(CHANNEL_ID, name, importance);
-            channel.setDescription(description);
-            // Register the channel with the system; you can't change the importance
-            // or other notification behaviors after this
-            NotificationManager notificationManager = getContext().getSystemService(NotificationManager.class);
-            notificationManager.createNotificationChannel(channel);
-        }
-    }
 
 }

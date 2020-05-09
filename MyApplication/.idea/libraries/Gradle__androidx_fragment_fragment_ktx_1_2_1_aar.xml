@@ -1,0 +1,12 @@
+<component name="libraryTable">
+  <library name="Gradle: androidx.fragment:fragment-ktx:1.2.1@aar">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/../../../ERGASIA KATANEMHMENA/DistributedSystemsAssignment/caches/transforms-2/files-2.1/ef4dd122c074c698bbf16649a2526f72/jetified-fragment-ktx-1.2.1/jars/classes.jar!/" />
+      <root url="file://$PROJECT_DIR$/../../../ERGASIA KATANEMHMENA/DistributedSystemsAssignment/caches/transforms-2/files-2.1/ef4dd122c074c698bbf16649a2526f72/jetified-fragment-ktx-1.2.1/res" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$PROJECT_DIR$/../../../ERGASIA KATANEMHMENA/DistributedSystemsAssignment/caches/modules-2/files-2.1/androidx.fragment/fragment-ktx/1.2.1/1ffa885329ceba2ceb2bea1253d2ca32a0c95fa7/fragment-ktx-1.2.1-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>
