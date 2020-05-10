@@ -48,9 +48,10 @@ public class SearchResult extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-        //createNotificationChannel();
         //get argmunets from search
-        artist = getArguments().getString ("artist", "");
+        artist = getArguments().getString("artist");
+        Log.e("artist", artist);
+
         //search for songs
         AsyncSearchResult runnerSearch = new AsyncSearchResult();
         runnerSearch.execute(new ArtistName(artist));

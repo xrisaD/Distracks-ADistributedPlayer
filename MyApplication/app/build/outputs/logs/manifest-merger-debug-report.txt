@@ -1,9 +1,9 @@
 -- Merging decision tree log ---
 manifest
-ADDED from C:\Users\Xrisa\Desktop\katan\DistributedSystemsAssignment\MyApplication\app\src\main\AndroidManifest.xml:2:1-25:12
-INJECTED from C:\Users\Xrisa\Desktop\katan\DistributedSystemsAssignment\MyApplication\app\src\main\AndroidManifest.xml:2:1-25:12
-INJECTED from C:\Users\Xrisa\Desktop\katan\DistributedSystemsAssignment\MyApplication\app\src\main\AndroidManifest.xml:2:1-25:12
-INJECTED from C:\Users\Xrisa\Desktop\katan\DistributedSystemsAssignment\MyApplication\app\src\main\AndroidManifest.xml:2:1-25:12
+ADDED from C:\Users\Xrisa\Desktop\katan\DistributedSystemsAssignment\MyApplication\app\src\main\AndroidManifest.xml:2:1-29:12
+INJECTED from C:\Users\Xrisa\Desktop\katan\DistributedSystemsAssignment\MyApplication\app\src\main\AndroidManifest.xml:2:1-29:12
+INJECTED from C:\Users\Xrisa\Desktop\katan\DistributedSystemsAssignment\MyApplication\app\src\main\AndroidManifest.xml:2:1-29:12
+INJECTED from C:\Users\Xrisa\Desktop\katan\DistributedSystemsAssignment\MyApplication\app\src\main\AndroidManifest.xml:2:1-29:12
 MERGED from [androidx.navigation:navigation-ui:2.3.0-alpha04] C:\Users\Xrisa\Desktop\ERGASIA KATANEMHMENA\DistributedSystemsAssignment\caches\transforms-2\files-2.1\bcff1b220a90524365ef402adf7b39f6\navigation-ui-2.3.0-alpha04\AndroidManifest.xml:17:1-24:12
 MERGED from [com.google.android.material:material:1.2.0-alpha05] C:\Users\Xrisa\Desktop\ERGASIA KATANEMHMENA\DistributedSystemsAssignment\caches\transforms-2\files-2.1\4d0636b72ff0b4d34e0e621b6e6c137f\material-1.2.0-alpha05\AndroidManifest.xml:17:1-24:12
 MERGED from [androidx.mediarouter:mediarouter:1.1.0] C:\Users\Xrisa\Desktop\ERGASIA KATANEMHMENA\DistributedSystemsAssignment\caches\transforms-2\files-2.1\e39c40433607a8e9bbd21da8c129b490\mediarouter-1.1.0\AndroidManifest.xml:17:1-24:12
@@ -56,27 +56,27 @@ MERGED from [androidx.lifecycle:lifecycle-livedata-core:2.2.0] C:\Users\Xrisa\De
 MERGED from [androidx.arch.core:core-runtime:2.1.0] C:\Users\Xrisa\Desktop\ERGASIA KATANEMHMENA\DistributedSystemsAssignment\caches\transforms-2\files-2.1\02e272269748a331fcc448332a33a66d\core-runtime-2.1.0\AndroidManifest.xml:17:1-24:12
 MERGED from [androidx.annotation:annotation-experimental:1.0.0] C:\Users\Xrisa\Desktop\ERGASIA KATANEMHMENA\DistributedSystemsAssignment\caches\transforms-2\files-2.1\0a4c23a06b3dbfca19007c663bc138f3\jetified-annotation-experimental-1.0.0\AndroidManifest.xml:17:1-24:12
 MERGED from [com.google.android.play:core:1.6.5] C:\Users\Xrisa\Desktop\ERGASIA KATANEMHMENA\DistributedSystemsAssignment\caches\transforms-2\files-2.1\c9c497020e99fcc9f4c88dfa40760756\jetified-core-1.6.5\AndroidManifest.xml:2:1-12:12
-INJECTED from C:\Users\Xrisa\Desktop\katan\DistributedSystemsAssignment\MyApplication\app\src\main\AndroidManifest.xml:2:1-25:12
-INJECTED from C:\Users\Xrisa\Desktop\katan\DistributedSystemsAssignment\MyApplication\app\src\main\AndroidManifest.xml:2:1-25:12
-INJECTED from C:\Users\Xrisa\Desktop\katan\DistributedSystemsAssignment\MyApplication\app\src\main\AndroidManifest.xml:2:1-25:12
+INJECTED from C:\Users\Xrisa\Desktop\katan\DistributedSystemsAssignment\MyApplication\app\src\main\AndroidManifest.xml:2:1-29:12
+INJECTED from C:\Users\Xrisa\Desktop\katan\DistributedSystemsAssignment\MyApplication\app\src\main\AndroidManifest.xml:2:1-29:12
+INJECTED from C:\Users\Xrisa\Desktop\katan\DistributedSystemsAssignment\MyApplication\app\src\main\AndroidManifest.xml:2:1-29:12
 	package
 		ADDED from C:\Users\Xrisa\Desktop\katan\DistributedSystemsAssignment\MyApplication\app\src\main\AndroidManifest.xml:4:5-38
 		INJECTED from C:\Users\Xrisa\Desktop\katan\DistributedSystemsAssignment\MyApplication\app\src\main\AndroidManifest.xml
 		INJECTED from C:\Users\Xrisa\Desktop\katan\DistributedSystemsAssignment\MyApplication\app\src\main\AndroidManifest.xml
 	android:versionName
 		INJECTED from C:\Users\Xrisa\Desktop\katan\DistributedSystemsAssignment\MyApplication\app\src\main\AndroidManifest.xml
-		ADDED from C:\Users\Xrisa\Desktop\katan\DistributedSystemsAssignment\MyApplication\app\src\main\AndroidManifest.xml:2:1-25:12
+		ADDED from C:\Users\Xrisa\Desktop\katan\DistributedSystemsAssignment\MyApplication\app\src\main\AndroidManifest.xml:2:1-29:12
 		INJECTED from C:\Users\Xrisa\Desktop\katan\DistributedSystemsAssignment\MyApplication\app\src\main\AndroidManifest.xml
 	xmlns:tools
 		ADDED from C:\Users\Xrisa\Desktop\katan\DistributedSystemsAssignment\MyApplication\app\src\main\AndroidManifest.xml:3:5-51
 	android:versionCode
 		INJECTED from C:\Users\Xrisa\Desktop\katan\DistributedSystemsAssignment\MyApplication\app\src\main\AndroidManifest.xml
-		ADDED from C:\Users\Xrisa\Desktop\katan\DistributedSystemsAssignment\MyApplication\app\src\main\AndroidManifest.xml:2:1-25:12
+		ADDED from C:\Users\Xrisa\Desktop\katan\DistributedSystemsAssignment\MyApplication\app\src\main\AndroidManifest.xml:2:1-29:12
 		INJECTED from C:\Users\Xrisa\Desktop\katan\DistributedSystemsAssignment\MyApplication\app\src\main\AndroidManifest.xml
 	xmlns:android
 		ADDED from C:\Users\Xrisa\Desktop\katan\DistributedSystemsAssignment\MyApplication\app\src\main\AndroidManifest.xml:2:11-69
 application
-ADDED from C:\Users\Xrisa\Desktop\katan\DistributedSystemsAssignment\MyApplication\app\src\main\AndroidManifest.xml:6:5-21:19
+ADDED from C:\Users\Xrisa\Desktop\katan\DistributedSystemsAssignment\MyApplication\app\src\main\AndroidManifest.xml:6:5-25:19
 MERGED from [com.google.android.material:material:1.2.0-alpha05] C:\Users\Xrisa\Desktop\ERGASIA KATANEMHMENA\DistributedSystemsAssignment\caches\transforms-2\files-2.1\4d0636b72ff0b4d34e0e621b6e6c137f\material-1.2.0-alpha05\AndroidManifest.xml:22:5-20
 MERGED from [com.google.android.material:material:1.2.0-alpha05] C:\Users\Xrisa\Desktop\ERGASIA KATANEMHMENA\DistributedSystemsAssignment\caches\transforms-2\files-2.1\4d0636b72ff0b4d34e0e621b6e6c137f\material-1.2.0-alpha05\AndroidManifest.xml:22:5-20
 MERGED from [androidx.constraintlayout:constraintlayout:1.1.3] C:\Users\Xrisa\Desktop\ERGASIA KATANEMHMENA\DistributedSystemsAssignment\caches\transforms-2\files-2.1\cb3ee0668a2ccffbec6ced598c9d8e79\constraintlayout-1.1.3\AndroidManifest.xml:9:5-20
@@ -106,33 +106,35 @@ MERGED from [com.google.android.play:core:1.6.5] C:\Users\Xrisa\Desktop\ERGASIA 
 	android:name
 		ADDED from C:\Users\Xrisa\Desktop\katan\DistributedSystemsAssignment\MyApplication\app\src\main\AndroidManifest.xml:13:9-34
 activity#com.world.myapplication.MainActivity
-ADDED from C:\Users\Xrisa\Desktop\katan\DistributedSystemsAssignment\MyApplication\app\src\main\AndroidManifest.xml:15:9-20:20
+ADDED from C:\Users\Xrisa\Desktop\katan\DistributedSystemsAssignment\MyApplication\app\src\main\AndroidManifest.xml:16:9-23:20
+	android:label
+		ADDED from C:\Users\Xrisa\Desktop\katan\DistributedSystemsAssignment\MyApplication\app\src\main\AndroidManifest.xml:17:13-45
 	android:theme
-		ADDED from C:\Users\Xrisa\Desktop\katan\DistributedSystemsAssignment\MyApplication\app\src\main\AndroidManifest.xml:15:48-79
+		ADDED from C:\Users\Xrisa\Desktop\katan\DistributedSystemsAssignment\MyApplication\app\src\main\AndroidManifest.xml:18:13-56
 	android:name
-		ADDED from C:\Users\Xrisa\Desktop\katan\DistributedSystemsAssignment\MyApplication\app\src\main\AndroidManifest.xml:15:19-47
+		ADDED from C:\Users\Xrisa\Desktop\katan\DistributedSystemsAssignment\MyApplication\app\src\main\AndroidManifest.xml:16:19-47
 intent-filter#action:name:android.intent.action.MAIN+category:name:android.intent.category.LAUNCHER
-ADDED from C:\Users\Xrisa\Desktop\katan\DistributedSystemsAssignment\MyApplication\app\src\main\AndroidManifest.xml:16:13-19:29
+ADDED from C:\Users\Xrisa\Desktop\katan\DistributedSystemsAssignment\MyApplication\app\src\main\AndroidManifest.xml:19:13-22:29
 action#android.intent.action.MAIN
-ADDED from C:\Users\Xrisa\Desktop\katan\DistributedSystemsAssignment\MyApplication\app\src\main\AndroidManifest.xml:17:17-69
+ADDED from C:\Users\Xrisa\Desktop\katan\DistributedSystemsAssignment\MyApplication\app\src\main\AndroidManifest.xml:20:17-69
 	android:name
-		ADDED from C:\Users\Xrisa\Desktop\katan\DistributedSystemsAssignment\MyApplication\app\src\main\AndroidManifest.xml:17:25-66
+		ADDED from C:\Users\Xrisa\Desktop\katan\DistributedSystemsAssignment\MyApplication\app\src\main\AndroidManifest.xml:20:25-66
 category#android.intent.category.LAUNCHER
-ADDED from C:\Users\Xrisa\Desktop\katan\DistributedSystemsAssignment\MyApplication\app\src\main\AndroidManifest.xml:18:17-77
+ADDED from C:\Users\Xrisa\Desktop\katan\DistributedSystemsAssignment\MyApplication\app\src\main\AndroidManifest.xml:21:17-77
 	android:name
-		ADDED from C:\Users\Xrisa\Desktop\katan\DistributedSystemsAssignment\MyApplication\app\src\main\AndroidManifest.xml:18:27-74
+		ADDED from C:\Users\Xrisa\Desktop\katan\DistributedSystemsAssignment\MyApplication\app\src\main\AndroidManifest.xml:21:27-74
 uses-permission#android.permission.INTERNET
-ADDED from C:\Users\Xrisa\Desktop\katan\DistributedSystemsAssignment\MyApplication\app\src\main\AndroidManifest.xml:22:5-67
+ADDED from C:\Users\Xrisa\Desktop\katan\DistributedSystemsAssignment\MyApplication\app\src\main\AndroidManifest.xml:26:5-67
 	android:name
-		ADDED from C:\Users\Xrisa\Desktop\katan\DistributedSystemsAssignment\MyApplication\app\src\main\AndroidManifest.xml:22:22-64
+		ADDED from C:\Users\Xrisa\Desktop\katan\DistributedSystemsAssignment\MyApplication\app\src\main\AndroidManifest.xml:26:22-64
 uses-permission#android.permission.READ_EXTERNAL_STORAGE
-ADDED from C:\Users\Xrisa\Desktop\katan\DistributedSystemsAssignment\MyApplication\app\src\main\AndroidManifest.xml:23:5-80
+ADDED from C:\Users\Xrisa\Desktop\katan\DistributedSystemsAssignment\MyApplication\app\src\main\AndroidManifest.xml:27:5-80
 	android:name
-		ADDED from C:\Users\Xrisa\Desktop\katan\DistributedSystemsAssignment\MyApplication\app\src\main\AndroidManifest.xml:23:22-77
+		ADDED from C:\Users\Xrisa\Desktop\katan\DistributedSystemsAssignment\MyApplication\app\src\main\AndroidManifest.xml:27:22-77
 uses-permission#android.permission.WRITE_EXTERNAL_STORAGE
-ADDED from C:\Users\Xrisa\Desktop\katan\DistributedSystemsAssignment\MyApplication\app\src\main\AndroidManifest.xml:24:5-81
+ADDED from C:\Users\Xrisa\Desktop\katan\DistributedSystemsAssignment\MyApplication\app\src\main\AndroidManifest.xml:28:5-81
 	android:name
-		ADDED from C:\Users\Xrisa\Desktop\katan\DistributedSystemsAssignment\MyApplication\app\src\main\AndroidManifest.xml:24:22-78
+		ADDED from C:\Users\Xrisa\Desktop\katan\DistributedSystemsAssignment\MyApplication\app\src\main\AndroidManifest.xml:28:22-78
 uses-sdk
 INJECTED from C:\Users\Xrisa\Desktop\katan\DistributedSystemsAssignment\MyApplication\app\src\main\AndroidManifest.xml reason: use-sdk injection requested
 INJECTED from C:\Users\Xrisa\Desktop\katan\DistributedSystemsAssignment\MyApplication\app\src\main\AndroidManifest.xml

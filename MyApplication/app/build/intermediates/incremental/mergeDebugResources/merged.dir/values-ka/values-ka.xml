@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:ns1="urn:oasis:names:tc:xliff:document:1.2">
+    <string msgid="7903180715631665059" name="abc_action_bar_home_description">"მთავარზე გადასვლა"</string>
+    <string msgid="6794660482873516081" name="abc_action_bar_up_description">"ზემოთ გადასვლა"</string>
+    <string msgid="1155814932213556626" name="abc_action_menu_overflow_description">"სხვა ვარიანტები"</string>
+    <string msgid="2571498368472823490" name="abc_action_mode_done">"მზადაა"</string>
+    <string msgid="3732416590524162402" name="abc_activity_chooser_view_see_all">"ყველას ნახვა"</string>
+    <string msgid="1798588241954930982" name="abc_activitychooserview_choose_application">"აირჩიეთ აპი"</string>
+    <string msgid="3403923230105792483" name="abc_capital_off">"გამორთვა"</string>
+    <string msgid="7831734969929204599" name="abc_capital_on">"ჩართვა"</string>
+    <string msgid="5725160506500770567" name="abc_menu_alt_shortcut_label">"Alt+"</string>
+    <string msgid="944415252197684443" name="abc_menu_ctrl_shortcut_label">"Ctrl+"</string>
+    <string msgid="129742188101734366" name="abc_menu_delete_shortcut_label">"delete"</string>
+    <string msgid="6840127756824236027" name="abc_menu_enter_shortcut_label">"enter"</string>
+    <string msgid="4974283687810130415" name="abc_menu_function_shortcut_label">"Function+"</string>
+    <string msgid="8046416353848716905" name="abc_menu_meta_shortcut_label">"Meta+"</string>
+    <string msgid="3271697756921353410" name="abc_menu_shift_shortcut_label">"Shift+"</string>
+    <string msgid="2304645930658438191" name="abc_menu_space_shortcut_label">"შორისი"</string>
+    <string msgid="8327365089695024394" name="abc_menu_sym_shortcut_label">"Sym+"</string>
+    <string msgid="3570106412128999382" name="abc_prepend_shortcut_label">"Menu+"</string>
+    <string msgid="940844115270746197" name="abc_search_hint">"ძიება…"</string>
+    <string msgid="1769270744562318534" name="abc_searchview_description_clear">"მოთხოვნის გასუფთავება"</string>
+    <string msgid="908784302972860853" name="abc_searchview_description_query">"მოთხოვნის ძიება"</string>
+    <string msgid="5466662225065974044" name="abc_searchview_description_search">"ძიება"</string>
+    <string msgid="8203855622131699655" name="abc_searchview_description_submit">"მოთხოვნის გადაგზავნა"</string>
+    <string msgid="3478748990613108725" name="abc_searchview_description_voice">"ხმოვანი ძიება"</string>
+    <string msgid="2650565705514630347" name="abc_shareactionprovider_share_with">"გაზიარება:"</string>
+    <string msgid="9009661856846212431" name="abc_shareactionprovider_share_with_application">"<ns1:g id="APPLICATION_NAME">%s</ns1:g>-ით გაზიარება"</string>
+    <string msgid="6389460216547290468" name="abc_toolbar_collapse_description">"ჩაკეცვა"</string>
+    <string msgid="475402237100444685" name="installation_cancelled">"ინსტალაცია გაუქმდა."</string>
+    <string msgid="863287960437940689" name="installation_failed">"ინსტალაცია ვერ მოხერხდა."</string>
+    <string msgid="5968445461040787716" name="installing_module">"ინსტალირდება მოდული:"</string>
+    <string msgid="1685185767093348095" name="mr_button_content_description">"ტრანსლირების ღილაკი"</string>
+    <string msgid="1350095112462806159" name="mr_cast_button_connected">"ტრანსლირების ღილაკი. დაკავშირებული"</string>
+    <string msgid="8959304318293841992" name="mr_cast_button_connecting">"ტრანსლირების ღილაკი. მიმდინარეობს დაკავშირება"</string>
+    <string msgid="5501231066847739632" name="mr_cast_button_disconnected">"ტრანსლირების ღილაკი. გათიშული"</string>
+    <string msgid="6167045754274068030" name="mr_cast_dialog_title_view_placeholder">"ინფორმაცია მიუწვდომელია"</string>
+    <string msgid="5504553798429329689" name="mr_chooser_searching">"მიმდინარეობს მოწყობილობების მოძიება"</string>
+    <string msgid="7548226170787476564" name="mr_chooser_title">"ტრანსლირება"</string>
+    <string msgid="5813284753012893250" name="mr_controller_album_art">"ალბომის გარეკანი"</string>
+    <string msgid="5286734709674025661" name="mr_controller_casting_screen">"მიმდინარეობს ეკრანის ტრანსლირება"</string>
+    <string msgid="5468775621814500662" name="mr_controller_close_description">"დახურვა"</string>
+    <string msgid="5518911192681928413" name="mr_controller_collapse_group">"ჩაკეცვა"</string>
+    <string msgid="1370654436555555647" name="mr_controller_disconnect">"გათიშვა"</string>
+    <string msgid="2422682304043876468" name="mr_controller_expand_group">"გაშლა"</string>
+    <string msgid="7299368841849988218" name="mr_controller_no_info_available">"ინფორმაცია არ არის ხელმისაწვდომი"</string>
+    <string msgid="4342878516155861006" name="mr_controller_no_media_selected">"მედია არჩეული არ არის"</string>
+    <string msgid="4701315813294065305" name="mr_controller_pause">"პაუზა"</string>
+    <string msgid="4443315438268112801" name="mr_controller_play">"დაკვრა"</string>
+    <string msgid="5106056093749454009" name="mr_controller_stop">"შეწყვეტა"</string>
+    <string msgid="7617024847862349259" name="mr_controller_stop_casting">"ტრანსლირების შეწყვეტა"</string>
+    <string msgid="691656961160498512" name="mr_controller_volume_slider">"ხმის სლაიდერი"</string>
+    <string msgid="470815817763403488" name="mr_dialog_groupable_header">"მოწყობილობის დამატება"</string>
+    <string msgid="8242946697267839296" name="mr_dialog_transferable_header">"ჯგუფში დაკვრა"</string>
+    <string msgid="3117964881088969586" name="mr_system_route_name">"სისტემა"</string>
+    <string msgid="8236416097133080726" name="mr_user_route_category_name">"მოწყობილობები"</string>
+    <string msgid="6301633601645100427" name="nav_app_bar_navigate_up_description">"ზემოთ გადასვლა"</string>
+    <string msgid="7456070600745802113" name="nav_app_bar_open_drawer_description">"ნავიგაციის უჯრის გახსნა"</string>
+    <string msgid="4702104660890557116" name="ok">"კარგი"</string>
+    <string msgid="8366783942222789124" name="progress">"პროგრესი:"</string>
+    <string msgid="1065327189183624288" name="retry">"ხელახლა ცდა"</string>
+    <string msgid="730395136688082741" name="search_menu_title">"ძიება"</string>
+    <string msgid="6277540029070332960" name="status_bar_notification_info_overflow">"999+"</string>
+</resources>

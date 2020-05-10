@@ -8,24 +8,10 @@
     tools:context=".MainActivity"
     android:fitsSystemWindows="true"
     android:id="@+id/drawerLayout">
-
-    <!-- Content -->
-    <LinearLayout
+    <include
+        layout="@layout/app_bar_main"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="horizontal"
-        android:gravity="center">
-
-        <fragment
-            android:id="@+id/nav_host_fragment"
-            android:name="androidx.navigation.fragment.NavHostFragment"
-            android:layout_width="315dp"
-            android:layout_height="match_parent"
-            app:defaultNavHost="true"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:navGraph="@navigation/nav_graph"
-            tools:layout_editor_absoluteY="-1dp" />
-    </LinearLayout>
+        android:layout_height="match_parent" />
 
     <!-- Navigation View-->
     <com.google.android.material.navigation.NavigationView

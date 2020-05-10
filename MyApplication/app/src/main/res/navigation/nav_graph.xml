@@ -22,13 +22,16 @@
         android:name="com.world.myapplication.SearchFragment"
         android:id="@+id/search_fragment"
         tools:layout="@layout/search_fragment" >
+
         <action
-            android:id="@+id/action_search_fragment_to_blankFragment2"
-            app:destination="@id/search_result" />
-        <argument
-            android:name="justAString"
-            app:argType="string"
-            android:defaultValue="def" />
+            android:id="@+id/search_to_result"
+            app:destination="@id/search_result">
+            <argument
+                android:name="artist"
+                app:argType="string"
+                android:defaultValue="1" />
+        </action>
+
     </fragment>
     <!-- Search Result for an artist fragment -->
     <fragment

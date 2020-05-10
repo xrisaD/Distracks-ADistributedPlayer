@@ -10,6 +10,8 @@ import android.widget.Button;
 
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.navigation.NavDirections;
+import androidx.navigation.Navigation;
 
 import com.google.android.material.textfield.TextInputLayout;
 
@@ -41,19 +43,15 @@ public class SearchFragment extends Fragment {
                         TextInputLayout textInputLayout = rootView.findViewById(R.id.textField);
                         text = textInputLayout.getEditText().getText().toString();
                         //new fragment
-                        //search for arist's songs
-                        SearchResult firstFragment = new SearchResult();
-                        Bundle args = new Bundle();
-                        args.putString("artist", text);
-                        firstFragment.setArguments(args);
-                        FragmentTransaction transaction = getFragmentManager().beginTransaction();
-                        transaction.replace(R.id.nav_host_fragment, firstFragment);
-                        transaction.addToBackStack(null);
+                        //search for artist's songs
+                        Bundle bundle = new Bundle();
+                        bundle.putString("artist", text);
+                        Navigation.findNavController(view).navigate(R.id.search_to_result, bundle);
                         //hide keyboard before go to the next fragment
                         if(!text.equals("")) {
                             hideSoftKeyboard(getActivity());
                         }
-                        transaction.commit();
+                        //transaction.commit();
                     }
                 });
     }

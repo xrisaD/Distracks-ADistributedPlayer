@@ -12,8 +12,5 @@
         android:title="Saved Songs"/>
     <item
         android:id="@id/first_page"
-        android:title="Recently Played"/>
-    <item
-        android:id="@id/first_page"
         android:title="About Us"/>
 </menu>

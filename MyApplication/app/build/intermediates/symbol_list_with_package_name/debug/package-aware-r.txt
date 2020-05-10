@@ -1807,7 +1807,6 @@ id action_menu_presenter
 id action_mode_bar
 id action_mode_bar_stub
 id action_mode_close_button
-id action_search_fragment_to_blankFragment2
 id action_text
 id actions
 id activity_chooser_view_content
@@ -2051,6 +2050,7 @@ id search_mag_icon
 id search_plate
 id search_result
 id search_src_text
+id search_to_result
 id search_voice_btn
 id seekbar
 id select_dialog_listview
@@ -2111,6 +2111,7 @@ id time
 id title
 id titleDividerNoCustom
 id title_template
+id toolbar
 id top
 id topPanel
 id touch_outside
@@ -2202,6 +2203,8 @@ layout abc_select_dialog_material
 layout abc_tooltip
 layout activity_main
 layout activity_player
+layout app_bar_main
+layout content_main
 layout custom_dialog
 layout design_bottom_navigation_item
 layout design_bottom_sheet_dialog
@@ -2433,6 +2436,9 @@ style Animation_AppCompat_Tooltip
 style Animation_Design_BottomSheetDialog
 style Animation_MaterialComponents_BottomSheetDialog
 style AppTheme
+style AppTheme_AppBarOverlay
+style AppTheme_NoActionBar
+style AppTheme_PopupOverlay
 style Base_AlertDialog_AppCompat
 style Base_AlertDialog_AppCompat_Light
 style Base_Animation_AppCompat_Dialog

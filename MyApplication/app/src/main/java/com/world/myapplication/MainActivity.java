@@ -9,7 +9,9 @@ import android.view.View;
 import android.widget.EditText;
 
 import com.google.android.material.appbar.CollapsingToolbarLayout;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
+import com.google.android.material.snackbar.Snackbar;
 
 
 import androidx.annotation.NonNull;
@@ -37,20 +39,25 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
+        DrawerLayout drawer = findViewById(R.id.drawerLayout);
+        NavigationView navigationView = findViewById(R.id.navigation);
+        // Passing each menu ID as a set of Ids because each
+        // menu should be considered as top level destinations.
+        appBarConfiguration = new AppBarConfiguration.Builder(
+                R.id.first_page, R.id.search_fragment, R.id.first_page)
+                .setDrawerLayout(drawer)
+                .build();
+        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
+        NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
+        NavigationUI.setupWithNavController(navigationView, navController);
     }
     @Override
     protected void onStart() {
         super.onStart();
-        navController = Navigation.findNavController(this, R.id.nav_host_fragment);
-        DrawerLayout drawerLayout = findViewById(R.id.drawerLayout);
-        appBarConfiguration =
-                new AppBarConfiguration.Builder(navController.getGraph())
-                        .setDrawerLayout(drawerLayout)
-                        .build();
-        NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
-        //set up navigation
-        NavigationView navView = findViewById(R.id.navigation);
-        NavigationUI.setupWithNavController(navView, navController);
+
     }
     @Override
     public boolean onSupportNavigateUp() {
@@ -58,10 +65,6 @@ public class MainActivity extends AppCompatActivity {
         return NavigationUI.navigateUp(navController, appBarConfiguration)
                 || super.onSupportNavigateUp();
     }
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        return NavigationUI.onNavDestinationSelected(item, navController)
-                || super.onOptionsItemSelected(item);
-    }
+
 
 }
