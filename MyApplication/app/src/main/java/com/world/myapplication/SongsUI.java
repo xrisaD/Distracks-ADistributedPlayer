@@ -156,9 +156,13 @@ public class SongsUI {
 
 
     //set songs on screen and set onclick listener
-    public static void setSongOnClickListener(ArrayList<Button> mySongs, View rootView, final Activity activity, Context context) {
+    public static void setSongOnClickListener(final String artist, ArrayList<Button> mySongs, View rootView, final Activity activity, Context context) {
             //get switch
-            download = SongsUI.download;
+            if(download!=null) {
+                download = SongsUI.download;
+            }else{
+                download.setChecked(false);
+            }
 
             for(Button b: mySongs){
                 b.setOnClickListener(

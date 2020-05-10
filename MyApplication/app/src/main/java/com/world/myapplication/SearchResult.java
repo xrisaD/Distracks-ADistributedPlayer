@@ -81,7 +81,7 @@ public class SearchResult extends Fragment {
             progressDialog.dismiss();
             if (s!=null && s.size() > 0) {
                 ArrayList<Button> mySongs = SongsUI.setSearchResultUI(s, getContext(), rootView);
-                SongsUI.setSongOnClickListener(mySongs, rootView, getActivity(), getContext());
+                SongsUI.setSongOnClickListener(artist ,mySongs, rootView, getActivity(), getContext());
             }else{
                 //set null ui
                 SongsUI.setNullUI("No songs for artist: "+ artist, getContext(), rootView);

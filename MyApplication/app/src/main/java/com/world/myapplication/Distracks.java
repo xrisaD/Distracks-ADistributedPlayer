@@ -35,6 +35,7 @@ public class Distracks extends Application {
         createNotificationChannel();
         consumer = new Consumer();
         consumer.addBroker(new Component("192.168.1.13", 5000));
+
         consumer.setPath(getFilesDir());
         //this.readBroker(getFilesDir().getAbsolutePath()+"brokers.txt");
         streamPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
