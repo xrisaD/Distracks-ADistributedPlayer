@@ -43,7 +43,7 @@ public class SavedSongs extends Fragment {
             ArrayList<Button> buttons = SongsUI.setSavedSongsUI(savedMetadata, getContext(), rootView);
             SongsUI.setSongOnClickListenerPlayer(buttons, rootView, getActivity(), getContext());
         }else{
-            SongsUI.setNullUI("", getContext(), rootView);
+            SongsUI.setNullUI("No downloaded songs.", getContext(), rootView);
         }
     }
 }

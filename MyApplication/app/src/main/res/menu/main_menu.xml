@@ -12,7 +12,7 @@
             android:title="Play Now" />
         <item
             android:id="@id/saved_songs"
-            android:title="Saved Songs"/>
+            android:title="Downloaded Songs"/>
         <item
             android:id="@id/first_page"
             android:title="About Us"/>
