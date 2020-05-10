@@ -61,8 +61,6 @@ public class SearchResult extends Fragment {
     }
     private class AsyncSearchResult extends AsyncTask<ArtistName, String, ArrayList<MusicFileMetaData>> {
         ProgressDialog progressDialog;
-        String BrokerIp;
-        int BrokerPort;
 
         @Override
         protected ArrayList<MusicFileMetaData> doInBackground(ArtistName... params) {
@@ -81,7 +79,14 @@ public class SearchResult extends Fragment {
         @Override
         protected void onPostExecute(ArrayList<MusicFileMetaData> s) {
             progressDialog.dismiss();
-            setSongs(s);
+            if (s!=null && s.size() > 0) {
+                ArrayList<Button> mySongs = SongsUI.setSearchResultUI(s, getContext(), rootView);
+                SongsUI.setSongOnClickListener(mySongs, rootView, getActivity(), getContext());
+            }else{
+                //set null ui
+                SongsUI.setNullUI("No songs for artist: "+ artist, getContext(), rootView);
+            }
+
         }
 
         @Override
@@ -89,50 +94,6 @@ public class SearchResult extends Fragment {
             super.onProgressUpdate(values);
         }
     }
-
-    //set songs on screen and set onclick listener
-    private void setSongs(ArrayList<MusicFileMetaData> resultMetaData) {
-        if(resultMetaData!=null && resultMetaData.size()>0){
-            Log.e("size of meta data songs", String.valueOf(resultMetaData.size()));
-            ArrayList<Button> mySongs = SongsUI.setUI(artist, resultMetaData, getContext(), rootView);
-            //get switch
-            download = SongsUI.download;
-
-            for(Button b: mySongs){
-                b.setOnClickListener(
-                        new View.OnClickListener()
-                        {
-                            public void onClick(View view)
-                            {
-                                Button thisBtn = (Button) view;
-                                String song = thisBtn.getText().toString();
-                                if(download.isChecked()){
-                                    //download async: download song
-                                    Distracks distracks= (Distracks) getActivity().getApplication();
-                                    MusicFileMetaData artistAndSong = new MusicFileMetaData();
-                                    artistAndSong.setArtistName(artist);
-                                    artistAndSong.setTrackName(song);
-
-                                    distracks.download(artistAndSong);
-
-                                }else{
-                                    //StreamImmediately
-                                    Distracks distracks= (Distracks) getActivity().getApplication();
-                                    MusicFileMetaData artistAndSong = new MusicFileMetaData();
-                                    artistAndSong.setArtistName(artist);
-                                    artistAndSong.setTrackName(song);
-                                    distracks.streamSong(artistAndSong);
-                                }
-
-                            }
-                        });
-            }
-        }else{
-            //set null ui
-            SongsUI.setNullUI("No songs for artist: "+ artist,getContext(), rootView);
-        }
-    }
-
 
 
 }

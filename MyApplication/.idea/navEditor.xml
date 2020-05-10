@@ -41,6 +41,18 @@
                       </LayoutPositions>
                     </value>
                   </entry>
+                  <entry key="saved_songs">
+                    <value>
+                      <LayoutPositions>
+                        <option name="myPosition">
+                          <Point>
+                            <option name="x" value="326" />
+                            <option name="y" value="-47" />
+                          </Point>
+                        </option>
+                      </LayoutPositions>
+                    </value>
+                  </entry>
                   <entry key="search_fragment">
                     <value>
                       <LayoutPositions>
@@ -52,7 +64,7 @@
                         </option>
                         <option name="myPositions">
                           <map>
-                            <entry key="action_search_fragment_to_blankFragment2">
+                            <entry key="search_to_result">
                               <value>
                                 <LayoutPositions />
                               </value>

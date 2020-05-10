@@ -44,6 +44,4 @@
         app:layout_constraintTop_toTopOf="parent"
         android:text="Search"
         android:layout_gravity="center"/>
-
-
 </LinearLayout>

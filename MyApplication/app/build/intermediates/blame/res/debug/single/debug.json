@@ -8,6 +8,10 @@
         "source": "C:\\Users\\Xrisa\\Desktop\\katan\\DistributedSystemsAssignment\\MyApplication\\app\\src\\main\\res\\raw\\brokers.txt"
     },
     {
+        "merged": "C:\\Users\\Xrisa\\Desktop\\katan\\DistributedSystemsAssignment\\MyApplication\\app\\build\\intermediates\\res\\merged\\debug\\layout_saved_songs.xml.flat",
+        "source": "C:\\Users\\Xrisa\\Desktop\\katan\\DistributedSystemsAssignment\\MyApplication\\app\\src\\main\\res\\layout\\saved_songs.xml"
+    },
+    {
         "merged": "C:\\Users\\Xrisa\\Desktop\\katan\\DistributedSystemsAssignment\\MyApplication\\app\\build\\intermediates\\res\\merged\\debug\\mipmap-xhdpi_ic_launcher.png.flat",
         "source": "C:\\Users\\Xrisa\\Desktop\\katan\\DistributedSystemsAssignment\\MyApplication\\app\\src\\main\\res\\mipmap-xhdpi\\ic_launcher.png"
     },

@@ -42,4 +42,8 @@
         android:name="com.world.myapplication.PlayerFragment"
         android:id="@+id/player_fragment"
         tools:layout="@layout/player_fragment" />
+    <fragment
+        android:name="com.world.myapplication.SavedSongs"
+        android:id="@+id/saved_songs"
+        tools:layout="@layout/saved_songs" />
 </navigation>

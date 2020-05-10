@@ -9,15 +9,14 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentTransaction;
-import androidx.navigation.NavDirections;
+
 import androidx.navigation.Navigation;
 
 import com.google.android.material.textfield.TextInputLayout;
 
 
 public class SearchFragment extends Fragment {
-    // Declare Variables
+
     View rootView;
     String text;
     @Override
@@ -51,7 +50,6 @@ public class SearchFragment extends Fragment {
                         if(!text.equals("")) {
                             hideSoftKeyboard(getActivity());
                         }
-                        //transaction.commit();
                     }
                 });
     }

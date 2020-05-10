@@ -2031,6 +2031,8 @@ id rounded
 id row_index_key
 id save_non_transition_alpha
 id save_overlay_view
+id saved_layout
+id saved_songs
 id scale
 id screen
 id scroll
@@ -2283,6 +2285,7 @@ layout notification_template_media_custom
 layout notification_template_part_chronometer
 layout notification_template_part_time
 layout player_fragment
+layout saved_songs
 layout search_fragment
 layout search_result
 layout select_dialog_item_material
