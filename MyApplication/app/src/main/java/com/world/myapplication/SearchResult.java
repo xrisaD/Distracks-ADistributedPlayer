@@ -51,10 +51,13 @@ public class SearchResult extends Fragment {
         //get argmunets from search
         artist = getArguments().getString("artist");
         Log.e("artist", artist);
-
-        //search for songs
-        AsyncSearchResult runnerSearch = new AsyncSearchResult();
-        runnerSearch.execute(new ArtistName(artist));
+        if(artist!=null && artist.length()>0) {
+            //search for songs
+            AsyncSearchResult runnerSearch = new AsyncSearchResult();
+            runnerSearch.execute(new ArtistName(artist));
+        }else{
+            SongsUI.setNullUI("No songs for artist: "+ artist,getContext(), rootView);
+        }
     }
     private class AsyncSearchResult extends AsyncTask<ArtistName, String, ArrayList<MusicFileMetaData>> {
         ProgressDialog progressDialog;
@@ -126,7 +129,6 @@ public class SearchResult extends Fragment {
             }
         }else{
             //set null ui
-            Log.e("null","null");
             SongsUI.setNullUI("No songs for artist: "+ artist,getContext(), rootView);
         }
     }
