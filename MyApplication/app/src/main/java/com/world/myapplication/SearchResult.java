@@ -94,6 +94,4 @@ public class SearchResult extends Fragment {
             super.onProgressUpdate(values);
         }
     }
-
-
 }

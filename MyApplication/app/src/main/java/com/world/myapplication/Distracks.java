@@ -3,23 +3,17 @@ package com.world.myapplication;
 import android.app.Application;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
-import android.app.ProgressDialog;
-import android.content.Context;
+
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.AsyncTask;
 import android.os.Build;
-import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
-import android.widget.Button;
 
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
-import androidx.fragment.app.FragmentTransaction;
 
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -90,17 +84,6 @@ public class Distracks extends Application {
         }
         forceChangeMediaPlayer(consumer.getPath() + metadata.getTrackName());
     }
-
-
-    private void saveChunk(MusicFile chunk , String filename){
-        try (FileOutputStream fos = new FileOutputStream(filename)) {
-            System.out.println("Saving a chunk to filename " + filename);
-            fos.write(chunk.getMusicFileExtract());
-        }
-        catch (Exception e){
-            e.printStackTrace();
-        }
-    }
     private void forceChangeMediaPlayer(String newDataSource){
         System.out.println("force changed caled");
         try {
@@ -123,6 +106,33 @@ public class Distracks extends Application {
             String songName = musicFileMetaData[0].getTrackName();
             try {
                 consumer.playData(new ArtistName(artistName) , songName , false);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+    }
+
+    private void saveChunk(MusicFile chunk , String filename){
+        try (FileOutputStream fos = new FileOutputStream(filename)) {
+            System.out.println("Saving a chunk to filename " + filename);
+            fos.write(chunk.getMusicFileExtract());
+        }
+        catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    // Async for streaming
+    private class StreamDownloadedSong extends AsyncTask<MusicFileMetaData , Void , Void>{
+
+        @Override
+        protected Void doInBackground(MusicFileMetaData... musicFileMetaData) {
+            String artistName = musicFileMetaData[0].getArtistName();
+            String songName = musicFileMetaData[0].getTrackName();
+            try {
+                //Stream downloaded song
+
             } catch (Exception e) {
                 e.printStackTrace();
             }
