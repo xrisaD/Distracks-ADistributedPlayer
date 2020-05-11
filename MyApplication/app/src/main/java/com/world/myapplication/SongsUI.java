@@ -187,11 +187,15 @@ public class SongsUI {
 
                                 }else{
                                     //StreamImmediately
-                                    Distracks distracks= (Distracks) activity.getApplication();
                                     MusicFileMetaData artistAndSong = new MusicFileMetaData();
                                     artistAndSong.setArtistName(artist);
                                     artistAndSong.setTrackName(song);
-                                    distracks.streamSong(artistAndSong);
+
+                                    Bundle bundle = new Bundle();
+                                    bundle.putBoolean("offline", false);
+                                    bundle.putSerializable("music_file", artistAndSong);
+
+                                    Navigation.findNavController(view).navigate(R.id.result_to_player, bundle);
                                 }
 
                             }

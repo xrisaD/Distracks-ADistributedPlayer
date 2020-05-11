@@ -33,6 +33,7 @@ public class PlayerFragment extends Fragment {
 
     private boolean flag=true;
     private int length;
+    //TODO: na asxolithoume me to interface edw!
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -54,7 +55,9 @@ public class PlayerFragment extends Fragment {
 
         }else{
             //online mode
-
+            MusicFileMetaData musicFileMetaData = (MusicFileMetaData) getArguments().getSerializable("music_file");
+            Distracks distracks= (Distracks) getActivity().getApplication();
+            distracks.streamSongOnline(musicFileMetaData);
         }
 
 

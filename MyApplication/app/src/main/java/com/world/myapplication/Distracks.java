@@ -66,8 +66,9 @@ public class Distracks extends Application {
             }
         });
     }
+    //TODO: na grapsoume aftes tis 2 sunarthseis
     public void streamSongOffline(String path){Log.e("pathhhhhaki ", path);}
-
+    public void streamSongOnline(MusicFileMetaData musicFileMetaData){}
 
     //Starts playing a song immediateely
     public void streamSong(MusicFileMetaData metadata){

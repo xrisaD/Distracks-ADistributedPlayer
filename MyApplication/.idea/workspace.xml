@@ -12,10 +12,8 @@
     <list default="true" id="2bab5826-eda4-479d-84cb-0c95fad24018" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/navEditor.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/navEditor.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/app.iml" beforeDir="false" afterPath="$PROJECT_DIR$/app/app.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/com/world/myapplication/Distracks.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/world/myapplication/Distracks.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/com/world/myapplication/PlayerFragment.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/world/myapplication/PlayerFragment.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/world/myapplication/SavedSongs.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/world/myapplication/SavedSongs.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/com/world/myapplication/SongsUI.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/world/myapplication/SongsUI.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/res/navigation/nav_graph.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/navigation/nav_graph.xml" afterDir="false" />
     </list>

@@ -9,13 +9,6 @@
         android:name="com.world.myapplication.FirstPage"
         android:id="@+id/first_page"
         tools:layout="@layout/first_page" >
-        <argument
-            android:name="myArg"
-            app:argType="integer"
-            android:defaultValue="1" />
-        <action
-            android:id="@+id/action_first_page_to_search_fragment"
-            app:destination="@id/search_fragment" />
     </fragment>
     <!-- Search for an artist fragment -->
     <fragment
@@ -36,7 +29,20 @@
     <fragment
         android:name="com.world.myapplication.SearchResult"
         android:id="@+id/search_result"
-        tools:layout="@layout/search_result" />
+        tools:layout="@layout/search_result">
+    <action
+        android:id="@+id/result_to_player"
+        app:destination="@id/player_fragment">
+        <argument
+            android:name="offline"
+            app:argType="boolean"
+            android:defaultValue="true" />
+        <argument
+            android:name="music_file"
+            app:argType="MusicFileMetaData"
+            android:defaultValue="@null" />
+    </action>/>
+    </fragment>
     <fragment
         android:name="com.world.myapplication.PlayerFragment"
         android:id="@+id/player_fragment"
