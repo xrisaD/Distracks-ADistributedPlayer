@@ -17,11 +17,6 @@ import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.math.BigInteger;
-import java.net.Socket;
 import java.util.ArrayList;
 
 public class PlayerFragment extends Fragment {
@@ -50,6 +45,19 @@ public class PlayerFragment extends Fragment {
     public void onStart() {
 
         super.onStart();
+
+        boolean offline = getArguments().getBoolean("offline");
+        if(offline){
+            String path = getArguments().getString("path"); //get song's path
+            Distracks distracks= (Distracks) getActivity().getApplication();
+            distracks.streamSongOffline(path);
+
+        }else{
+            //online mode
+
+        }
+
+
 
         playButton = (ImageButton) rootView.findViewById(R.id.start);
 

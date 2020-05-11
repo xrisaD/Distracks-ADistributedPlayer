@@ -4,6 +4,7 @@ package com.world.myapplication;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
+import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -12,6 +13,9 @@ import android.widget.Switch;
 import android.widget.TextView;
 
 
+import androidx.navigation.Navigation;
+
+import java.io.File;
 import java.util.ArrayList;
 
 public class SongsUI {
@@ -196,23 +200,25 @@ public class SongsUI {
 
     }
     //set songs on screen and set onclick listener
-    public static void setSongOnClickListenerPlayer(ArrayList<Button> mySongs, View rootView, final Activity activity, Context context) {
-        for(Button b: mySongs){
-            b.setOnClickListener(
+    public static void setSongOnClickListenerPlayer(ArrayList<Button> mySongs, final ArrayList<MusicFileMetaData> savedMetadata, final Activity activity, Context context, View rootView) {
+
+        for(int i = 0; i < mySongs.size(); i++){
+            final int finalI = i;
+            mySongs.get(i).setOnClickListener(
                     new View.OnClickListener()
                     {
                         public void onClick(View view)
                         {
                             Button thisBtn = (Button) view;
                             String song = thisBtn.getText().toString();
+                            Log.e("THESOULA", String.valueOf(finalI));
 
                             //StreamImmediately
-                            Distracks distracks= (Distracks) activity.getApplication();
-                            MusicFileMetaData artistAndSong = new MusicFileMetaData();
-                            artistAndSong.setArtistName(artist);
-                            artistAndSong.setTrackName(song);
-
-                            distracks.streamSong(artistAndSong);
+                            //search for artist's songs
+                            Bundle bundle = new Bundle();
+                            bundle.putBoolean("offline", true);
+                            bundle.putString("path", savedMetadata.get(finalI).getPath());
+                            Navigation.findNavController(view).navigate(R.id.saved_to_player, bundle);
                         }
                     });
         }

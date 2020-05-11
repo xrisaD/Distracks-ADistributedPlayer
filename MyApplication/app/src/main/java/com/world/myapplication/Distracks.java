@@ -66,6 +66,7 @@ public class Distracks extends Application {
             }
         });
     }
+    public void streamSongOffline(String path){Log.e("pathhhhhaki ", path);}
 
 
     //Starts playing a song immediateely

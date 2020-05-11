@@ -31,9 +31,8 @@
                 app:argType="string"
                 android:defaultValue="1" />
         </action>
-
     </fragment>
-    <!-- Search Result for an artist fragment -->
+
     <fragment
         android:name="com.world.myapplication.SearchResult"
         android:id="@+id/search_result"
@@ -45,5 +44,18 @@
     <fragment
         android:name="com.world.myapplication.SavedSongs"
         android:id="@+id/saved_songs"
-        tools:layout="@layout/saved_songs" />
+        tools:layout="@layout/saved_songs">
+        <action
+            android:id="@+id/saved_to_player"
+            app:destination="@id/player_fragment">
+        <argument
+            android:name="offline"
+            app:argType="boolean"
+            android:defaultValue="true" />
+            <argument
+                android:name="path"
+                app:argType="string"
+                android:defaultValue="1" />
+        </action>
+    </fragment>
 </navigation>
