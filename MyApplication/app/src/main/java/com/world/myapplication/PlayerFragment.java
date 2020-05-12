@@ -46,23 +46,40 @@ public class PlayerFragment extends Fragment {
     public void onStart() {
 
         super.onStart();
+        if(getArguments() != null){
+            boolean offline = getArguments().getBoolean("offline");
+            if (offline) {
+                String path = getArguments().getString("path"); //get song's path
+                Distracks distracks = (Distracks) getActivity().getApplication();
+                distracks.streamSongOffline(path);
 
-        boolean offline = getArguments().getBoolean("offline");
-        if(offline){
-            String path = getArguments().getString("path"); //get song's path
-            Distracks distracks= (Distracks) getActivity().getApplication();
-            distracks.streamSongOffline(path);
-
-        }else{
-            //online mode
-            MusicFileMetaData musicFileMetaData = (MusicFileMetaData) getArguments().getSerializable("music_file");
-            Distracks distracks= (Distracks) getActivity().getApplication();
-            distracks.streamSongOnline(musicFileMetaData);
+            } else {
+                //online mode
+                String artistName = getArguments().getString("artist_name");
+                String songName = getArguments().getString("song_name");
+                Distracks distracks = (Distracks) getActivity().getApplication();
+                distracks.streamSongOnline(artistName, songName);
+            }
         }
 
-
-
         playButton = (ImageButton) rootView.findViewById(R.id.start);
+        playButton.setOnClickListener(new View.OnClickListener() {
+            boolean paused = false;
+            @Override
+            public void onClick(View v) {
+                if(!paused){
+                    Distracks distracks = (Distracks) getActivity().getApplication();
+                    distracks.pause();
+                    paused = true;
+                }
+                else{
+                    Distracks distracks = (Distracks) getActivity().getApplication();
+                    distracks.resume();
+                    paused = false;
+                }
+
+            }
+        });
 
         seek = (SeekBar)  rootView.findViewById(R.id.seekbar);
         titleText = (TextView) rootView.findViewById(R.id.artistsong);
@@ -142,7 +159,7 @@ public class PlayerFragment extends Fragment {
             playButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-
+                    /*
                     length=musicPlayer.getCurrentPosition();
                     Log.e("yag", String.valueOf(length));
                     if(length==0){
@@ -163,6 +180,8 @@ public class PlayerFragment extends Fragment {
                     }
                     updateSeek();
                     flag=!flag;
+                    */
+
                 }
             });
             musicPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {

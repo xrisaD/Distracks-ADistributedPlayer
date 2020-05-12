@@ -1800,7 +1800,6 @@ id action_bar_title
 id action_container
 id action_context_bar
 id action_divider
-id action_first_page_to_search_fragment
 id action_image
 id action_menu_divider
 id action_menu_presenter
@@ -2024,6 +2023,7 @@ id progress_horizontal
 id progress_icon
 id progress_title
 id radio
+id result_to_player
 id right
 id right_icon
 id right_side

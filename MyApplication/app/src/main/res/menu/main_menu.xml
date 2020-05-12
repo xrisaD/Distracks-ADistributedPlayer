@@ -8,7 +8,7 @@
             android:id="@id/search_fragment"
             android:title="Search for an artist.." />
         <item
-            android:id="@id/first_page"
+            android:id="@id/player_fragment"
             android:title="Play Now" />
         <item
             android:id="@id/saved_songs"

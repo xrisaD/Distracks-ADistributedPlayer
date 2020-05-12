@@ -187,13 +187,11 @@ public class SongsUI {
 
                                 }else{
                                     //StreamImmediately
-                                    MusicFileMetaData artistAndSong = new MusicFileMetaData();
-                                    artistAndSong.setArtistName(artist);
-                                    artistAndSong.setTrackName(song);
 
                                     Bundle bundle = new Bundle();
                                     bundle.putBoolean("offline", false);
-                                    bundle.putSerializable("music_file", artistAndSong);
+                                    bundle.putString("artist_name", artist);
+                                    bundle.putString("song_name", song);
 
                                     Navigation.findNavController(view).navigate(R.id.result_to_player, bundle);
                                 }
@@ -215,7 +213,6 @@ public class SongsUI {
                         {
                             Button thisBtn = (Button) view;
                             String song = thisBtn.getText().toString();
-                            Log.e("THESOULA", String.valueOf(finalI));
 
                             //StreamImmediately
                             //search for artist's songs

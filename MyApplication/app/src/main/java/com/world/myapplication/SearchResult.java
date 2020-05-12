@@ -50,13 +50,24 @@ public class SearchResult extends Fragment {
         super.onStart();
         //get argmunets from search
         artist = getArguments().getString("artist");
-        Log.e("artist", artist);
-        if(artist!=null && artist.length()>0) {
-            //search for songs
-            AsyncSearchResult runnerSearch = new AsyncSearchResult();
-            runnerSearch.execute(new ArtistName(artist));
+        Distracks distracks = (Distracks) getActivity().getApplication();
+        if(distracks.lastSearch.equals(artist)) {
+            if(distracks.lastSearchResult == null){
+                //set null ui
+                SongsUI.setNullUI("No songs for artist: "+ artist, getContext(), rootView);
+            }else{
+                ArrayList<Button> mySongs = SongsUI.setSearchResultUI(distracks.lastSearchResult, getContext(), rootView);
+                SongsUI.setSongOnClickListener(artist ,mySongs, rootView, getActivity(), getContext());
+            }
         }else{
-            SongsUI.setNullUI("No songs for artist: "+ artist,getContext(), rootView);
+            Log.e("artist", artist);
+            if (artist != null && artist.length() > 0) {
+                //search for songs
+                AsyncSearchResult runnerSearch = new AsyncSearchResult();
+                runnerSearch.execute(new ArtistName(artist));
+            } else {
+                SongsUI.setNullUI("No songs for artist: " + artist, getContext(), rootView);
+            }
         }
     }
     private class AsyncSearchResult extends AsyncTask<ArtistName, String, ArrayList<MusicFileMetaData>> {
@@ -77,14 +88,18 @@ public class SearchResult extends Fragment {
                     "Searching for "+ artist + "...");
         }
         @Override
-        protected void onPostExecute(ArrayList<MusicFileMetaData> s) {
+        protected void onPostExecute(ArrayList<MusicFileMetaData> result) {
             progressDialog.dismiss();
-            if (s!=null && s.size() > 0) {
-                ArrayList<Button> mySongs = SongsUI.setSearchResultUI(s, getContext(), rootView);
+            Distracks distracks = (Distracks) getActivity().getApplication();
+            if (result!=null && result.size() > 0) {
+                distracks.lastSearchResult = result;
+                ArrayList<Button> mySongs = SongsUI.setSearchResultUI(result, getContext(), rootView);
                 SongsUI.setSongOnClickListener(artist ,mySongs, rootView, getActivity(), getContext());
+
             }else{
                 //set null ui
                 SongsUI.setNullUI("No songs for artist: "+ artist, getContext(), rootView);
+                distracks.lastSearchResult = null;
             }
 
         }
