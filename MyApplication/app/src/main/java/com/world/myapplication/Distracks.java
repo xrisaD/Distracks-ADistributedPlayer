@@ -39,7 +39,7 @@ public class Distracks extends Application {
         super.onCreate();
         createNotificationChannel();
         consumer = new Consumer();
-        consumer.addBroker(new Component("192.168.1.13", 5000));
+        consumer.addBroker(new Component("192.168.1.16", 5000));
 
         consumer.setPath(getFilesDir());
         //this.readBroker(getFilesDir().getAbsolutePath()+"brokers.txt");
@@ -61,7 +61,7 @@ public class Distracks extends Application {
         }
     }
     int mediaPlayerIndex;
-    public void pauseOnlineStreaming(){
+    private void pauseOnlineStreaming(){
         for(int i = 0 ; i < onlinePlayers.size() ; i++){
             if(onlinePlayers.get(i).isPlaying()){
                 onlinePlayers.get(i).pause();
@@ -69,13 +69,13 @@ public class Distracks extends Application {
             }
         }
     }
-    public void resumeOnlineStreaming(){
+    private void resumeOnlineStreaming(){
         onlinePlayers.get(mediaPlayerIndex).start();
     }
-    public void pauseOfflineStreaming(){
+    private void pauseOfflineStreaming(){
         this.offlinePlayer.pause();
     }
-    public void resumeOfflineStreaming(){
+    private void resumeOfflineStreaming(){
         offlinePlayer.start();
     }
     boolean currentlyStreamingOnline  = true;
@@ -93,10 +93,10 @@ public class Distracks extends Application {
             resumeOnlineStreaming();
         }
         else {
-            pauseOfflineStreaming();
+            resumeOfflineStreaming();
         }
     }
-    public void resetEverything(){
+    private void resetEverything(){
         try{
             System.out.println("RESETTING EVERYTHING");
             if(onlinePlayers != null) {
@@ -124,6 +124,23 @@ public class Distracks extends Application {
         MusicFileMetaData metaData= new MusicFileMetaData(songName , artistName , null , null , null,0);
         streamSong.execute(metaData);
 
+    }
+    public int getCurrentPositionInSeconds(){
+        if(!currentlyStreamingOnline){
+            if(offlinePlayer == null) return 0;
+            return offlinePlayer.getCurrentPosition() / 1000 ;
+        }
+        else{
+            if(onlinePlayers == null) return  0;
+            int sumMilliseconds = 0;
+            for (MediaPlayer m : onlinePlayers){
+                sumMilliseconds += m.getCurrentPosition();
+                if(m.isPlaying()){
+                    break;
+                }
+            }
+            return sumMilliseconds / 1000;
+        }
     }
 
 

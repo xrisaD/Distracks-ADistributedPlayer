@@ -101,6 +101,8 @@ public class PlayerFragment extends Fragment {
                 updateSeek();
             }
         });
+        TestPos s = new TestPos();
+        s.execute();
 //        seek.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
 //            @Override
 //            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
@@ -233,6 +235,24 @@ public class PlayerFragment extends Fragment {
                 }
             };
             handler.postDelayed(runnable,100);
+        }
+    }
+
+    class TestPos extends AsyncTask<Void , Void , Void>{
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            Distracks e = (Distracks) getActivity().getApplication();
+            while(true) {
+                Log.e("wtf", "startinga " + e.getCurrentPositionInSeconds());
+
+                try {
+                    Thread.sleep(1300);
+                } catch (InterruptedException ex) {
+                    ex.printStackTrace();
+                }
+            }
+
         }
     }
 }
