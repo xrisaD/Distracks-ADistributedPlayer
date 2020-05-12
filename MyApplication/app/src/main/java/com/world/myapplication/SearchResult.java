@@ -1,10 +1,7 @@
 package com.world.myapplication;
 
-import android.app.NotificationChannel;
-import android.app.NotificationManager;
 import android.app.ProgressDialog;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -14,18 +11,13 @@ import android.widget.Button;
 import android.widget.Switch;
 
 
-import androidx.core.app.NotificationCompat;
-import androidx.core.app.NotificationManagerCompat;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentTransaction;
 
 
-import java.io.File;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.util.ArrayList;
-import java.util.List;
 
 //result: all artist's song
 public class SearchResult extends Fragment {
@@ -57,7 +49,7 @@ public class SearchResult extends Fragment {
                 SongsUI.setNullUI("No songs for artist: "+ artist, getContext(), rootView);
             }else{
                 ArrayList<Button> mySongs = SongsUI.setSearchResultUI(distracks.lastSearchResult, getContext(), rootView);
-                SongsUI.setSongOnClickListener(artist ,mySongs, rootView, getActivity(), getContext());
+                SongsUI.setSongOnClickListener(artist ,mySongs, distracks.lastSearchResult, rootView, getActivity(), getContext());
             }
         }else{
             Log.e("artist", artist);
@@ -94,10 +86,9 @@ public class SearchResult extends Fragment {
 
             Distracks distracks = (Distracks) getActivity().getApplication();
             if (result!=null && result.size() > 0) {
-                Log.e("ok",result.get(0).toString());
                 distracks.lastSearchResult = result;
                 ArrayList<Button> mySongs = SongsUI.setSearchResultUI(result, getContext(), rootView);
-                SongsUI.setSongOnClickListener(artist ,mySongs, rootView, getActivity(), getContext());
+                SongsUI.setSongOnClickListener(artist ,mySongs, result,rootView, getActivity(), getContext());
 
             }else{
                 //set null ui

@@ -1,6 +1,8 @@
 package com.world.myapplication;
 
 import android.app.ProgressDialog;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -11,6 +13,7 @@ import android.view.ViewGroup;
 import android.media.MediaPlayer;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -27,9 +30,10 @@ public class PlayerFragment extends Fragment {
     private SeekBar seek;
     private Runnable runnable;
     private Handler handler;
-
+    private ImageView imageView;
     private String artist;
     private String song;
+    private Bitmap bmp;
 
     private boolean flag=true;
     private int length;
@@ -46,12 +50,15 @@ public class PlayerFragment extends Fragment {
     public void onStart() {
 
         super.onStart();
+        bmp = null;
         if(getArguments() != null){
             boolean offline = getArguments().getBoolean("offline");
             if (offline) {
+                //offline mode
                 String path = getArguments().getString("path"); //get song's path
                 artist= getArguments().getString("artist_name");
                 song = getArguments().getString("song_name");
+                //bmp  = getArguments().getParcelable("bitmap");
                 Distracks distracks = (Distracks) getActivity().getApplication();
                 distracks.streamSongOffline(path);
 
@@ -59,12 +66,19 @@ public class PlayerFragment extends Fragment {
                 //online mode
                 artist= getArguments().getString("artist_name");
                 song = getArguments().getString("song_name");
+
                 Distracks distracks = (Distracks) getActivity().getApplication();
                 distracks.streamSongOnline(artist, song);
             }
         }
-
-        playButton = (ImageButton) rootView.findViewById(R.id.start);
+        imageView = (ImageView) rootView.findViewById(R.id.album_image);
+        if(bmp!=null) {
+        }else{
+            bmp = BitmapFactory.decodeResource(getContext().getResources(), R.drawable.logo);
+        }
+        imageView.setImageBitmap(Bitmap.createScaledBitmap(bmp, bmp.getWidth(), bmp.getHeight(), false));
+        playButton
+                = (ImageButton) rootView.findViewById(R.id.start);
         playButton.setOnClickListener(new View.OnClickListener() {
             boolean paused = false;
             @Override

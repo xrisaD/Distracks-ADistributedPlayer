@@ -3,19 +3,22 @@ package com.world.myapplication;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.Switch;
 import android.widget.TextView;
 
 
 import androidx.navigation.Navigation;
 
-import java.io.File;
 import java.util.ArrayList;
 
 public class SongsUI {
@@ -57,8 +60,28 @@ public class SongsUI {
             // create a new textview
             // Create LinearLayout
             LinearLayout newLayout = new LinearLayout(context);
-            newLayout.setOrientation(LinearLayout.VERTICAL);
+            newLayout.setOrientation(LinearLayout.HORIZONTAL);
             newLayout.setBackgroundColor(colorBackground);
+
+            //image layout
+            RelativeLayout leftLayout = new RelativeLayout(context);
+            leftLayout.setGravity(Gravity.LEFT);
+
+            ImageView imgView = new ImageView(context);
+            Bitmap bmp = null;
+            if(resultMetaData.get(i).getImage()!=null){
+                bmp = BitmapFactory.decodeByteArray(resultMetaData.get(i).getImage(), 0, resultMetaData.get(i).getImage().length);
+            }else{
+                bmp = BitmapFactory.decodeResource(context.getResources(), R.drawable.logo);
+            }
+            imgView.setImageBitmap(Bitmap.createScaledBitmap(bmp, 200, 200, false));
+            leftLayout.addView(imgView);
+
+            RelativeLayout rightLayout = new RelativeLayout(context);
+            rightLayout.setGravity(Gravity.RIGHT);
+
+            LinearLayout dataLayout = new LinearLayout(context);
+            dataLayout.setOrientation(LinearLayout.VERTICAL);
 
             // Add title
             // Create Button
@@ -68,7 +91,7 @@ public class SongsUI {
             btn.setTextSize(12);
             btn.setTextColor(colorText);
             btn.setLayoutParams (new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 100));
-            newLayout.addView(btn);
+            dataLayout.addView(btn);
             mySongs.add(btn);
 
             //Add
@@ -77,11 +100,18 @@ public class SongsUI {
             data.setText(info);
             data.setTextSize(10);
             data.setTextColor(colorText);
-            newLayout.addView(data);
+            dataLayout.addView(data);
 
+            dataLayout.setPadding(padding, 0, 0, 0);
+
+            rightLayout.addView(dataLayout);
+
+            newLayout.addView(leftLayout);
+            newLayout.addView(rightLayout);
             newLayout.setLayoutParams(layoutParams);
-
             newLayout.setPadding(padding,padding,padding,padding);
+
+
             // add the textview to the linearlayout
             myLayout.addView(newLayout);
 
@@ -122,11 +152,32 @@ public class SongsUI {
         //set padding
         int padding = 30;
         for (int i = 0; i < resultMetaData.size(); i++) {
-            // create a new textview
+
             // Create LinearLayout
             LinearLayout newLayout = new LinearLayout(context);
-            newLayout.setOrientation(LinearLayout.VERTICAL);
+            newLayout.setOrientation(LinearLayout.HORIZONTAL);
             newLayout.setBackgroundColor(colorBackground);
+
+            //image layout
+            RelativeLayout leftLayout = new RelativeLayout(context);
+            leftLayout.setGravity(Gravity.LEFT);
+
+            ImageView imgView = new ImageView(context);
+            Bitmap bmp = null;
+            if(resultMetaData.get(i).getImage()!=null){
+                 bmp = BitmapFactory.decodeByteArray(resultMetaData.get(i).getImage(), 0, resultMetaData.get(i).getImage().length);
+            }else{
+                bmp = BitmapFactory.decodeResource(context.getResources(), R.drawable.logo);
+            }
+            imgView.setImageBitmap(Bitmap.createScaledBitmap(bmp, 200, 200, false));
+            leftLayout.addView(imgView);
+
+
+            RelativeLayout rightLayout = new RelativeLayout(context);
+            rightLayout.setGravity(Gravity.RIGHT);
+
+            LinearLayout dataLayout = new LinearLayout(context);
+            dataLayout.setOrientation(LinearLayout.VERTICAL);
 
             // Add title
             // Create Button
@@ -136,7 +187,7 @@ public class SongsUI {
             btn.setTextSize(12);
             btn.setTextColor(colorText);
             btn.setLayoutParams (new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 100));
-            newLayout.addView(btn);
+            dataLayout.addView(btn);
             mySongs.add(btn);
 
             //Add
@@ -145,11 +196,17 @@ public class SongsUI {
             data.setText(info);
             data.setTextSize(10);
             data.setTextColor(colorText);
-            newLayout.addView(data);
+            dataLayout.addView(data);
+            dataLayout.setPadding(padding, 0, 0, 0);
 
+            rightLayout.addView(dataLayout);
+
+            newLayout.addView(leftLayout);
+            newLayout.addView(rightLayout);
             newLayout.setLayoutParams(layoutParams);
-
             newLayout.setPadding(padding,padding,padding,padding);
+
+
             // add the textview to the linearlayout
             myLayout.addView(newLayout);
 
@@ -160,7 +217,7 @@ public class SongsUI {
 
 
     //set songs on screen and set onclick listener
-    public static void setSongOnClickListener(final String artist, ArrayList<Button> mySongs, View rootView, final Activity activity, Context context) {
+    public static void setSongOnClickListener(final String artist, ArrayList<Button> mySongs, final ArrayList<MusicFileMetaData> result, View rootView, final Activity activity, final Context context) {
             //get switch
             if(download!=null) {
                 download = SongsUI.download;
@@ -168,8 +225,9 @@ public class SongsUI {
                 download.setChecked(false);
             }
 
-            for(Button b: mySongs){
-                b.setOnClickListener(
+        for(int i = 0; i < mySongs.size(); i++){
+            final int finalI = i;
+                mySongs.get(i).setOnClickListener(
                         new View.OnClickListener()
                         {
                             public void onClick(View view)
@@ -202,7 +260,7 @@ public class SongsUI {
 
     }
     //set songs on screen and set onclick listener
-    public static void setSongOnClickListenerPlayer(ArrayList<Button> mySongs, final ArrayList<MusicFileMetaData> savedMetadata, final Activity activity, Context context, View rootView) {
+    public static void setSongOnClickListenerPlayer(ArrayList<Button> mySongs, final ArrayList<MusicFileMetaData> savedMetadata, final Activity activity, final Context context, View rootView) {
 
         for(int i = 0; i < mySongs.size(); i++){
             final int finalI = i;

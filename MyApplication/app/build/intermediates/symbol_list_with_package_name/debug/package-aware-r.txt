@@ -1810,6 +1810,7 @@ id action_text
 id actions
 id activity_chooser_view_content
 id add
+id album_image
 id alertTitle
 id all
 id always

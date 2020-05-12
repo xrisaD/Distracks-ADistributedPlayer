@@ -108,6 +108,12 @@ class MP3Cutter{
 
                 ID3v2 id3v2Tag = mp3file.getId3v2Tag();
 
+                if(id3v2Tag.getAlbumImage()!=null){
+                    MFD.setImage(id3v2Tag.getAlbumImage());
+                }else{
+                    MFD.setImage(null);
+                }
+
                 if (id3v2Tag.getTitle() != null) {
                     MFD.setTrackName(id3v2Tag.getTitle());
                 } else {
