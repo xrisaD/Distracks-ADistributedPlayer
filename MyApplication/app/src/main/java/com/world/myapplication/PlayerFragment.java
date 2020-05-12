@@ -90,7 +90,33 @@ public class PlayerFragment extends Fragment {
         handler=new Handler();
         musicPlayer = MediaPlayer.create(getActivity(), R.raw.kk);
 
-
+        musicPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+            @Override
+            public void onPrepared(MediaPlayer mp) {
+                seek.setMax(musicPlayer.getDuration());
+                musicPlayer.setLooping(false);
+                musicPlayer.start();
+                updateSeek();
+            }
+        });
+//        seek.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+//            @Override
+//            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+//                if(fromUser){
+//                    musicPlayer.seekTo(progress);
+//                }
+//            }
+//
+//            @Override
+//            public void onStartTrackingTouch(SeekBar seekBar) {
+//
+//            }
+//
+//            @Override
+//            public void onStopTrackingTouch(SeekBar seekBar) {
+//
+//            }
+//        });
         //PlayerFragment.AsyncPlaySong runner = new PlayerFragment.AsyncPlaySong();
         //runner.execute(settings);
 
@@ -128,33 +154,7 @@ public class PlayerFragment extends Fragment {
 
         @Override
         protected void onPreExecute() {
-            musicPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
-                @Override
-                public void onPrepared(MediaPlayer mp) {
-                    seek.setMax(musicPlayer.getDuration());
-                    musicPlayer.setLooping(false);
-                    musicPlayer.start();
-                    updateSeek();
-                }
-            });
-            seek.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-                @Override
-                public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                    if(fromUser){
-                        musicPlayer.seekTo(progress);
-                    }
-                }
 
-                @Override
-                public void onStartTrackingTouch(SeekBar seekBar) {
-
-                }
-
-                @Override
-                public void onStopTrackingTouch(SeekBar seekBar) {
-
-                }
-            });
 
 
 
@@ -187,17 +187,17 @@ public class PlayerFragment extends Fragment {
 
                 }
             });
-            musicPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-                @Override
-                public void onCompletion(MediaPlayer mp) {
-                    playButton.setImageResource(R.drawable.play);
-                    flag=!flag;
-                    Toast.makeText(getActivity(), "The Song is Over", Toast.LENGTH_SHORT).show();
-
-                    stopPlaying(playButton);
-
-                }
-            });
+//            musicPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+//                @Override
+//                public void onCompletion(MediaPlayer mp) {
+//                    playButton.setImageResource(R.drawable.play);
+//                    flag=!flag;
+//                    Toast.makeText(getActivity(), "The Song is Over", Toast.LENGTH_SHORT).show();
+//
+//                    stopPlaying(playButton);
+//
+//                }
+//            });
         }
 
         @Override
@@ -210,26 +210,27 @@ public class PlayerFragment extends Fragment {
             super.onProgressUpdate(values);
         }
 
-        private void stopPlaying(final ImageButton playButton) {
-            if (musicPlayer != null) {
-                musicPlayer.seekTo(0);
-                musicPlayer.start();
-                musicPlayer.pause();
-            }
-        }
 
-        public void updateSeek(){
-            seek.setProgress(musicPlayer.getCurrentPosition());
-            if(musicPlayer.isPlaying()){
-                runnable=new Runnable() {
-                    @Override
-                    public void run() {
-                        updateSeek();
-                    }
-                };
-                handler.postDelayed(runnable,100);
-            }
-        }
 
+    }
+    private void stopPlaying(final ImageButton playButton) {
+        if (musicPlayer != null) {
+            musicPlayer.seekTo(0);
+            musicPlayer.start();
+            musicPlayer.pause();
+        }
+    }
+
+    public void updateSeek(){
+        seek.setProgress(musicPlayer.getCurrentPosition());
+        if(musicPlayer.isPlaying()){
+            runnable=new Runnable() {
+                @Override
+                public void run() {
+                    updateSeek();
+                }
+            };
+            handler.postDelayed(runnable,100);
+        }
     }
 }

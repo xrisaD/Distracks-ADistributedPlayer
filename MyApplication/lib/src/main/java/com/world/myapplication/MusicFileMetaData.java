@@ -67,6 +67,7 @@ public class MusicFileMetaData implements Serializable {
                 ", albumInfo='" + albumInfo + '\'' +
                 ", genre='" + genre + '\'' +
                 ", path='" + path + '\'' +
+                ", duration='" + duration + '\'' +
                 '}';
     }
 
