@@ -114,6 +114,7 @@ public class Broker {
         if(publisherWithThisArtist != null && artistToPublisher.size() !=0 ) {
             //If song exists is not in the cache
             MusicFileMetaData tmp = new MusicFileMetaData(song , artist.getArtistName() , null , null , null, 0, null);
+
             IncompleteList<MusicFile> musicFileChunks = musicFileCache.get(tmp);
             if(musicFileChunks == null) {
                 System.out.printf("[BROKER %s % d] Song %s not in cache%n"
@@ -219,8 +220,7 @@ public class Broker {
             if(reply.statusCode == Request.StatusCodes.OK){
                 //Adding the musicFile to the cache
                 //Music file meta data object only for use with the cache
-                musicFileReference =
-                        new MusicFileMetaData(song , artistName.getArtistName(), null , null , null, 0, null);
+                musicFileReference = new MusicFileMetaData(song , artistName.getArtistName(), null , null , null, 0, null);
                 musicFileCache.put(musicFileReference, new IncompleteList<>(reply.numChunks));
 
                 numOfChunks = reply.numChunks;
