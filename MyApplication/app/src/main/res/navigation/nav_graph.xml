@@ -66,6 +66,14 @@
                 android:name="path"
                 app:argType="string"
                 android:defaultValue="1" />
+            <argument
+                android:name="artist_name"
+                app:argType="string"
+                android:defaultValue="1" />
+            <argument
+                android:name="song_name"
+                app:argType="string"
+                android:defaultValue="1" />
         </action>
     </fragment>
 </navigation>

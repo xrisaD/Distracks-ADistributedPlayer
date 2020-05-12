@@ -37,8 +37,6 @@ public class SavedSongs extends Fragment {
         if(matchingFiles.length > 0){
             for(File file:matchingFiles){
                 MusicFileMetaData musicFileMetaData = MP3Cutter.ID3(file);
-                Log.e("pathaki", musicFileMetaData.getPath());
-                Log.e(" ",musicFileMetaData.getTrackName());
                 savedMetadata.add(musicFileMetaData);
             }
             ArrayList<Button> buttons = SongsUI.setSavedSongsUI(savedMetadata, getContext(), rootView);

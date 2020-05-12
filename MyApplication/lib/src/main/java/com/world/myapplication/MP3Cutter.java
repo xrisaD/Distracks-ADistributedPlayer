@@ -105,6 +105,7 @@ class MP3Cutter{
             }
             //if hasId3v2Tag it means that it have Id3v2Tag metadata
             else if (mp3file.hasId3v2Tag()) {
+
                 ID3v2 id3v2Tag = mp3file.getId3v2Tag();
 
                 if (id3v2Tag.getTitle() != null) {

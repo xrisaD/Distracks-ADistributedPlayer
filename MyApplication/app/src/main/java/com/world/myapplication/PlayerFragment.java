@@ -50,6 +50,8 @@ public class PlayerFragment extends Fragment {
             boolean offline = getArguments().getBoolean("offline");
             if (offline) {
                 String path = getArguments().getString("path"); //get song's path
+                artist= getArguments().getString("artist_name");
+                song = getArguments().getString("song_name");
                 Distracks distracks = (Distracks) getActivity().getApplication();
                 distracks.streamSongOffline(path);
 

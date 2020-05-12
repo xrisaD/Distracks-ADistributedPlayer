@@ -121,7 +121,7 @@ public class Distracks extends Application {
         resetEverything();
         currentlyStreamingOnline = true;
         StreamSong streamSong = new StreamSong();
-        MusicFileMetaData metaData= new MusicFileMetaData(songName , artistName , null , null , null);
+        MusicFileMetaData metaData= new MusicFileMetaData(songName , artistName , null , null , null,0);
         streamSong.execute(metaData);
 
     }

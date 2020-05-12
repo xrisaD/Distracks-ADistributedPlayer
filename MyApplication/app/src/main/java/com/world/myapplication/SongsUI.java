@@ -219,6 +219,9 @@ public class SongsUI {
                             Bundle bundle = new Bundle();
                             bundle.putBoolean("offline", true);
                             bundle.putString("path", savedMetadata.get(finalI).getPath());
+                            bundle.putString("artist_name", savedMetadata.get(finalI).getArtistName());
+                            bundle.putString("song_name", savedMetadata.get(finalI).getTrackName());
+
                             Navigation.findNavController(view).navigate(R.id.saved_to_player, bundle);
                         }
                     });
