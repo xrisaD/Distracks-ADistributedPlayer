@@ -55,10 +55,10 @@ public class PlayerFragment extends Fragment {
 
             } else {
                 //online mode
-                String artistName = getArguments().getString("artist_name");
-                String songName = getArguments().getString("song_name");
+                artist= getArguments().getString("artist_name");
+                song = getArguments().getString("song_name");
                 Distracks distracks = (Distracks) getActivity().getApplication();
-                distracks.streamSongOnline(artistName, songName);
+                distracks.streamSongOnline(artist, song);
             }
         }
 
@@ -69,11 +69,13 @@ public class PlayerFragment extends Fragment {
             public void onClick(View v) {
                 if(!paused){
                     Distracks distracks = (Distracks) getActivity().getApplication();
+                    playButton.setImageResource(R.drawable.play);
                     distracks.pause();
                     paused = true;
                 }
                 else{
                     Distracks distracks = (Distracks) getActivity().getApplication();
+                    playButton.setImageResource(R.drawable.pause);
                     distracks.resume();
                     paused = false;
                 }
@@ -82,6 +84,7 @@ public class PlayerFragment extends Fragment {
         });
 
         seek = (SeekBar)  rootView.findViewById(R.id.seekbar);
+        seek.setEnabled(false);
         titleText = (TextView) rootView.findViewById(R.id.artistsong);
         titleText.setText(artist+ " - "+song);
         handler=new Handler();
