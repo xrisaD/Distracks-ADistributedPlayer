@@ -70,7 +70,7 @@ class MP3Cutter{
             if (mp3file.hasId3v1Tag()) {
                 //take metadata
                 ID3v1 id3v1Tag = mp3file.getId3v1Tag();
-
+                MFD.setDuration(mp3file.getLengthInSeconds());
                 //TITLE
                 if (id3v1Tag.getTitle() != null) {
                     MFD.setTrackName(id3v1Tag.getTitle());
@@ -114,7 +114,8 @@ class MP3Cutter{
                     //if it title is null, set it with fileName
                     MFD.setTrackName(fileN);
                 }
-
+                
+                MFD.setDuration(mp3file.getLengthInSeconds());
                 //ARTIST
                 if (id3v2Tag.getArtist() != null) {
                     MFD.setArtistName(id3v2Tag.getArtist());

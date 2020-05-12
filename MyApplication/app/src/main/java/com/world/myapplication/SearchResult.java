@@ -78,6 +78,7 @@ public class SearchResult extends Fragment {
             ArtistName artistname = params[0];
             Distracks distracks = ((Distracks) getActivity().getApplication());
             ArrayList<MusicFileMetaData> musicFileMetaData = distracks.getConsumer().search(artistname);
+
             return musicFileMetaData;
         }
 
@@ -90,8 +91,10 @@ public class SearchResult extends Fragment {
         @Override
         protected void onPostExecute(ArrayList<MusicFileMetaData> result) {
             progressDialog.dismiss();
+
             Distracks distracks = (Distracks) getActivity().getApplication();
             if (result!=null && result.size() > 0) {
+                Log.e("ok",result.get(0).toString());
                 distracks.lastSearchResult = result;
                 ArrayList<Button> mySongs = SongsUI.setSearchResultUI(result, getContext(), rootView);
                 SongsUI.setSongOnClickListener(artist ,mySongs, rootView, getActivity(), getContext());
