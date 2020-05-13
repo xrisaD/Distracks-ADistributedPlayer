@@ -74,13 +74,14 @@ public class PlayerFragment extends Fragment {
                 song = getArguments().getString("song_name");
                 String image  = getArguments().getString("image");
                 duration = getArguments().getLong("duration");
+
                 if(!image.equals("1")) { //default value
                     imageBytes = Base64.getDecoder().decode(image);
                 }
-                Log.e("off","offline");
+
                 seek.setEnabled(true);
                 seek.setMax((int)duration);
-                distracks.setState(artist, song, imageBytes);
+                distracks.setState(artist, song, imageBytes, duration);
 
                 distracks.streamSongOffline(path);
             } else {
@@ -94,7 +95,7 @@ public class PlayerFragment extends Fragment {
                 }
                 seek.setEnabled(false);
                 seek.setMax((int)duration);
-                distracks.setState(artist, song, imageBytes);
+                distracks.setState(artist, song, imageBytes, duration);
                 distracks.streamSongOnline(artist, song);
             }
         }//playNow
@@ -104,10 +105,10 @@ public class PlayerFragment extends Fragment {
                 artist = distracks.playNowArtist;
                 song = distracks.playNowSong;
                 imageBytes = distracks.imageBytesNow;
-                duration = getArguments().getLong("duration");
+                duration = distracks.duration;
                 seek.setEnabled(true);
                 seek.setMax((int)duration);
-                seek.setProgress(distracks.getCurrentPositionInSeconds());
+
             }else{
                 //Screan: null
                 PlayerUI.setNullUI("Nothing is playing now", getContext(), rootView);
@@ -163,9 +164,6 @@ public class PlayerFragment extends Fragment {
         titleText.setText(artist+ " - "+song);
         handler=new Handler();
 
-        Log.e("duration", String.valueOf(duration));
-
-
         TestPos s = new TestPos();
         s.execute();
 
@@ -174,8 +172,6 @@ public class PlayerFragment extends Fragment {
 
     }
 
-
-    @SuppressLint("DefaultLocale")
     public String converter(int millis){
         int minutes = (millis % 3600) / 60;
         int seconds = millis % 60;
@@ -208,9 +204,6 @@ public class PlayerFragment extends Fragment {
                 seconds=e.getCurrentPositionInSeconds();
                 Log.e("cur",String.valueOf(seconds));
                 Log.e("eee",converter(seconds));
-                seek.setProgress(seconds);
-
-                //setter(seconds);
 
                 publishProgress(seconds);
                 try {
@@ -226,6 +219,7 @@ public class PlayerFragment extends Fragment {
         protected void onProgressUpdate(Integer... values) {
             super.onProgressUpdate(values);
             Log.e("tester", String.valueOf(values[0]));
+            seek.setProgress(values[0]);
             timeNow.setText(converter(values[0]));
         }
     }

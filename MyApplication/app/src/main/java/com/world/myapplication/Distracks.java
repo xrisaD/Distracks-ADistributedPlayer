@@ -40,17 +40,17 @@ public class Distracks extends Application {
     public String playNowArtist;
     public String playNowSong;
     public byte[] imageBytesNow;
-    public int duration;
+    public long duration;
 
     //set State
-    public void setState(String playNowArtist, String playNowSong, byte[] imageBytesNow, int duration){
+    public void setState(String playNowArtist, String playNowSong, byte[] imageBytesNow, long duration){
         this.playNowArtist = playNowArtist;
         this.playNowSong = playNowSong;
         this.imageBytesNow = imageBytesNow;
         this.duration = duration;
     }
     public boolean isStateNull(){
-        if(playNowArtist == null && playNowSong == null && imageBytesNow == null && duration == 0){
+        if(playNowArtist == null && playNowSong == null && imageBytesNow == null){
             return true;
         }
         return false;
@@ -535,4 +535,5 @@ public class Distracks extends Application {
         runner = new AsyncDownload();
         runner.execute(artistAndSong);
     }
+
 }

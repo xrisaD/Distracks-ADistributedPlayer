@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:ns1="urn:oasis:names:tc:xliff:document:1.2">
+    <string msgid="7903180715631665059" name="abc_action_bar_home_description">"转到首页"</string>
+    <string msgid="6794660482873516081" name="abc_action_bar_up_description">"转到上一层级"</string>
+    <string msgid="1155814932213556626" name="abc_action_menu_overflow_description">"更多选项"</string>
+    <string msgid="2571498368472823490" name="abc_action_mode_done">"完成"</string>
+    <string msgid="3732416590524162402" name="abc_activity_chooser_view_see_all">"查看全部"</string>
+    <string msgid="1798588241954930982" name="abc_activitychooserview_choose_application">"选择应用"</string>
+    <string msgid="3403923230105792483" name="abc_capital_off">"关闭"</string>
+    <string msgid="7831734969929204599" name="abc_capital_on">"开启"</string>
+    <string msgid="5725160506500770567" name="abc_menu_alt_shortcut_label">"Alt+"</string>
+    <string msgid="944415252197684443" name="abc_menu_ctrl_shortcut_label">"Ctrl+"</string>
+    <string msgid="129742188101734366" name="abc_menu_delete_shortcut_label">"Delete 键"</string>
+    <string msgid="6840127756824236027" name="abc_menu_enter_shortcut_label">"Enter 键"</string>
+    <string msgid="4974283687810130415" name="abc_menu_function_shortcut_label">"Fn+"</string>
+    <string msgid="8046416353848716905" name="abc_menu_meta_shortcut_label">"Meta+"</string>
+    <string msgid="3271697756921353410" name="abc_menu_shift_shortcut_label">"Shift+"</string>
+    <string msgid="2304645930658438191" name="abc_menu_space_shortcut_label">"空格键"</string>
+    <string msgid="8327365089695024394" name="abc_menu_sym_shortcut_label">"Sym+"</string>
+    <string msgid="3570106412128999382" name="abc_prepend_shortcut_label">"Menu+"</string>
+    <string msgid="940844115270746197" name="abc_search_hint">"搜索…"</string>
+    <string msgid="1769270744562318534" name="abc_searchview_description_clear">"清除查询"</string>
+    <string msgid="908784302972860853" name="abc_searchview_description_query">"搜索查询"</string>
+    <string msgid="5466662225065974044" name="abc_searchview_description_search">"搜索"</string>
+    <string msgid="8203855622131699655" name="abc_searchview_description_submit">"提交查询"</string>
+    <string msgid="3478748990613108725" name="abc_searchview_description_voice">"语音搜索"</string>
+    <string msgid="2650565705514630347" name="abc_shareactionprovider_share_with">"分享对象"</string>
+    <string msgid="9009661856846212431" name="abc_shareactionprovider_share_with_application">"与<ns1:g id="APPLICATION_NAME">%s</ns1:g>分享"</string>
+    <string msgid="6389460216547290468" name="abc_toolbar_collapse_description">"收起"</string>
+    <string msgid="475402237100444685" name="installation_cancelled">"已取消安装。"</string>
+    <string msgid="863287960437940689" name="installation_failed">"安装失败。"</string>
+    <string msgid="5968445461040787716" name="installing_module">"正在安装模块："</string>
+    <string msgid="1685185767093348095" name="mr_button_content_description">"投射按钮"</string>
+    <string msgid="1350095112462806159" name="mr_cast_button_connected">"投射按钮。已连接"</string>
+    <string msgid="8959304318293841992" name="mr_cast_button_connecting">"投射按钮。正在连接"</string>
+    <string msgid="5501231066847739632" name="mr_cast_button_disconnected">"投射按钮。已断开连接"</string>
+    <string msgid="6167045754274068030" name="mr_cast_dialog_title_view_placeholder">"没有任何相关信息"</string>
+    <string msgid="5504553798429329689" name="mr_chooser_searching">"正在查找设备"</string>
+    <string msgid="7548226170787476564" name="mr_chooser_title">"投射到"</string>
+    <string msgid="5813284753012893250" name="mr_controller_album_art">"专辑封面"</string>
+    <string msgid="5286734709674025661" name="mr_controller_casting_screen">"正在投射屏幕"</string>
+    <string msgid="5468775621814500662" name="mr_controller_close_description">"关闭"</string>
+    <string msgid="5518911192681928413" name="mr_controller_collapse_group">"收起"</string>
+    <string msgid="1370654436555555647" name="mr_controller_disconnect">"断开连接"</string>
+    <string msgid="2422682304043876468" name="mr_controller_expand_group">"展开"</string>
+    <string msgid="7299368841849988218" name="mr_controller_no_info_available">"没有任何相关信息"</string>
+    <string msgid="4342878516155861006" name="mr_controller_no_media_selected">"未选择任何媒体内容"</string>
+    <string msgid="4701315813294065305" name="mr_controller_pause">"暂停"</string>
+    <string msgid="4443315438268112801" name="mr_controller_play">"播放"</string>
+    <string msgid="5106056093749454009" name="mr_controller_stop">"停止"</string>
+    <string msgid="7617024847862349259" name="mr_controller_stop_casting">"停止投射"</string>
+    <string msgid="691656961160498512" name="mr_controller_volume_slider">"音量滑块"</string>
+    <string msgid="470815817763403488" name="mr_dialog_groupable_header">"添加设备"</string>
+    <string msgid="8242946697267839296" name="mr_dialog_transferable_header">"在一组设备上播放"</string>
+    <string msgid="3117964881088969586" name="mr_system_route_name">"系统"</string>
+    <string msgid="8236416097133080726" name="mr_user_route_category_name">"设备"</string>
+    <string msgid="6301633601645100427" name="nav_app_bar_navigate_up_description">"转到上一层级"</string>
+    <string msgid="7456070600745802113" name="nav_app_bar_open_drawer_description">"打开抽屉式导航栏"</string>
+    <string msgid="4702104660890557116" name="ok">"确定"</string>
+    <string msgid="8366783942222789124" name="progress">"进度："</string>
+    <string msgid="1065327189183624288" name="retry">"重试"</string>
+    <string msgid="730395136688082741" name="search_menu_title">"搜索"</string>
+    <string msgid="6277540029070332960" name="status_bar_notification_info_overflow">"999+"</string>
+</resources>
