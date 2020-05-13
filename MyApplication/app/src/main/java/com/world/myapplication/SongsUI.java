@@ -1,5 +1,6 @@
 package com.world.myapplication;
 
+import java.util.Base64;
 
 import android.app.Activity;
 import android.content.Context;
@@ -141,6 +142,7 @@ public class SongsUI {
         myLayout.addView(nullLayout);
     }
 
+
     public static ArrayList<Button> setSavedSongsUI(ArrayList<MusicFileMetaData> resultMetaData, Context context, View rootView){
         LinearLayout myLayout = rootView.findViewById(R.id.saved_layout);
 
@@ -251,6 +253,12 @@ public class SongsUI {
                                     bundle.putString("artist_name", artist);
                                     bundle.putString("song_name", song);
 
+                                    byte[] image = result.get(finalI).getImage();
+                                    String encodeBytes = "1";
+                                    if(image!=null && image.length>0) {
+                                        encodeBytes = Base64.getEncoder().encodeToString(image);
+                                    }
+                                    bundle.putString("image", encodeBytes);
                                     Navigation.findNavController(view).navigate(R.id.result_to_player, bundle);
                                 }
 
@@ -279,7 +287,12 @@ public class SongsUI {
                             bundle.putString("path", savedMetadata.get(finalI).getPath());
                             bundle.putString("artist_name", savedMetadata.get(finalI).getArtistName());
                             bundle.putString("song_name", savedMetadata.get(finalI).getTrackName());
-
+                            byte[] image = savedMetadata.get(finalI).getImage();
+                            String encodeBytes = "1";
+                            if(image!=null && image.length>0) {
+                                encodeBytes = Base64.getEncoder().encodeToString(image);
+                            }
+                            bundle.putString("image", encodeBytes);
                             Navigation.findNavController(view).navigate(R.id.saved_to_player, bundle);
                         }
                     });

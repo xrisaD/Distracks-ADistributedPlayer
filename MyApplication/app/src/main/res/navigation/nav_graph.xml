@@ -45,6 +45,11 @@
             android:name="song_name"
             app:argType="string"
             android:defaultValue="1" />
+        <argument
+            android:name="image"
+            app:argType="string"
+            android:defaultValue="1" />
+
     </action>/>
     </fragment>
     <fragment
@@ -74,7 +79,10 @@
                 android:name="song_name"
                 app:argType="string"
                 android:defaultValue="1" />
-
+            <argument
+                android:name="image"
+                app:argType="string"
+                android:defaultValue="1" />
         </action>
     </fragment>
 </navigation>

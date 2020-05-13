@@ -4,6 +4,7 @@ import android.app.Application;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 
+import android.graphics.Bitmap;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.AsyncTask;
@@ -31,9 +32,27 @@ public class Distracks extends Application {
     String currentDataSource;
     private  AsyncDownload runner;
 
+    //last search, don't ask again broker for this data
     public String lastSearch = "";
     public ArrayList<MusicFileMetaData> lastSearchResult= null;
 
+    //State
+    public String playNowArtist;
+    public String playNowSong;
+    public byte[] imageBytesNow;
+
+    //set State
+    public void setState(String playNowArtist, String playNowSong, byte[] imageBytesNow){
+        this.playNowArtist = playNowArtist;
+        this.playNowSong = playNowSong;
+        this.imageBytesNow = imageBytesNow;
+    }
+    public boolean isStateNull(){
+        if(playNowArtist == null && playNowSong == null && imageBytesNow == null){
+            return true;
+        }
+        return false;
+    }
     @Override
     public void onCreate() {
         super.onCreate();

@@ -1,5 +1,7 @@
 package com.world.myapplication;
 
+import java.util.Base64;
+
 import android.app.ProgressDialog;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -14,6 +16,7 @@ import android.media.MediaPlayer;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -33,11 +36,12 @@ public class PlayerFragment extends Fragment {
     private ImageView imageView;
     private String artist;
     private String song;
-    private Bitmap bmp;
+    private byte[] imageBytes;
 
     private boolean flag=true;
     private int length;
     //TODO: na asxolithoume me to interface edw!
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -50,7 +54,10 @@ public class PlayerFragment extends Fragment {
     public void onStart() {
 
         super.onStart();
-        bmp = null;
+
+        Distracks distracks = (Distracks) getActivity().getApplication();
+
+        //get arguments
         if(getArguments() != null){
             boolean offline = getArguments().getBoolean("offline");
             if (offline) {
@@ -58,27 +65,45 @@ public class PlayerFragment extends Fragment {
                 String path = getArguments().getString("path"); //get song's path
                 artist= getArguments().getString("artist_name");
                 song = getArguments().getString("song_name");
-                //bmp  = getArguments().getParcelable("bitmap");
-                Distracks distracks = (Distracks) getActivity().getApplication();
-                distracks.streamSongOffline(path);
+                String image  = getArguments().getString("image");
+                if(!image.equals("1")) { //default value
+                    imageBytes = Base64.getDecoder().decode(image);
+                }
+                distracks.setState(artist, song, imageBytes);
 
+                distracks.streamSongOffline(path);
             } else {
                 //online mode
                 artist= getArguments().getString("artist_name");
                 song = getArguments().getString("song_name");
+                String image  = getArguments().getString("image");
+                if(!image.equals("1")) { //default value
+                    imageBytes = Base64.getDecoder().decode(image);
+                }
 
-                Distracks distracks = (Distracks) getActivity().getApplication();
+                distracks.setState(artist, song, imageBytes);
                 distracks.streamSongOnline(artist, song);
             }
+        }//playNow
+        else{
+            if(!distracks.isStateNull()){
+                //get current state
+                artist = distracks.playNowArtist;
+                song = distracks.playNowSong;
+                imageBytes = distracks.imageBytesNow;
+
+            }else{
+                //Screan: null
+                PlayerUI.setNullUI("Nothing is playing now", getContext(), rootView);
+                return;
+            }
         }
-        imageView = (ImageView) rootView.findViewById(R.id.album_image);
-        if(bmp!=null) {
-        }else{
-            bmp = BitmapFactory.decodeResource(getContext().getResources(), R.drawable.logo);
-        }
-        imageView.setImageBitmap(Bitmap.createScaledBitmap(bmp, bmp.getWidth(), bmp.getHeight(), false));
-        playButton
-                = (ImageButton) rootView.findViewById(R.id.start);
+
+        ImageView imageView = (ImageView) rootView.findViewById(R.id.album_image);
+        playButton = (ImageButton) rootView.findViewById(R.id.start);
+
+        PlayerUI.setPlayerUI(imageView, imageBytes, distracks, getContext(), rootView);
+
         playButton.setOnClickListener(new View.OnClickListener() {
             boolean paused = false;
             @Override
