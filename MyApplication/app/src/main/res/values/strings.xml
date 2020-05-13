@@ -4,4 +4,5 @@
     <string name="drawer_close">Close</string>
     <string name="play">play</string>
     <string name="pause">pause</string>
+    <string name="textview">00:00</string>
 </resources>
