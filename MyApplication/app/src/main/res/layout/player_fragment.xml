@@ -15,6 +15,7 @@
         android:layout_weight="1"
         android:layout_marginTop="100dp"
         android:id="@+id/first">
+
         <ImageView
             android:id="@+id/album_image"
             android:layout_width="match_parent"
@@ -22,19 +23,39 @@
             android:gravity="center"></ImageView>
     </LinearLayout>
 
-    <LinearLayout android:layout_width="match_parent"
+    <LinearLayout
+        android:id="@+id/second"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_margin="0dp"
         android:layout_weight="1"
-        android:orientation="vertical"
         android:gravity="center"
-        android:id="@+id/second">
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/total"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="0dp"
+            android:layout_marginStart="0dp"
+            android:text="TextView" />
+
+        <TextView
+            android:id="@+id/continuous"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="180dp"
+            android:text="TextView" />
+
         <SeekBar
             android:id="@+id/seekbar"
             android:layout_width="match_parent"
-            android:layout_height="40dp"
+            android:layout_height="60dp"
             android:layout_marginLeft="20dp"
             android:layout_marginRight="20dp"
-            />
+            android:progressBackgroundTint="#604545"
+            android:progressTint="#D61717" />
+
         <TextView
             android:id="@+id/artistsong"
             android:layout_width="match_parent"
