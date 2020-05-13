@@ -259,6 +259,7 @@ public class SongsUI {
                                         encodeBytes = Base64.getEncoder().encodeToString(image);
                                     }
                                     bundle.putString("image", encodeBytes);
+                                    bundle.putLong("duration", result.get(finalI).getDuration());
                                     Navigation.findNavController(view).navigate(R.id.result_to_player, bundle);
                                 }
 
@@ -293,6 +294,7 @@ public class SongsUI {
                                 encodeBytes = Base64.getEncoder().encodeToString(image);
                             }
                             bundle.putString("image", encodeBytes);
+                            bundle.putLong("duration", savedMetadata.get(finalI).getDuration());
                             Navigation.findNavController(view).navigate(R.id.saved_to_player, bundle);
                         }
                     });

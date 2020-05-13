@@ -58,7 +58,7 @@ public class Distracks extends Application {
         super.onCreate();
         createNotificationChannel();
         consumer = new Consumer();
-        consumer.addBroker(new Component("192.168.1.16", 5000));
+        consumer.addBroker(new Component("192.168.1.2", 5000));
 
         consumer.setPath(getFilesDir());
         //this.readBroker(getFilesDir().getAbsolutePath()+"brokers.txt");
@@ -144,6 +144,9 @@ public class Distracks extends Application {
                 0, null);
         streamSong.execute(metaData);
 
+    }
+    public void seekTo(int seconds){
+        offlinePlayer.seekTo(seconds*1000);
     }
     public int getCurrentPositionInSeconds(){
         if(!currentlyStreamingOnline){

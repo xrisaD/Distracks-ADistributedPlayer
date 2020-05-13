@@ -2,6 +2,7 @@ package com.world.myapplication;
 
 import java.util.Base64;
 
+import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -26,10 +27,13 @@ import androidx.fragment.app.Fragment;
 import java.util.ArrayList;
 
 public class PlayerFragment extends Fragment {
+    private Distracks distracks;
     private View rootView;
     private MediaPlayer musicPlayer;
     private ImageButton playButton;
     private TextView titleText;
+    private TextView totalAmount;
+    private TextView timeNow;
     private SeekBar seek;
     private Runnable runnable;
     private Handler handler;
@@ -37,7 +41,7 @@ public class PlayerFragment extends Fragment {
     private String artist;
     private String song;
     private byte[] imageBytes;
-
+    private long duration;
     private boolean flag=true;
     private int length;
     //TODO: na asxolithoume me to interface edw!
@@ -55,8 +59,10 @@ public class PlayerFragment extends Fragment {
 
         super.onStart();
 
-        Distracks distracks = (Distracks) getActivity().getApplication();
-
+        distracks = (Distracks) getActivity().getApplication();
+        seek = (SeekBar)  rootView.findViewById(R.id.seekbar);
+        timeNow = (TextView) rootView.findViewById(R.id.continuous);
+        totalAmount = (TextView) rootView.findViewById(R.id.continuous);
         //get arguments
         if(getArguments() != null){
             boolean offline = getArguments().getBoolean("offline");
@@ -66,9 +72,13 @@ public class PlayerFragment extends Fragment {
                 artist= getArguments().getString("artist_name");
                 song = getArguments().getString("song_name");
                 String image  = getArguments().getString("image");
+                duration = getArguments().getLong("duration");
                 if(!image.equals("1")) { //default value
                     imageBytes = Base64.getDecoder().decode(image);
                 }
+                Log.e("off","offline");
+                seek.setEnabled(true);
+                seek.setMax((int)duration);
                 distracks.setState(artist, song, imageBytes);
 
                 distracks.streamSongOffline(path);
@@ -77,10 +87,12 @@ public class PlayerFragment extends Fragment {
                 artist= getArguments().getString("artist_name");
                 song = getArguments().getString("song_name");
                 String image  = getArguments().getString("image");
+                duration = getArguments().getLong("duration");
                 if(!image.equals("1")) { //default value
                     imageBytes = Base64.getDecoder().decode(image);
                 }
-
+                seek.setEnabled(false);
+                seek.setMax((int)duration);
                 distracks.setState(artist, song, imageBytes);
                 distracks.streamSongOnline(artist, song);
             }
@@ -124,42 +136,49 @@ public class PlayerFragment extends Fragment {
             }
         });
 
-        seek = (SeekBar)  rootView.findViewById(R.id.seekbar);
-        seek.setEnabled(false);
+        seek.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                Log.e("clicked", String.valueOf(progress));
+                if(fromUser) {
+                    distracks.seekTo(progress);
+                    Log.e("clicked", "i just clicked");
+                }
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
         titleText = (TextView) rootView.findViewById(R.id.artistsong);
         titleText.setText(artist+ " - "+song);
         handler=new Handler();
-        musicPlayer = MediaPlayer.create(getActivity(), R.raw.kk);
 
-        musicPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
-            @Override
-            public void onPrepared(MediaPlayer mp) {
-                seek.setMax(musicPlayer.getDuration());
-                musicPlayer.setLooping(false);
-                musicPlayer.start();
-                updateSeek();
-            }
-        });
-        TestPos s = new TestPos();
-        s.execute();
-//        seek.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+        Log.e("duration", String.valueOf(duration));
+        //musicPlayer = MediaPlayer.create(getActivity(), R.raw.kk);
+
+//        musicPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
 //            @Override
-//            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-//                if(fromUser){
-//                    musicPlayer.seekTo(progress);
-//                }
-//            }
+//            public void onPrepared(MediaPlayer mp) {
 //
-//            @Override
-//            public void onStartTrackingTouch(SeekBar seekBar) {
-//
-//            }
-//
-//            @Override
-//            public void onStopTrackingTouch(SeekBar seekBar) {
-//
+//                musicPlayer.setLooping(false);
+//                musicPlayer.start();
+//                updateSeek();
 //            }
 //        });
+
+
+        TestPos s = new TestPos();
+        s.execute();
+
+
+
+
         //PlayerFragment.AsyncPlaySong runner = new PlayerFragment.AsyncPlaySong();
         //runner.execute(settings);
 
@@ -263,10 +282,16 @@ public class PlayerFragment extends Fragment {
             musicPlayer.pause();
         }
     }
+    @SuppressLint("DefaultLocale")
+    public String converter(int millis){
+        int minutes = (millis % 3600) / 60;
+        int seconds = millis % 60;
 
+        return String.format("%02d:%02d", minutes, seconds);
+    }
     public void updateSeek(){
-        seek.setProgress(musicPlayer.getCurrentPosition());
-        if(musicPlayer.isPlaying()){
+        seek.setProgress(distracks.getCurrentPositionInSeconds());
+        Log.e("in","in and "+distracks.getCurrentPositionInSeconds());
             runnable=new Runnable() {
                 @Override
                 public void run() {
@@ -274,22 +299,25 @@ public class PlayerFragment extends Fragment {
                 }
             };
             handler.postDelayed(runnable,100);
-        }
+
     }
 
     class TestPos extends AsyncTask<Void , Void , Void>{
 
+        @SuppressLint("WrongThread")
         @Override
         protected Void doInBackground(Void... voids) {
             Distracks e = (Distracks) getActivity().getApplication();
             while(true) {
-                Log.e("wtf", "startinga " + e.getCurrentPositionInSeconds());
-
+                Log.e("cur",String.valueOf(e.getCurrentPositionInSeconds()));
+                Log.e("eee",converter(e.getCurrentPositionInSeconds()));
+                seek.setProgress(e.getCurrentPositionInSeconds());
                 try {
-                    Thread.sleep(1300);
+                    Thread.sleep(600);
                 } catch (InterruptedException ex) {
                     ex.printStackTrace();
                 }
+
             }
 
         }
