@@ -46,20 +46,8 @@ public class SearchFragment extends Fragment {
                         Bundle bundle = new Bundle();
                         bundle.putString("artist", text);
                         Navigation.findNavController(view).navigate(R.id.search_to_result, bundle);
-                        //hide keyboard before go to the next fragment
-                        if(!text.equals("")) {
-                            hideSoftKeyboard(getActivity());
-                        }
                     }
                 });
     }
 
-    //hide keybord
-    public static void hideSoftKeyboard(Activity activity) {
-        InputMethodManager inputMethodManager =
-                (InputMethodManager) activity.getSystemService(
-                        Activity.INPUT_METHOD_SERVICE);
-        inputMethodManager.hideSoftInputFromWindow(
-                activity.getCurrentFocus().getWindowToken(), 0);
-    }
 }
