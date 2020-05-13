@@ -104,7 +104,10 @@ public class PlayerFragment extends Fragment {
                 artist = distracks.playNowArtist;
                 song = distracks.playNowSong;
                 imageBytes = distracks.imageBytesNow;
-
+                duration = getArguments().getLong("duration");
+                seek.setEnabled(true);
+                seek.setMax((int)duration);
+                seek.setProgress(distracks.getCurrentPositionInSeconds());
             }else{
                 //Screan: null
                 PlayerUI.setNullUI("Nothing is playing now", getContext(), rootView);
