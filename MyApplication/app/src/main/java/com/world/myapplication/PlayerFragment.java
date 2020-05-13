@@ -62,7 +62,8 @@ public class PlayerFragment extends Fragment {
         distracks = (Distracks) getActivity().getApplication();
         seek = (SeekBar)  rootView.findViewById(R.id.seekbar);
         timeNow = (TextView) rootView.findViewById(R.id.continuous);
-        totalAmount = (TextView) rootView.findViewById(R.id.continuous);
+        totalAmount = (TextView) rootView.findViewById(R.id.total);
+
         //get arguments
         if(getArguments() != null){
             boolean offline = getArguments().getBoolean("offline");
@@ -113,7 +114,7 @@ public class PlayerFragment extends Fragment {
 
         ImageView imageView = (ImageView) rootView.findViewById(R.id.album_image);
         playButton = (ImageButton) rootView.findViewById(R.id.start);
-
+        totalAmount.setText(converter((int) duration));
         PlayerUI.setPlayerUI(imageView, imageBytes, distracks, getContext(), rootView);
 
         playButton.setOnClickListener(new View.OnClickListener() {
@@ -160,17 +161,6 @@ public class PlayerFragment extends Fragment {
         handler=new Handler();
 
         Log.e("duration", String.valueOf(duration));
-        //musicPlayer = MediaPlayer.create(getActivity(), R.raw.kk);
-
-//        musicPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
-//            @Override
-//            public void onPrepared(MediaPlayer mp) {
-//
-//                musicPlayer.setLooping(false);
-//                musicPlayer.start();
-//                updateSeek();
-//            }
-//        });
 
 
         TestPos s = new TestPos();
@@ -179,115 +169,18 @@ public class PlayerFragment extends Fragment {
 
 
 
-        //PlayerFragment.AsyncPlaySong runner = new PlayerFragment.AsyncPlaySong();
-        //runner.execute(settings);
-
-//
-//        Button pauseButton = (Button) findViewById(R.id.stop);
-//
-//        musicPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-//            @Override
-//            public void onCompletion(MediaPlayer mp) {
-//                Toast.makeText(MainActivity.this, "The Song is Over", Toast.LENGTH_SHORT).show();
-//            }
-//        });
-//        pauseButton.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-        //setImageResource(R.drawable.start);
-//                musicPlayer.pause();
-//            }
-//        });
     }
 
 
-
-
-    //TODO: 4 anazhthse to tragoudi kai paikstro
-    private class AsyncPlaySong extends AsyncTask<ArrayList<String>, String, String> {
-        ProgressDialog progressDialog;
-
-
-        @Override
-        protected String doInBackground(ArrayList<String>... arrayLists) {
-
-            return null;
-        }
-
-        @Override
-        protected void onPreExecute() {
-
-
-
-
-
-            playButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    /*
-                    length=musicPlayer.getCurrentPosition();
-                    Log.e("yag", String.valueOf(length));
-                    if(length==0){
-                        musicPlayer.start();
-                        playButton.setImageResource(R.drawable.pause);
-                        flag=!flag;
-                        updateSeek();
-                        return;
-                    }
-                    if(flag){
-                        musicPlayer.pause();
-                        playButton.setImageResource(R.drawable.play);
-                    }else{
-                        playButton.setImageResource(R.drawable.pause);
-                        musicPlayer.seekTo(length);
-                        musicPlayer.start();
-
-                    }
-                    updateSeek();
-                    flag=!flag;
-                    */
-
-                }
-            });
-//            musicPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-//                @Override
-//                public void onCompletion(MediaPlayer mp) {
-//                    playButton.setImageResource(R.drawable.play);
-//                    flag=!flag;
-//                    Toast.makeText(getActivity(), "The Song is Over", Toast.LENGTH_SHORT).show();
-//
-//                    stopPlaying(playButton);
-//
-//                }
-//            });
-        }
-
-        @Override
-        protected void onPostExecute(String s) {
-            super.onPostExecute(s);
-        }
-
-        @Override
-        protected void onProgressUpdate(String... values) {
-            super.onProgressUpdate(values);
-        }
-
-
-
-    }
-    private void stopPlaying(final ImageButton playButton) {
-        if (musicPlayer != null) {
-            musicPlayer.seekTo(0);
-            musicPlayer.start();
-            musicPlayer.pause();
-        }
-    }
     @SuppressLint("DefaultLocale")
     public String converter(int millis){
         int minutes = (millis % 3600) / 60;
         int seconds = millis % 60;
 
         return String.format("%02d:%02d", minutes, seconds);
+    }
+    public void setter(int seconds){
+        timeNow.setText(converter(seconds));
     }
     public void updateSeek(){
         seek.setProgress(distracks.getCurrentPositionInSeconds());
@@ -302,16 +195,21 @@ public class PlayerFragment extends Fragment {
 
     }
 
-    class TestPos extends AsyncTask<Void , Void , Void>{
+    class TestPos extends AsyncTask<Void , Integer, Void>{
 
-        @SuppressLint("WrongThread")
         @Override
         protected Void doInBackground(Void... voids) {
             Distracks e = (Distracks) getActivity().getApplication();
+            int seconds=0;
             while(true) {
-                Log.e("cur",String.valueOf(e.getCurrentPositionInSeconds()));
-                Log.e("eee",converter(e.getCurrentPositionInSeconds()));
-                seek.setProgress(e.getCurrentPositionInSeconds());
+                seconds=e.getCurrentPositionInSeconds();
+                Log.e("cur",String.valueOf(seconds));
+                Log.e("eee",converter(seconds));
+                seek.setProgress(seconds);
+
+                //setter(seconds);
+
+                publishProgress(seconds);
                 try {
                     Thread.sleep(600);
                 } catch (InterruptedException ex) {
@@ -320,6 +218,12 @@ public class PlayerFragment extends Fragment {
 
             }
 
+        }
+        @Override
+        protected void onProgressUpdate(Integer... values) {
+            super.onProgressUpdate(values);
+            Log.e("tester", String.valueOf(values[0]));
+            timeNow.setText(converter(values[0]));
         }
     }
 }
