@@ -20,7 +20,7 @@ public class ArtistName {
 
     @Override
     public int hashCode(){
-        return artistName.hashCode();
+        return artistName.trim().toLowerCase().hashCode();
     }
     @Override
     public boolean equals(Object o) {
