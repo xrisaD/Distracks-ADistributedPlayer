@@ -40,25 +40,28 @@ public class Distracks extends Application {
     public String playNowArtist;
     public String playNowSong;
     public byte[] imageBytesNow;
+    public int duration;
 
     //set State
-    public void setState(String playNowArtist, String playNowSong, byte[] imageBytesNow){
+    public void setState(String playNowArtist, String playNowSong, byte[] imageBytesNow, int duration){
         this.playNowArtist = playNowArtist;
         this.playNowSong = playNowSong;
         this.imageBytesNow = imageBytesNow;
+        this.duration = duration;
     }
     public boolean isStateNull(){
-        if(playNowArtist == null && playNowSong == null && imageBytesNow == null){
+        if(playNowArtist == null && playNowSong == null && imageBytesNow == null && duration == 0){
             return true;
         }
         return false;
     }
+
     @Override
     public void onCreate() {
         super.onCreate();
         createNotificationChannel();
         consumer = new Consumer();
-        consumer.addBroker(new Component("192.168.1.2", 5000));
+        consumer.addBroker(new Component("192.168.1.13", 5000));
 
         consumer.setPath(getFilesDir());
         //this.readBroker(getFilesDir().getAbsolutePath()+"brokers.txt");
@@ -67,7 +70,6 @@ public class Distracks extends Application {
 
     public void streamSongOffline(String path){
         currentlyStreamingOnline = false;
-        Log.e("pathhhhhaki ", path);
         try{
             resetEverything();
             offlinePlayer = new MediaPlayer();
