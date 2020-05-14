@@ -35,30 +35,38 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/inner"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="40dp"
             android:layout_margin="0dp"
-            android:orientation="horizontal">
-            <TextView
-                android:id="@+id/total"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="0dp"
-                android:layout_marginStart="0dp"
-                android:textColor="@color/colorAccent"
-                android:text="@string/textview"
-                android:gravity="right"
-                app:layout_constraintEnd_toEndOf="parent"
-                />
+            android:layout_marginStart="0dp"
+            android:layout_marginRight="100dp">
 
             <TextView
                 android:id="@+id/continuous"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="0dp"
                 android:gravity="left"
+                android:padding="10dp"
                 android:text="TextView"
+                android:textColor="@color/colorAccent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/total"
                 app:layout_constraintStart_toStartOf="parent"
-                android:textColor="@color/colorAccent" />
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/total"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="100dp"
+                android:layout_marginEnd="6dp"
+                android:gravity="center|right"
+                android:padding="10dp"
+                android:text="@string/textview"
+                android:textColor="@color/colorAccent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/continuous"
+                app:layout_constraintTop_toTopOf="parent" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -77,8 +85,8 @@
             android:layout_height="wrap_content"
             android:gravity="center"
             android:text="You have no calls for "
-            android:textSize="15sp"
-            android:textColor="@color/colorAccent"/>
+            android:textColor="@color/colorAccent"
+            android:textSize="15sp" />
 
         <ImageButton
             android:id="@+id/start"
@@ -92,8 +100,7 @@
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.500"
-            />
+            app:layout_constraintVertical_bias="0.500" />
 
     </LinearLayout>
 
