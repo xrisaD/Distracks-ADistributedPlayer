@@ -113,9 +113,12 @@ public class PlayerFragment extends Fragment {
                 song = distracks.playNowSong;
                 imageBytes = distracks.imageBytesNow;
                 duration = distracks.duration;
-                seek.setEnabled(true);
+                if(distracks.currentlyStreamingOnline){
+                    seek.setEnabled(false);
+                }else {
+                    seek.setEnabled(true);
+                }
                 seek.setMax((int)duration);
-
             }else{
                 //Screan: null
                 PlayerUI.setNullUI("Nothing is playing now", getContext(), rootView);

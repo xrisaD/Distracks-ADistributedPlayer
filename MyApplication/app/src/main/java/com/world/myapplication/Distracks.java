@@ -44,6 +44,7 @@ public class Distracks extends Application {
 
     //Reference to the player fragment that is currently being used
     PlayerFragment player;
+    boolean currentlyStreamingOnline  = true;
 
     //set State
     public void setState(String playNowArtist, String playNowSong, byte[] imageBytesNow, long duration){
@@ -104,7 +105,7 @@ public class Distracks extends Application {
     private void resumeOfflineStreaming(){
         offlinePlayer.start();
     }
-    boolean currentlyStreamingOnline  = true;
+
     public void pause(){
         if(currentlyStreamingOnline){
             pauseOnlineStreaming();
