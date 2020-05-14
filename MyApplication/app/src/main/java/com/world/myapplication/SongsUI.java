@@ -139,7 +139,7 @@ public class SongsUI {
         data.setTextColor(colorText);
         nullLayout.addView(data);
 
-        myLayout.addView(nullLayout);
+        if(myLayout != null) myLayout.addView(nullLayout);
     }
 
 

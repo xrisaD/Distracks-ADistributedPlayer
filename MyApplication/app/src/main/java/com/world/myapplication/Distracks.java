@@ -42,6 +42,9 @@ public class Distracks extends Application {
     public byte[] imageBytesNow;
     public long duration;
 
+    //Reference to the player fragment that is currently being used
+    PlayerFragment player;
+
     //set State
     public void setState(String playNowArtist, String playNowSong, byte[] imageBytesNow, long duration){
         this.playNowArtist = playNowArtist;
@@ -64,6 +67,8 @@ public class Distracks extends Application {
         consumer.addBroker(new Component("192.168.1.13", 5000));
 
         consumer.setPath(getFilesDir());
+        UpdatePlayerPosition updatePlayerPosition = new UpdatePlayerPosition();
+        //updatePlayerPosition.execute();
         //this.readBroker(getFilesDir().getAbsolutePath()+"brokers.txt");
 
     }
@@ -126,7 +131,7 @@ public class Distracks extends Application {
                     mp.release();
                 }
             }
-            onlinePlayers = null;
+            onlinePlayers = new ArrayList<>();
             if(offlinePlayer != null) {
                 offlinePlayer.reset();
                 offlinePlayer.release();
@@ -147,8 +152,12 @@ public class Distracks extends Application {
         streamSong.execute(metaData);
 
     }
+    public boolean onlineSongHasBeenFullyDownloaded = false;
     public void seekTo(int seconds){
-        offlinePlayer.seekTo(seconds*1000);
+        if(!currentlyStreamingOnline) {
+            offlinePlayer.seekTo(seconds * 1000);
+        }
+
     }
     public int getCurrentPositionInSeconds(){
         if(!currentlyStreamingOnline){
@@ -187,7 +196,7 @@ public class Distracks extends Application {
         MusicFileMetaData musicFileMetaData;
         @Override
         protected Void doInBackground(MusicFileMetaData... artistAndSong) {
-
+            onlineSongHasBeenFullyDownloaded = false;
             musicFileMetaData = artistAndSong[0];
             //get data
             ArtistName artist = new ArtistName(musicFileMetaData.getArtistName());
@@ -312,6 +321,7 @@ public class Distracks extends Application {
             out.writeObject(requestToBroker);
             out.flush();
         }
+
     }
 
     private void saveChunk(MusicFile chunk , String filename){
@@ -535,5 +545,31 @@ public class Distracks extends Application {
         runner = new AsyncDownload();
         runner.execute(artistAndSong);
     }
+    class UpdatePlayerPosition extends AsyncTask<Void , Integer, Void>{
 
+        @Override
+        protected Void doInBackground(Void... voids) {
+            int seconds=0;
+            while(true) {
+                seconds=getCurrentPositionInSeconds();
+                Log.e("cur",String.valueOf(seconds));
+                publishProgress(seconds);
+                try {
+                    Thread.sleep(600);
+                } catch (InterruptedException ex) {
+                    ex.printStackTrace();
+                }
+
+            }
+
+        }
+        @Override
+        protected void onProgressUpdate(Integer... values) {
+            super.onProgressUpdate(values);
+            Log.e("tester", String.valueOf(values[0]));
+            if(player != null) {
+                player.updateSeconds(values[0]);
+            }
+        }
+    }
 }

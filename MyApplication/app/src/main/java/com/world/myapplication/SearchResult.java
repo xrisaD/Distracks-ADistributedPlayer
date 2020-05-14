@@ -54,6 +54,7 @@ public class SearchResult extends Fragment {
         }else{
             Log.e("artist", artist);
             if (artist != null && artist.length() > 0) {
+                distracks.lastSearch = artist;
                 //search for songs
                 AsyncSearchResult runnerSearch = new AsyncSearchResult();
                 runnerSearch.execute(new ArtistName(artist));
@@ -70,6 +71,8 @@ public class SearchResult extends Fragment {
             ArtistName artistname = params[0];
             Distracks distracks = ((Distracks) getActivity().getApplication());
             ArrayList<MusicFileMetaData> musicFileMetaData = distracks.getConsumer().search(artistname);
+            Distracks e = (Distracks) getActivity().getApplication();
+            e.lastSearchResult = musicFileMetaData;
 
             return musicFileMetaData;
         }

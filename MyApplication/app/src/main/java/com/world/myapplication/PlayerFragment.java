@@ -45,6 +45,7 @@ public class PlayerFragment extends Fragment {
     private boolean flag=true;
     private int length;
     //TODO: na asxolithoume me to interface edw!
+    public static boolean isPlaying = false;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -53,15 +54,21 @@ public class PlayerFragment extends Fragment {
         rootView = inflater.inflate(R.layout.player_fragment, container, false);
         return rootView;
     }
-
+    @Override
+    public void onStop(){
+        super.onStop();
+        isPlaying = false;
+        Log.e("PLAYER" , "IS STOPPED");
+    }
     @Override
     public void onStart() {
-
+        isPlaying = true;
         super.onStart();
 
         distracks = (Distracks) getActivity().getApplication();
         seek = (SeekBar)  rootView.findViewById(R.id.seekbar);
         timeNow = (TextView) rootView.findViewById(R.id.continuous);
+        timeNow.setText(converter(0));
         totalAmount = (TextView) rootView.findViewById(R.id.total);
 
         //get arguments
@@ -120,6 +127,8 @@ public class PlayerFragment extends Fragment {
         playButton = (ImageButton) rootView.findViewById(R.id.start);
         totalAmount.setText(converter((int) duration));
         PlayerUI.setPlayerUI(imageView, imageBytes, distracks, getContext(), rootView);
+        UpdatePlayerPosition updatePlayerPosition = new UpdatePlayerPosition();
+        updatePlayerPosition.execute();
 
         playButton.setOnClickListener(new View.OnClickListener() {
             boolean paused = false;
@@ -163,12 +172,8 @@ public class PlayerFragment extends Fragment {
         titleText = (TextView) rootView.findViewById(R.id.artistsong);
         titleText.setText(artist+ " - "+song);
         handler=new Handler();
-
-        TestPos s = new TestPos();
-        s.execute();
-
-
-
+        Distracks application= (Distracks) getActivity().getApplication();
+        application.player = this;
 
     }
 
@@ -177,6 +182,10 @@ public class PlayerFragment extends Fragment {
         int seconds = millis % 60;
 
         return String.format("%02d:%02d", minutes, seconds);
+    }
+    public void updateSeconds(int seconds){
+        seek.setProgress(seconds);
+        timeNow.setText(converter(seconds));
     }
     public void setter(int seconds){
         timeNow.setText(converter(seconds));
@@ -194,33 +203,38 @@ public class PlayerFragment extends Fragment {
 
     }
 
-    class TestPos extends AsyncTask<Void , Integer, Void>{
+    class UpdatePlayerPosition extends AsyncTask<Void , Integer, Void>{
 
         @Override
         protected Void doInBackground(Void... voids) {
-            Distracks e = (Distracks) getActivity().getApplication();
             int seconds=0;
             while(true) {
-                seconds=e.getCurrentPositionInSeconds();
-                Log.e("cur",String.valueOf(seconds));
-                Log.e("eee",converter(seconds));
-
+                if(getActivity() != null){
+                    Distracks e = (Distracks) getActivity().getApplication();
+                    seconds=e.getCurrentPositionInSeconds();
+                }
                 publishProgress(seconds);
                 try {
                     Thread.sleep(600);
                 } catch (InterruptedException ex) {
                     ex.printStackTrace();
                 }
-
+                if(!isPlaying){
+                    break;
+                }
             }
-
+            return null;
         }
         @Override
         protected void onProgressUpdate(Integer... values) {
             super.onProgressUpdate(values);
-            Log.e("tester", String.valueOf(values[0]));
-            seek.setProgress(values[0]);
-            timeNow.setText(converter(values[0]));
+            System.out.println("Updating seek to " + values[0]);
+            updateSeconds(values[0]);
+
         }
     }
+    public void enableSeekBar(){
+        this.seek.setEnabled(true);
+    }
+
 }
