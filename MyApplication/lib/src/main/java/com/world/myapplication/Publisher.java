@@ -55,13 +55,8 @@ public class Publisher {
                     //send cunk
                     Utilities ut=new Utilities();
                     for(byte[] b: currentsong){
-                        Request.RequestToPublisher requestToPublisher = (Request.RequestToPublisher)in.readObject();
-                        if(requestToPublisher.method == Request.Methods.NEXT_CHUNK){
-                            MusicFile finalMF= new MusicFile(s, b, ut.getMd5(b));//metadata + kathe chunk
-                            out.writeObject(finalMF);
-                        }else{
-                            break;
-                        }
+                        MusicFile finalMF= new MusicFile(s, b, ut.getMd5(b));//metadata + kathe chunk
+                        out.writeObject(finalMF);
                     }
                     return;
                 }

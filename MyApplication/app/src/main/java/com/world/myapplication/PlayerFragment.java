@@ -2,10 +2,6 @@ package com.world.myapplication;
 
 import java.util.Base64;
 
-import android.annotation.SuppressLint;
-import android.app.ProgressDialog;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -14,17 +10,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.media.MediaPlayer;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
-
-import java.util.ArrayList;
 
 public class PlayerFragment extends Fragment {
     private Distracks distracks;
@@ -100,7 +91,7 @@ public class PlayerFragment extends Fragment {
                 if(!image.equals("1")) { //default value
                     imageBytes = Base64.getDecoder().decode(image);
                 }
-                seek.setEnabled(false);
+                seek.setEnabled(true);
                 seek.setMax((int)duration);
                 distracks.setState(artist, song, imageBytes, duration);
                 distracks.streamSongOnline(artist, song);
@@ -113,11 +104,11 @@ public class PlayerFragment extends Fragment {
                 song = distracks.playNowSong;
                 imageBytes = distracks.imageBytesNow;
                 duration = distracks.duration;
-                if(distracks.currentlyStreamingOnline){
-                    seek.setEnabled(false);
-                }else {
-                    seek.setEnabled(true);
-                }
+//                if(distracks.currentlyStreamingOnline){
+//                    seek.setEnabled(false);
+//                }else {
+//                    seek.setEnabled(true);
+//                }
                 seek.setMax((int)duration);
             }else{
                 //Screan: null

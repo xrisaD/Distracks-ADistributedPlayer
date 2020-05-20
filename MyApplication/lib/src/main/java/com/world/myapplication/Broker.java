@@ -61,7 +61,7 @@ public class Broker {
         return ( res .compareTo(this.hashValue) == 0);
     }
 
-
+    // BROKER'S COMMUNICATION
     public void replyWithMalformedRequest(ObjectOutputStream out) throws IOException{
         Request.ReplyFromBroker reply = new Request.ReplyFromBroker();
         reply.statusCode = Request.StatusCodes.MALFORMED_REQUEST;
@@ -140,15 +140,6 @@ public class Broker {
     public void search(ArtistName artist, ObjectOutputStream  out) throws IOException {
         //find Publisher for this artist
         Component publisherWithThisArtist = artistToPublisher.get(artist);
-        //DEBUG CODE!!! #DEBUG
-        if(publisherWithThisArtist==null) {
-            for (ArtistName x : artistToPublisher.keySet()) {
-                if (x.equals(artist)) {
-                    System.out.println("se vrika");
-                    publisherWithThisArtist = artistToPublisher.get(x);
-                }
-            }
-        }
         //open connection with Publisher and request the specific song
         if(publisherWithThisArtist != null && artistToPublisher.size() != 0 ) {
             requestMetaDataFromPublisher(publisherWithThisArtist, artist, out);
@@ -231,25 +222,15 @@ public class Broker {
                 ut = new Utilities();
 
                 while(i<numOfChunks){
-                    //consumer ask for the next chunk
-                    Request.RequestToBroker requestToBroker = (Request.RequestToBroker) in.readObject();
-                    if(requestToBroker.method == Request.Methods.NEXT_CHUNK){
-                        //ask chunk from Publisher
-                        Request.RequestToPublisher requestToPublisher = new Request.RequestToPublisher();
-                        requestToPublisher.method = Request.Methods.NEXT_CHUNK;
-                        outToPublisher.writeObject(requestToPublisher);
-                        outToPublisher.flush();
 
-                        MusicFile chunk = (MusicFile) inFromPublisher.readObject();
-                        //Adding chunk to the cache
-                        musicFileCache.get(musicFileReference).add(chunk);
-                        BigInteger brokermd5 = ut.getMd5(chunk.getMusicFileExtract());
-                        System.out.println("Sending song chunk " + i + "with hashval " + Arrays.hashCode(chunk.getMusicFileExtract()));
-
-                        outToConsumer.writeObject(chunk);
-                        outToConsumer.flush();
-                        i++;
-                    }
+                    MusicFile chunk = (MusicFile) inFromPublisher.readObject();
+                    //Adding chunk to the cache
+                    musicFileCache.get(musicFileReference).add(chunk);
+                    BigInteger brokermd5 = ut.getMd5(chunk.getMusicFileExtract());
+                    System.out.println("Sending song chunk " + i + "with hashval " + Arrays.hashCode(chunk.getMusicFileExtract()));
+                    outToConsumer.writeObject(chunk);
+                    outToConsumer.flush();
+                    i++;
                 }
             }
             //404 : something went wrong
@@ -262,12 +243,6 @@ public class Broker {
             //consumer stop unexpected
             //we will continue cache all the elements from Publisher form future usage
             while(i<numOfChunks){
-                //ask chunk from Publisher
-                Request.RequestToPublisher requestToPublisher =  new Request.RequestToPublisher();
-                requestToPublisher.method = Request.Methods.NEXT_CHUNK;
-                outToPublisher.writeObject(requestToPublisher);
-                outToPublisher.flush();
-
                 MusicFile chunk = (MusicFile)inFromPublisher.readObject();
                 //Adding chunk to the cache
                 musicFileCache.get(musicFileReference).add(chunk);
@@ -293,7 +268,6 @@ public class Broker {
         ObjectOutputStream outToPublisher = null;
         try {
             s = new Socket(c.getIp(), c.getPort());
-            System.out.println("as anazhthsoyme ston publisher");
             //Creating the request to the Publisher
             Request.RequestToPublisher request = new Request.RequestToPublisher();
             request.method = Request.Methods.SEARCH;

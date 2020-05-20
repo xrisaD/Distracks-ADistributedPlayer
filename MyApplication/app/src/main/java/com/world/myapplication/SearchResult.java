@@ -19,7 +19,7 @@ import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.util.ArrayList;
 
-//result: all artist's song
+// result: all artist's song
 public class SearchResult extends Fragment {
 
     private View rootView;
@@ -40,7 +40,7 @@ public class SearchResult extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-        //get argmunets from search
+        //get arguments from search
         artist = getArguments().getString("artist");
         Distracks distracks = (Distracks) getActivity().getApplication();
         if(distracks.lastSearch.equals(artist)) {
@@ -70,6 +70,7 @@ public class SearchResult extends Fragment {
         protected ArrayList<MusicFileMetaData> doInBackground(ArtistName... params) {
             ArtistName artistname = params[0];
             Distracks distracks = ((Distracks) getActivity().getApplication());
+            //search for metadata
             ArrayList<MusicFileMetaData> musicFileMetaData = distracks.getConsumer().search(artistname);
             Distracks e = (Distracks) getActivity().getApplication();
             e.lastSearchResult = musicFileMetaData;
@@ -86,17 +87,20 @@ public class SearchResult extends Fragment {
         @Override
         protected void onPostExecute(ArrayList<MusicFileMetaData> result) {
             progressDialog.dismiss();
-
+            //set UI
             Distracks distracks = (Distracks) getActivity().getApplication();
             if (result!=null && result.size() > 0) {
+                // save last search result, optimization
                 distracks.lastSearchResult = result;
+                // show songs
                 ArrayList<Button> mySongs = SongsUI.setSearchResultUI(result, getContext(), rootView);
-                SongsUI.setSongOnClickListener(artist ,mySongs, result,rootView, getActivity(), getContext());
+                SongsUI.setSongOnClickListener(artist ,mySongs, result, rootView, getActivity(), getContext());
 
             }else{
                 //set null ui
-                SongsUI.setNullUI("No songs for artist: "+ artist, getContext(), rootView);
+                // save last search result for optimization
                 distracks.lastSearchResult = null;
+                SongsUI.setNullUI("No songs for artist: "+ artist, getContext(), rootView);
             }
 
         }
