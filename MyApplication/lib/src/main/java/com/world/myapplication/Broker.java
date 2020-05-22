@@ -409,7 +409,11 @@ public class Broker {
                         everyThingOk = false;
                     }
                     notifyPublisher(request.publisherIp, request.publisherPort, request.artistNames);
-                    //replyWithOK(out); ?
+                    //the end
+                    Request.RequestToPublisher requestToPublisher = new Request.RequestToPublisher();
+                    requestToPublisher.method = Request.Methods.THE_END;
+                    out.writeObject(requestToPublisher);
+                    out.flush();
                 }
                 //pull means we got a request from Consumer for an artist's song
                 else if (request.method == Request.Methods.PULL){
@@ -437,7 +441,7 @@ public class Broker {
                     }else {
                         if (isResponsible(artist.getArtistName())) {
                             search(artist, out);
-                            everyThingOk = false;
+                            everyThingOk = true;
                         } else {
                             sendResponsibleBroker(artist, out);
                             everyThingOk = false;

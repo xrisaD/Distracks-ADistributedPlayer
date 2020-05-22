@@ -118,12 +118,17 @@ public class Publisher {
     public void notifyBroker(String ip , int port){
         System.out.printf("Publisher(%s,%d) notifying Broker(%s,%d)\n" , getIp(),getPort() , ip , port);
         Socket socket = null;
+        ObjectInputStream in = null;
         ObjectOutputStream out = null;
+
         try{
             //Connecting to the broker
             socket = new Socket(ip,port);
             System.out.printf("[PUBLISHER %d] Connected to broker on port %d , ip %s%n" ,getPort() , port , ip);
+
             out = new ObjectOutputStream(socket.getOutputStream());
+            in = new ObjectInputStream(socket.getInputStream());
+
             //Creating notify request to Broker
             //String message = String.format("notify %s %d" , getIp() , getPort());
             Request.RequestToBroker request = new Request.RequestToBroker();
@@ -143,16 +148,18 @@ public class Publisher {
             e.printStackTrace();
             System.out.println(e.getMessage());
         }
-        finally{
-            try {
-                if(out!=null) out.close();
-                if(socket!=null) socket.close();
-            }
-            catch(Exception e){
-                System.out.println("Error while closing streams");
-                throw new RuntimeException(e);
+        try {
+            if(((Request.RequestToPublisher) in.readObject()).method == Request.Methods.THE_END) {
+                if (out != null) out.close();
+                if(in != null) in.close();
+                if (socket != null) socket.close();
             }
         }
+        catch(Exception e){
+            System.out.println("Error while closing streams");
+            throw new RuntimeException(e);
+        }
+
 
     }
     public static void main(String[] args){

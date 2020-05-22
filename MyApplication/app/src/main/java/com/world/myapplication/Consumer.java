@@ -92,7 +92,7 @@ public class Consumer {
 
             //if everything ok, this message will go to the responsible broker
             if(statusCode == Request.StatusCodes.NOT_RESPONSIBLE){
-                s = new Socket(ip, port);
+                                s = new Socket(ip, port);
                 //Creating the request to Broker for this artist
                 out = new ObjectOutputStream(s.getOutputStream());
                 //search for artist's metadata
@@ -106,11 +106,17 @@ public class Consumer {
                 port = reply.responsibleBrokerPort;
                 //something went wrong
                 if(statusCode == Request.StatusCodes.NOT_RESPONSIBLE){
+                    // reply with the_end so broker can close the socket
                     Log.e("NOT_RESPONSIBLE.","Can't found responsible broker. Check your brokers ip and port");
                     return null;
                 }
             }
             if(statusCode == Request.StatusCodes.NOT_FOUND){
+                // reply with the_end so broker can close the socket
+                Request.RequestToBroker requestToBroker= new Request.RequestToBroker();
+                requestToBroker.method = Request.Methods.THE_END;
+                out.writeObject(requestToBroker);
+                out.flush();
                 System.out.println("Song or Artist does not exist");
                 throw new Exception("Song or Artist does not exist");
             }
@@ -137,6 +143,7 @@ public class Consumer {
                 System.out.println("MALFORMED_REQUEST");
                 throw new Exception("MALFORMED_REQUEST");
             }
+
         }
         catch(ClassNotFoundException e){
             //Protocol Error (Unexpected Object Caught) its a protocol error
@@ -150,6 +157,7 @@ public class Consumer {
             e.printStackTrace();
             e.printStackTrace();
         }
+
         try {
             if (s != null) s.close();
         }
