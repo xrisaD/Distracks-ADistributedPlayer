@@ -42,13 +42,14 @@ public class Distracks extends Application {
     //Reference to the player fragment that is currently being used
     PlayerFragment player;
     boolean currentlyStreamingOnline  = true;
+    int lastChunkNumber = 0;
 
     @Override
     public void onCreate() {
         super.onCreate();
         createNotificationChannel();
         consumer = new Consumer();
-        consumer.addBroker(new Component("192.168.1.13", 5000));
+        consumer.addBroker(new Component("192.168.1.2", 5000));
     }
 
     // download song with this meta data
@@ -57,6 +58,15 @@ public class Distracks extends Application {
         runner.execute(artistAndSong);
     }
 
+    public void printOnlinePositions(){
+        int i = 0;
+        for(MediaPlayer mp : onlinePlayers){
+            Log.e("tag" ,
+                    String.format("Media Player %d at ( %d / %d)" , i
+                    , mp.getCurrentPosition() , mp.getDuration())  );
+            i++;
+        }
+    }
     // stream offline song
     public void streamSongOffline(String path){
         currentlyStreamingOnline = false;
@@ -177,6 +187,7 @@ public class Distracks extends Application {
             int size = 0;
             //Start reading chunks
             onlinePlayers = new ArrayList<>();
+            lastChunkNumber = 0;
             //Creating as many medialayer objects as there are chunks
             for(int i = 0 ; i < numChunks ; i++){
                 MediaPlayer temp = new MediaPlayer();
@@ -212,6 +223,7 @@ public class Distracks extends Application {
                     if(i ==0){
                         chunkPlaya.start();
                     }
+                    lastChunkNumber += 1;
                 }
             }
             //send the end so broker can close socket
@@ -477,6 +489,29 @@ public class Distracks extends Application {
     public void seekTo(int seconds){
         if(!currentlyStreamingOnline) {
             offlinePlayer.seekTo(seconds * 1000);
+        }
+        else{
+            int millis = seconds * 1000;
+            Log.e("ta" , "Seeking to (onlnine) " + seconds);
+            int millisSum = 0;
+            for(int i = 0 ; i < onlinePlayers.size() ; i++) {
+                int currentDuration = onlinePlayers.get(i).getDuration();
+                if(millisSum + currentDuration > millis){
+                    //THis is the targfet chunk (i) we should be seeking to
+
+                    //Seek only if the current chunk is the one that is playing
+                    if(onlinePlayers.get(i).isPlaying()){
+                        int msec = millisSum + currentDuration - millis;
+                        System.out.println("In range of current chunk eelTp " + msec + " max pos" + onlinePlayers.get(i).getDuration());
+                        onlinePlayers.get(i).seekTo(msec);
+                    }
+                    else{
+                        System.out.println("Out of  range of players");
+                        break;
+                    }
+                }
+                millisSum += currentDuration;
+            }
         }
 
     }
