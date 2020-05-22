@@ -1,0 +1,1 @@
+java -cp .;mp3agic-0.9.0.jar com.world.myapplication.Publisher 192.168.1.3 5001 a z brokers.txt
