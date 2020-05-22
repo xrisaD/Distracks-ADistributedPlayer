@@ -1,6 +1,8 @@
 package com.world.myapplication;
 
 
+import android.util.Log;
+
 import java.io.*;
 import java.net.Socket;
 import java.time.LocalDateTime;
@@ -75,9 +77,21 @@ public class Consumer {
         try {
             //While we find a broker who is not responsible for the artistname
             Request.ReplyFromBroker reply=null;
-            int statusCode = Request.StatusCodes.NOT_RESPONSIBLE;
-            while(statusCode == Request.StatusCodes.NOT_RESPONSIBLE){
-                System.out.println("NOT RESPONSIBLE");
+            s = new Socket(ip, port);
+            //Creating the request to Broker for this artist
+            out = new ObjectOutputStream(s.getOutputStream());
+            //search for artist's metadata
+            requestSearchToBroker(artist, out);
+            //Waiting for the reply
+            in = new ObjectInputStream(s.getInputStream());
+            reply = (Request.ReplyFromBroker) in.readObject();
+            System.out.printf("[CONSUMER] Got reply from Broker(%s,%d) : %s", ip, port, reply);
+            int statusCode = reply.statusCode;
+            ip = reply.responsibleBrokerIp;
+            port = reply.responsibleBrokerPort;
+
+            //if everything ok, this message will go to the responsible broker
+            if(statusCode == Request.StatusCodes.NOT_RESPONSIBLE){
                 s = new Socket(ip, port);
                 //Creating the request to Broker for this artist
                 out = new ObjectOutputStream(s.getOutputStream());
@@ -90,6 +104,11 @@ public class Consumer {
                 statusCode = reply.statusCode;
                 ip = reply.responsibleBrokerIp;
                 port = reply.responsibleBrokerPort;
+                //something went wrong
+                if(statusCode == Request.StatusCodes.NOT_RESPONSIBLE){
+                    Log.e("NOT_RESPONSIBLE.","Can't found responsible broker. Check your brokers ip and port");
+                    return null;
+                }
             }
             if(statusCode == Request.StatusCodes.NOT_FOUND){
                 System.out.println("Song or Artist does not exist");

@@ -425,8 +425,7 @@ public class Broker {
                             everyThingOk = pull(artist, song, out, in);
                         }else{
                             sendResponsibleBroker(artist, out);
-                            //we want to close socket without ok from consumer
-                            everyThingOk = false;
+                            everyThingOk = true;
                         }
                     }
                 }
@@ -435,14 +434,15 @@ public class Broker {
                     if(request.pullArtistName ==null){
                         replyWithMalformedRequest(out);
                         everyThingOk = false;
-                    }else{
-                        if(isResponsible(artist.getArtistName())) {
+                    }else {
+                        if (isResponsible(artist.getArtistName())) {
                             search(artist, out);
-                        }else{
+                            everyThingOk = false;
+                        } else {
                             sendResponsibleBroker(artist, out);
+                            everyThingOk = false;
                         }
                     }
-                    everyThingOk = true;
                 }
                 //this  "else if" is for debug purposes
                 else if(request.method == Request.Methods.STATUS){ 				//information querying about broker's state
