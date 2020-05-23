@@ -29,6 +29,12 @@ public class Distracks extends Application {
     String currentDataSource;
     private  AsyncDownload runner;
 
+    ArrayList<Integer> startSecOfEachChunk = new ArrayList<>();
+    ArrayList<Integer> endSecOfEachChunk = new ArrayList<>();
+    int totalSongLength;
+    int totalDuration;
+    int start;
+
     //last search, don't ask again broker for this data
     public String lastSearch = "";
     public ArrayList<MusicFileMetaData> lastSearchResult= null;
@@ -49,7 +55,7 @@ public class Distracks extends Application {
         super.onCreate();
         createNotificationChannel();
         consumer = new Consumer();
-        consumer.addBroker(new Component("192.168.1.2", 5000));
+        consumer.addBroker(new Component("192.168.1.5", 5000));
     }
 
     // download song with this meta data
@@ -219,9 +225,17 @@ public class Distracks extends Application {
                     if(i-1 >= 0) {
                         System.out.println("Setting next media player @ " + i + "currFilename " + tempFilename);
                         onlinePlayers.get(i-1).setNextMediaPlayer(chunkPlaya);
+                        totalDuration=totalDuration+chunkPlaya.getDuration();
+                        startSecOfEachChunk.add(i,start);
+                        endSecOfEachChunk.add(i,totalDuration);
+                        start=totalDuration;
                     }
                     if(i ==0){
                         chunkPlaya.start();
+                        totalDuration = chunkPlaya.getDuration();
+                        startSecOfEachChunk.add(i,0);
+                        endSecOfEachChunk.add(i,chunkPlaya.getDuration());
+                        start=totalDuration;
                     }
                     lastChunkNumber += 1;
                 }
@@ -512,6 +526,24 @@ public class Distracks extends Application {
                 }
                 millisSum += currentDuration;
             }
+
+//            for (int i =0;i<onlinePlayers.size();i++) {
+//                totalSongLength=totalSongLength+onlinePlayers.get(i).getDuration();
+//                Log.e("startSecOfEachChunk"," startSecOfEachChunk Player number: " + i+"   "+String.valueOf(startSecOfEachChunk.get(i)));
+//                Log.e("endSecOfEachChunk","endSecOfEachChunk Player number: " + i+"   "+String.valueOf(endSecOfEachChunk.get(i)));
+//                Log.e("DurOfP","DurOfP Player number: " +i+"   "+onlinePlayers.get(i).getDuration());
+//            }
+//
+//
+//            Log.e("SECONDS","   "+String.valueOf(seconds));
+//            for (int i =0;i<onlinePlayers.size();i++) {
+//                if (((seconds * 1000 >= startSecOfEachChunk.get(i) && endSecOfEachChunk.get(i) > seconds * 1000 && onlinePlayers.get(i).isPlaying()))) {
+//                    Log.e("OOF","");
+//                    onlinePlayers.get(i).seekTo(seconds * 1000);
+//                }
+//            }
+
+
         }
 
     }
