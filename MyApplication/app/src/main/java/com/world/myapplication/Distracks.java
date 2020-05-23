@@ -24,7 +24,7 @@ import java.util.ArrayList;
 public class Distracks extends Application {
     private Consumer consumer;
 
-    ArrayList<MediaPlayer> onlinePlayers = new ArrayList<>();
+    MediaPlayer onlinePlayer = new MediaPlayer();
     MediaPlayer offlinePlayer = new MediaPlayer();
     String currentDataSource;
     private  AsyncDownload runner;
@@ -55,7 +55,7 @@ public class Distracks extends Application {
         super.onCreate();
         createNotificationChannel();
         consumer = new Consumer();
-        consumer.addBroker(new Component("192.168.1.5", 5000));
+        consumer.addBroker(new Component("192.168.1.2", 5000));
     }
 
     // download song with this meta data
@@ -64,15 +64,7 @@ public class Distracks extends Application {
         runner.execute(artistAndSong);
     }
 
-    public void printOnlinePositions(){
-        int i = 0;
-        for(MediaPlayer mp : onlinePlayers){
-            Log.e("tag" ,
-                    String.format("Media Player %d at ( %d / %d)" , i
-                    , mp.getCurrentPosition() , mp.getDuration())  );
-            i++;
-        }
-    }
+
     // stream offline song
     public void streamSongOffline(String path){
         currentlyStreamingOnline = false;
@@ -84,170 +76,29 @@ public class Distracks extends Application {
             offlinePlayer.start();
         }
         catch (IOException e){
-
+            e.printStackTrace();
         }
     }
     // stream online song
     public void streamSongOnline(String artistName, String songName){
         resetEverything();
         currentlyStreamingOnline = true;
-        StreamSong streamSong = new StreamSong();
         MusicFileMetaData metaData= new MusicFileMetaData(songName , artistName , null , null , null,
                 0, null);
-        streamSong.execute(metaData);
+        DistracksOnlineMediaDataSource mDataSource = new DistracksOnlineMediaDataSource(consumer , metaData);
+        onlinePlayer = new MediaPlayer();
+        onlinePlayer.setDataSource(mDataSource);
+        try {
+            onlinePlayer.prepare();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        onlinePlayer.start();
 
     }
 
     // Async for streaming
-    private class StreamSong extends AsyncTask<MusicFileMetaData , Void , Void>{
-        MusicFileMetaData musicFileMetaData;
-        @Override
-        protected Void doInBackground(MusicFileMetaData... artistAndSong) {
-            onlineSongHasBeenFullyDownloaded = false;
-            musicFileMetaData = artistAndSong[0];
-            //get data
-            ArtistName artist = new ArtistName(musicFileMetaData.getArtistName());
-            String songName = musicFileMetaData.getTrackName();
 
-            Component b = consumer.getBroker(artist);
-            String ip = b.getIp();
-            int port = b.getPort();
-
-            Socket s = null;
-            ObjectInputStream in = null;
-            ObjectOutputStream out = null;
-            try {
-                //While we find a broker who is not responsible for the artistname
-                Request.ReplyFromBroker reply=null;
-                s = new Socket(ip, port);
-                //Creating the request to Broker for this artist
-                out = new ObjectOutputStream(s.getOutputStream());
-                consumer.requestPullToBroker(artist, songName, out);
-                //Waiting for the reply
-                in = new ObjectInputStream(s.getInputStream());
-                reply = (Request.ReplyFromBroker) in.readObject();
-                System.out.printf("[CONSUMER] Got reply from Broker(%s,%d) : %s%n", ip, port, reply);
-                int statusCode = reply.statusCode;
-                ip = reply.responsibleBrokerIp;
-                port = reply.responsibleBrokerPort;
-                //ask  for broker
-                if(statusCode == Request.StatusCodes.NOT_RESPONSIBLE){
-                    s = new Socket(ip, port);
-                    //Creating the request to Broker for this artist
-                    out = new ObjectOutputStream(s.getOutputStream());
-                    consumer.requestPullToBroker(artist, songName, out);
-                    //Waiting for the reply
-                    in = new ObjectInputStream(s.getInputStream());
-                    reply = (Request.ReplyFromBroker) in.readObject();
-                    System.out.printf("[CONSUMER] Got reply from Broker(%s,%d) : %s%n", ip, port, reply);
-                    statusCode = reply.statusCode;
-                    ip = reply.responsibleBrokerIp;
-                    port = reply.responsibleBrokerPort;
-                    //something went wrong
-                    if(statusCode == Request.StatusCodes.NOT_RESPONSIBLE){
-                        Log.e("NOT_RESPONSIBLE.","Can't found responsible broker. Check your brokers' ip and port");
-                        return null;
-                    }
-                }
-                if(statusCode == Request.StatusCodes.NOT_FOUND){
-                    System.out.println("Song or Artist does not exist");
-                    throw new Exception("Song or Artist does not exist");
-                }
-                //Song exists and the broker is responsible for the artist
-                else if(statusCode == Request.StatusCodes.OK){
-                    //Save the information that this broker is responsible for the requested artist
-                    consumer.register(new Component(s.getInetAddress().getHostAddress(),s.getPort()) , artist);
-                    //download mp3 to the device
-                    stream(reply.numChunks, in , out, songName);
-                }
-                //In this case the status code is MALFORMED_REQUEST
-                else{
-                    System.out.println("MALFORMED_REQUEST");
-                    throw new Exception("MALFORMED_REQUEST");
-                }
-            }
-            catch(ClassNotFoundException e){
-                //Protocol Error (Unexpected Object Caught) its a protocol error
-                System.out.printf("[CONSUMER] Unexpected object on playData %s " , e.getMessage());
-                e.printStackTrace();
-            }
-            catch (Exception e){
-                System.out.printf("[CONSUMER] Error on playData %s " , e.getMessage());
-                e.printStackTrace();
-            }
-            finally {
-                try {
-                    if (in != null) in.close();
-                    if (out != null) out.close();
-                    if (s != null) s.close();
-                }
-                catch(Exception e){
-                    System.out.printf("[CONSUMER] Error while closing socket on playData %s " , e.getMessage());
-                    e.printStackTrace();
-                }
-
-            }
-            return null;
-        }
-        private void stream(final int numChunks, ObjectInputStream in, ObjectOutputStream out, String filename) throws IOException, ClassNotFoundException {
-            int size = 0;
-            //Start reading chunks
-            onlinePlayers = new ArrayList<>();
-            lastChunkNumber = 0;
-            //Creating as many medialayer objects as there are chunks
-            for(int i = 0 ; i < numChunks ; i++){
-                MediaPlayer temp = new MediaPlayer();
-                onlinePlayers.add(temp);
-            }
-            for (int i = 0; i < numChunks; i++) {
-
-                //HandleCHunks
-                Object object = in.readObject();
-                if (object instanceof MusicFile) {
-                    MusicFile chunk = (MusicFile) object;
-
-                    System.out.println("[CONSUMER] got chunk Number " + i);
-                    System.out.println();
-
-                    size += chunk.getMusicFileExtract().length;
-                    //Add chunk to the icomplete list
-                    String tempFilename = getFilesDir() + "/temp" + i + ".mp3";
-                    try (FileOutputStream fos = new FileOutputStream(tempFilename)) {
-                        fos.write(chunk.getMusicFileExtract());
-                    }
-                    catch (IOException e){
-                        e.printStackTrace();
-                    }
-                    MediaPlayer chunkPlaya = onlinePlayers.get(i);
-                    chunkPlaya.setDataSource(tempFilename);
-                    chunkPlaya.prepare();
-                    //If the current media player is not the first we chain it with the previous one
-                    if(i-1 >= 0) {
-                        System.out.println("Setting next media player @ " + i + "currFilename " + tempFilename);
-                        onlinePlayers.get(i-1).setNextMediaPlayer(chunkPlaya);
-                        totalDuration=totalDuration+chunkPlaya.getDuration();
-                        startSecOfEachChunk.add(i,start);
-                        endSecOfEachChunk.add(i,totalDuration);
-                        start=totalDuration;
-                    }
-                    if(i ==0){
-                        chunkPlaya.start();
-                        totalDuration = chunkPlaya.getDuration();
-                        startSecOfEachChunk.add(i,0);
-                        endSecOfEachChunk.add(i,chunkPlaya.getDuration());
-                        start=totalDuration;
-                    }
-                    lastChunkNumber += 1;
-                }
-            }
-            //send the end so broker can close socket
-            Request.RequestToBroker requestToBroker= new Request.RequestToBroker();
-            requestToBroker.method = Request.Methods.THE_END;
-            out.writeObject(requestToBroker);
-            out.flush();
-        }
-
-    }
 
 //    private void saveChunk(MusicFile chunk , String filename){
 //        try (FileOutputStream fos = new FileOutputStream(filename)) {
@@ -443,17 +294,11 @@ public class Distracks extends Application {
     }
 
     //Player's methods
-    int mediaPlayerIndex;
     private void pauseOnlineStreaming(){
-        for(int i = 0 ; i < onlinePlayers.size() ; i++){
-            if(onlinePlayers.get(i).isPlaying()){
-                onlinePlayers.get(i).pause();
-                mediaPlayerIndex = i;
-            }
-        }
+        onlinePlayer.pause();
     }
     private void resumeOnlineStreaming(){
-        onlinePlayers.get(mediaPlayerIndex).start();
+        onlinePlayer.start();
     }
     private void pauseOfflineStreaming(){
         this.offlinePlayer.pause();
@@ -481,13 +326,11 @@ public class Distracks extends Application {
     private void resetEverything(){
         try{
             System.out.println("RESETTING EVERYTHING");
-            if(onlinePlayers != null) {
-                for (MediaPlayer mp : onlinePlayers) {
-                    mp.reset();
-                    mp.release();
-                }
+            if(onlinePlayer != null) {
+                onlinePlayer.reset();
+                onlinePlayer.release();
+                onlinePlayer = null;
             }
-            onlinePlayers = new ArrayList<>();
             if(offlinePlayer != null) {
                 offlinePlayer.reset();
                 offlinePlayer.release();
@@ -499,51 +342,32 @@ public class Distracks extends Application {
             e.printStackTrace();
         }
     }
-    public boolean onlineSongHasBeenFullyDownloaded = false;
     public void seekTo(int seconds){
         if(!currentlyStreamingOnline) {
-            offlinePlayer.seekTo(seconds * 1000);
+            //TODO if seekTo is called when the player is being prepared
+            if(!offlinePlayer.isPlaying()){
+                offlinePlayer.stop();
+                offlinePlayer.prepareAsync();
+                offlinePlayer.setOnPreparedListener(new SeekToAndStartWhenPrepared(seconds*1000));
+            }
+            else {
+                offlinePlayer.seekTo(seconds * 1000);
+            }
         }
         else{
-            int millis = seconds * 1000;
-            Log.e("ta" , "Seeking to (onlnine) " + seconds);
-            int millisSum = 0;
-            for(int i = 0 ; i < onlinePlayers.size() ; i++) {
-                int currentDuration = onlinePlayers.get(i).getDuration();
-                if(millisSum + currentDuration > millis){
-                    //THis is the targfet chunk (i) we should be seeking to
-
-                    //Seek only if the current chunk is the one that is playing
-                    if(onlinePlayers.get(i).isPlaying()){
-                        int msec = millisSum + currentDuration - millis;
-                        System.out.println("In range of current chunk eelTp " + msec + " max pos" + onlinePlayers.get(i).getDuration());
-                        onlinePlayers.get(i).seekTo(msec);
-                    }
-                    else{
-                        System.out.println("Out of  range of players");
-                        break;
-                    }
+            if(!onlinePlayer.isPlaying()){
+                onlinePlayer.stop();
+                try {
+                    onlinePlayer.prepare();
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
-                millisSum += currentDuration;
+                onlinePlayer.seekTo(seconds* 1000);
+                onlinePlayer.start();
             }
-
-//            for (int i =0;i<onlinePlayers.size();i++) {
-//                totalSongLength=totalSongLength+onlinePlayers.get(i).getDuration();
-//                Log.e("startSecOfEachChunk"," startSecOfEachChunk Player number: " + i+"   "+String.valueOf(startSecOfEachChunk.get(i)));
-//                Log.e("endSecOfEachChunk","endSecOfEachChunk Player number: " + i+"   "+String.valueOf(endSecOfEachChunk.get(i)));
-//                Log.e("DurOfP","DurOfP Player number: " +i+"   "+onlinePlayers.get(i).getDuration());
-//            }
-//
-//
-//            Log.e("SECONDS","   "+String.valueOf(seconds));
-//            for (int i =0;i<onlinePlayers.size();i++) {
-//                if (((seconds * 1000 >= startSecOfEachChunk.get(i) && endSecOfEachChunk.get(i) > seconds * 1000 && onlinePlayers.get(i).isPlaying()))) {
-//                    Log.e("OOF","");
-//                    onlinePlayers.get(i).seekTo(seconds * 1000);
-//                }
-//            }
-
-
+            else {
+                onlinePlayer.seekTo(seconds * 1000);
+            }
         }
 
     }
@@ -553,15 +377,8 @@ public class Distracks extends Application {
             return offlinePlayer.getCurrentPosition() / 1000 ;
         }
         else{
-            if(onlinePlayers == null) return  0;
-            int sumMilliseconds = 0;
-            for (MediaPlayer m : onlinePlayers){
-                sumMilliseconds += m.getCurrentPosition();
-                if(m.isPlaying()){
-                    break;
-                }
-            }
-            return sumMilliseconds / 1000;
+            if(onlinePlayer == null) return 0;
+            return onlinePlayer.getCurrentPosition() / 1000;
         }
     }
 
