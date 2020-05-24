@@ -55,10 +55,10 @@ public class Broker {
      * check if this Broker is responsible for this artistName
      */
     public boolean isResponsible(String artistName){
-        BigInteger md5 = Utilities.getMd5(artistName);
+        BigInteger md5 = Utilities.getMd5(artistName.trim().toLowerCase());
         BigInteger res = findResponsibleBroker(md5);
         //this broker is responsible for this artistName
-        return ( res .compareTo(this.hashValue) == 0);
+        return (res.compareTo(this.hashValue) == 0);
     }
 
     // BROKER'S COMMUNICATION
@@ -150,7 +150,7 @@ public class Broker {
     }
     public void sendResponsibleBroker(ArtistName artist, ObjectOutputStream  out) throws IOException {
         //find responsible Broker and send
-        BigInteger brokersHashValue = findResponsibleBroker(Utilities.getMd5(artist.getArtistName()));
+        BigInteger brokersHashValue = findResponsibleBroker(Utilities.getMd5(artist.getArtistName().trim().toLowerCase()));
         //it can't be null, there is at least one Broker, ourself
         Component broker = hashValueToBroker.get(brokersHashValue);
         //send message to Consumer with the ip and the port with the responsible broker
@@ -220,14 +220,13 @@ public class Broker {
                 replyWithOK(outToConsumer,  numOfChunks);
                 //Transmitting the chunks
                 ut = new Utilities();
-
                 while(i<numOfChunks){
-
                     MusicFile chunk = (MusicFile) inFromPublisher.readObject();
                     //Adding chunk to the cache
                     musicFileCache.get(musicFileReference).add(chunk);
                     BigInteger brokermd5 = ut.getMd5(chunk.getMusicFileExtract());
                     System.out.println("Sending song chunk " + i + "with hashval " + Arrays.hashCode(chunk.getMusicFileExtract()));
+
                     outToConsumer.writeObject(chunk);
                     outToConsumer.flush();
                     i++;
@@ -414,6 +413,7 @@ public class Broker {
                     requestToPublisher.method = Request.Methods.THE_END;
                     out.writeObject(requestToPublisher);
                     out.flush();
+                    System.out.println("I  am responsible for artists : " + artistToPublisher.entrySet());
                 }
                 //pull means we got a request from Consumer for an artist's song
                 else if (request.method == Request.Methods.PULL){

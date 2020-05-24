@@ -7,7 +7,6 @@ import android.app.NotificationManager;
 import android.media.MediaPlayer;
 import android.os.AsyncTask;
 import android.os.Build;
-import android.util.Log;
 
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
@@ -29,12 +28,6 @@ public class Distracks extends Application {
     String currentDataSource;
     private  AsyncDownload runner;
 
-    ArrayList<Integer> startSecOfEachChunk = new ArrayList<>();
-    ArrayList<Integer> endSecOfEachChunk = new ArrayList<>();
-    int totalSongLength;
-    int totalDuration;
-    int start;
-
     //last search, don't ask again broker for this data
     public String lastSearch = "";
     public ArrayList<MusicFileMetaData> lastSearchResult= null;
@@ -48,14 +41,13 @@ public class Distracks extends Application {
     //Reference to the player fragment that is currently being used
     PlayerFragment player;
     boolean currentlyStreamingOnline  = true;
-    int lastChunkNumber = 0;
 
     @Override
     public void onCreate() {
         super.onCreate();
         createNotificationChannel();
         consumer = new Consumer();
-        consumer.addBroker(new Component("192.168.1.2", 5000));
+        consumer.addBroker(new Component("192.168.1.13", 5000));
     }
 
     // download song with this meta data
@@ -97,19 +89,6 @@ public class Distracks extends Application {
 
     }
 
-    // Async for streaming
-
-
-//    private void saveChunk(MusicFile chunk , String filename){
-//        try (FileOutputStream fos = new FileOutputStream(filename)) {
-//            System.out.println("Saving a chunk to filename " + filename);
-//            fos.write(chunk.getMusicFileExtract());
-//        }
-//        catch (Exception e){
-//            e.printStackTrace();
-//        }
-//    }
-//
     //Async for download
     public class AsyncDownload extends AsyncTask<MusicFileMetaData, Integer, String> {
         private ArrayList<MusicFile> chunks = new ArrayList<>();
@@ -146,8 +125,6 @@ public class Distracks extends Application {
                     out = new ObjectOutputStream(s.getOutputStream());
                     consumer.requestPullToBroker(artist, songName, out);
                     //Waiting for the reply
-
-
                     in = new ObjectInputStream(s.getInputStream());
                     reply = (Request.ReplyFromBroker) in.readObject();
                     System.out.printf("[CONSUMER] Got reply from Broker(%s,%d) : %s%n", ip, port, reply);
@@ -344,11 +321,15 @@ public class Distracks extends Application {
     }
     public void seekTo(int seconds){
         if(!currentlyStreamingOnline) {
-            //TODO if seekTo is called when the player is being prepared
             if(!offlinePlayer.isPlaying()){
                 offlinePlayer.stop();
-                offlinePlayer.prepareAsync();
-                offlinePlayer.setOnPreparedListener(new SeekToAndStartWhenPrepared(seconds*1000));
+                try {
+                    offlinePlayer.prepare();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                offlinePlayer.seekTo(seconds* 1000);
+                offlinePlayer.start();
             }
             else {
                 offlinePlayer.seekTo(seconds * 1000);
@@ -381,46 +362,6 @@ public class Distracks extends Application {
             return onlinePlayer.getCurrentPosition() / 1000;
         }
     }
-
-    private void forceChangeMediaPlayer(MediaPlayer mp , String newDataSource){
-        System.out.println("force changed caled");
-        try {
-            mp.reset();
-            mp.setDataSource(newDataSource);
-            currentDataSource = newDataSource;
-            mp.prepare();
-            mp.start();
-        } catch (IOException e) {
-            forceChangeMediaPlayer(mp , newDataSource);
-        }
-    }
-
-     public class UpdatePlayerPosition extends AsyncTask<Void , Integer, Void>{
-
-        @Override
-        protected Void doInBackground(Void... voids) {
-            int seconds=0;
-            while(true) {
-                seconds=getCurrentPositionInSeconds();
-                publishProgress(seconds);
-                try {
-                    Thread.sleep(600);
-                } catch (InterruptedException ex) {
-                    ex.printStackTrace();
-                }
-
-            }
-        }
-        @Override
-        protected void onProgressUpdate(Integer... values) {
-            super.onProgressUpdate(values);
-            if(player != null) {
-                player.updateSeconds(values[0]);
-            }
-        }
-    }
-
-
 
     public Consumer getConsumer() {
         return consumer;

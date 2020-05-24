@@ -1,0 +1,10 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Broker" type="Application" factoryName="Application">
+    <option name="MAIN_CLASS_NAME" value="com.world.myapplication.Broker" />
+    <module name="lib" />
+    <option name="PROGRAM_PARAMETERS" value="192.168.1.13 5000 brokers.txt" />
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>

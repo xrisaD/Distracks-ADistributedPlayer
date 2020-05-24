@@ -11,9 +11,9 @@
   <component name="ChangeListManager">
     <list default="true" id="2bab5826-eda4-479d-84cb-0c95fad24018" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/world/myapplication/Consumer.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/world/myapplication/Consumer.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/world/myapplication/Distracks.java" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/world/myapplication/Distracks.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/src/main/java/com/world/myapplication/ArtistName.java" beforeDir="false" afterPath="$PROJECT_DIR$/lib/src/main/java/com/world/myapplication/ArtistName.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/lib/src/main/java/com/world/myapplication/Broker.java" beforeDir="false" afterPath="$PROJECT_DIR$/lib/src/main/java/com/world/myapplication/Broker.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/src/main/java/com/world/myapplication/Publisher.java" beforeDir="false" afterPath="$PROJECT_DIR$/lib/src/main/java/com/world/myapplication/Publisher.java" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -75,7 +75,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Android App.app">
+  <component name="RunManager" selected="Application.Broker2">
     <configuration default="true" type="AndroidJUnit" factoryName="Android JUnit">
       <option name="TEST_OBJECT" value="class" />
       <option name="WORKING_DIRECTORY" value="$MODULE_DIR$" />
@@ -132,38 +132,6 @@
       <option name="ACTIVITY_CLASS" value="" />
       <method v="2">
         <option name="Android.Gradle.BeforeRunTask" enabled="true" />
-      </method>
-    </configuration>
-    <configuration name="Broker" type="Application" factoryName="Application">
-      <option name="MAIN_CLASS_NAME" value="com.world.myapplication.Broker" />
-      <module name="lib" />
-      <option name="PROGRAM_PARAMETERS" value="192.168.1.13 5000 brokers.txt" />
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
-    <configuration name="Broker2" type="Application" factoryName="Application">
-      <option name="MAIN_CLASS_NAME" value="com.world.myapplication.Broker" />
-      <module name="lib" />
-      <option name="PROGRAM_PARAMETERS" value="192.168.1.13 5001 brokers.txt" />
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
-    <configuration name="Publisher" type="Application" factoryName="Application">
-      <option name="MAIN_CLASS_NAME" value="com.world.myapplication.Publisher" />
-      <module name="lib" />
-      <option name="PROGRAM_PARAMETERS" value="192.168.1.13 5010 A C brokers.txt" />
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
-    <configuration name="Publisher2" type="Application" factoryName="Application">
-      <option name="MAIN_CLASS_NAME" value="com.world.myapplication.Publisher" />
-      <module name="lib" />
-      <option name="PROGRAM_PARAMETERS" value="192.168.1.13 5011 C Z brokers.txt" />
-      <method v="2">
-        <option name="Make" enabled="true" />
       </method>
     </configuration>
     <list>

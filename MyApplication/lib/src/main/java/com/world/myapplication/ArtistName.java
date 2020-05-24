@@ -29,4 +29,9 @@ public class ArtistName {
         ArtistName that = (ArtistName) o;
         return this.artistName.trim().toLowerCase().equals( that.artistName.trim().toLowerCase());
     }
+
+    @Override
+    public String toString() {
+        return artistName;
+    }
 }
