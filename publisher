@@ -1,1 +1,0 @@
-java -cp .:mp3agic-0.9.0.jar Publisher $1 5001 a z brokers.txt
