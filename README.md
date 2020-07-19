@@ -1,3 +1,0 @@
-# Distributed Systems Project
-## Distracks
-
