@@ -1,8 +1,9 @@
 <component name="libraryTable">
   <library name="Gradle: androidx.navigation:navigation-dynamic-features-runtime:2.3.0-alpha04@aar">
     <CLASSES>
-      <root url="jar://$PROJECT_DIR$/../../../ERGASIA KATANEMHMENA/DistributedSystemsAssignment/caches/transforms-2/files-2.1/46f6569d09d7f2da4d67ca507564e935/jetified-navigation-dynamic-features-runtime-2.3.0-alpha04/jars/classes.jar!/" />
-      <root url="file://$PROJECT_DIR$/../../../ERGASIA KATANEMHMENA/DistributedSystemsAssignment/caches/transforms-2/files-2.1/46f6569d09d7f2da4d67ca507564e935/jetified-navigation-dynamic-features-runtime-2.3.0-alpha04/res" />
+      <root url="file://$PROJECT_DIR$/../../../ERGASIA KATANEMHMENA/DistributedSystemsAssignment/caches/transforms-2/files-2.1/eef7ef655eb6c4930d56511f846eac47/jetified-navigation-dynamic-features-runtime-2.3.0-alpha04/AndroidManifest.xml" />
+      <root url="jar://$PROJECT_DIR$/../../../ERGASIA KATANEMHMENA/DistributedSystemsAssignment/caches/transforms-2/files-2.1/eef7ef655eb6c4930d56511f846eac47/jetified-navigation-dynamic-features-runtime-2.3.0-alpha04/jars/classes.jar!/" />
+      <root url="file://$PROJECT_DIR$/../../../ERGASIA KATANEMHMENA/DistributedSystemsAssignment/caches/transforms-2/files-2.1/eef7ef655eb6c4930d56511f846eac47/jetified-navigation-dynamic-features-runtime-2.3.0-alpha04/res" />
     </CLASSES>
     <JAVADOC />
     <SOURCES>

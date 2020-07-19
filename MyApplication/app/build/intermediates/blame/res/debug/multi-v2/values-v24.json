@@ -1,10 +1,10 @@
 {
     "logs": [
         {
-            "outputFile": "C:\\Users\\Xrisa\\Desktop\\katan\\DistributedSystemsAssignment\\MyApplication\\app\\build\\intermediates\\incremental\\mergeDebugResources\\merged.dir\\values-v24\\values-v24.xml",
+            "outputFile": "C:\\Users\\Xrisa\\Desktop\\kkkatan\\Distributed-Systems-Project\\MyApplication\\app\\build\\intermediates\\incremental\\mergeDebugResources\\merged.dir\\values-v24\\values-v24.xml",
             "map": [
                 {
-                    "source": "C:\\Users\\Xrisa\\Desktop\\ERGASIA KATANEMHMENA\\DistributedSystemsAssignment\\caches\\transforms-2\\files-2.1\\ea88890b09526096266c9c16859169ae\\appcompat-1.1.0\\res\\values-v24\\values-v24.xml",
+                    "source": "C:\\Users\\Xrisa\\Desktop\\ERGASIA KATANEMHMENA\\DistributedSystemsAssignment\\caches\\transforms-2\\files-2.1\\c2c5fa787d66aaf40578b3071f4d283f\\appcompat-1.1.0\\res\\values-v24\\values-v24.xml",
                     "from": {
                         "startLines": "2,3",
                         "startColumns": "4,4",
@@ -14,7 +14,7 @@
                     }
                 },
                 {
-                    "source": "C:\\Users\\Xrisa\\Desktop\\ERGASIA KATANEMHMENA\\DistributedSystemsAssignment\\caches\\transforms-2\\files-2.1\\bebe664a8e5d3f0b32cd0e887ac4aea1\\media-1.1.0\\res\\values-v24\\values-v24.xml",
+                    "source": "C:\\Users\\Xrisa\\Desktop\\ERGASIA KATANEMHMENA\\DistributedSystemsAssignment\\caches\\transforms-2\\files-2.1\\37853e8f21d758efa0c4d2d570aa4128\\media-1.1.0\\res\\values-v24\\values-v24.xml",
                     "from": {
                         "startLines": "2,3,4,5",
                         "startColumns": "4,4,4,4",

@@ -6,90 +6,90 @@
 6
 7    <uses-sdk
 8        android:minSdkVersion="26"
-8-->C:\Users\Xrisa\Desktop\katan\DistributedSystemsAssignment\MyApplication\app\src\main\AndroidManifest.xml
+8-->C:\Users\Xrisa\Desktop\kkkatan\Distributed-Systems-Project\MyApplication\app\src\main\AndroidManifest.xml
 9        android:targetSdkVersion="29" />
-9-->C:\Users\Xrisa\Desktop\katan\DistributedSystemsAssignment\MyApplication\app\src\main\AndroidManifest.xml
+9-->C:\Users\Xrisa\Desktop\kkkatan\Distributed-Systems-Project\MyApplication\app\src\main\AndroidManifest.xml
 10
 11    <uses-permission android:name="android.permission.INTERNET" />
-11-->C:\Users\Xrisa\Desktop\katan\DistributedSystemsAssignment\MyApplication\app\src\main\AndroidManifest.xml:26:5-67
-11-->C:\Users\Xrisa\Desktop\katan\DistributedSystemsAssignment\MyApplication\app\src\main\AndroidManifest.xml:26:22-64
+11-->C:\Users\Xrisa\Desktop\kkkatan\Distributed-Systems-Project\MyApplication\app\src\main\AndroidManifest.xml:26:5-67
+11-->C:\Users\Xrisa\Desktop\kkkatan\Distributed-Systems-Project\MyApplication\app\src\main\AndroidManifest.xml:26:22-64
 12    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-12-->C:\Users\Xrisa\Desktop\katan\DistributedSystemsAssignment\MyApplication\app\src\main\AndroidManifest.xml:27:5-80
-12-->C:\Users\Xrisa\Desktop\katan\DistributedSystemsAssignment\MyApplication\app\src\main\AndroidManifest.xml:27:22-77
+12-->C:\Users\Xrisa\Desktop\kkkatan\Distributed-Systems-Project\MyApplication\app\src\main\AndroidManifest.xml:27:5-80
+12-->C:\Users\Xrisa\Desktop\kkkatan\Distributed-Systems-Project\MyApplication\app\src\main\AndroidManifest.xml:27:22-77
 13    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-13-->C:\Users\Xrisa\Desktop\katan\DistributedSystemsAssignment\MyApplication\app\src\main\AndroidManifest.xml:28:5-81
-13-->C:\Users\Xrisa\Desktop\katan\DistributedSystemsAssignment\MyApplication\app\src\main\AndroidManifest.xml:28:22-78
+13-->C:\Users\Xrisa\Desktop\kkkatan\Distributed-Systems-Project\MyApplication\app\src\main\AndroidManifest.xml:28:5-81
+13-->C:\Users\Xrisa\Desktop\kkkatan\Distributed-Systems-Project\MyApplication\app\src\main\AndroidManifest.xml:28:22-78
 14
 15    <application
-15-->C:\Users\Xrisa\Desktop\katan\DistributedSystemsAssignment\MyApplication\app\src\main\AndroidManifest.xml:6:5-25:19
+15-->C:\Users\Xrisa\Desktop\kkkatan\Distributed-Systems-Project\MyApplication\app\src\main\AndroidManifest.xml:6:5-25:19
 16        android:name="com.world.myapplication.Distracks"
-16-->C:\Users\Xrisa\Desktop\katan\DistributedSystemsAssignment\MyApplication\app\src\main\AndroidManifest.xml:13:9-34
+16-->C:\Users\Xrisa\Desktop\kkkatan\Distributed-Systems-Project\MyApplication\app\src\main\AndroidManifest.xml:13:9-34
 17        android:allowBackup="true"
-17-->C:\Users\Xrisa\Desktop\katan\DistributedSystemsAssignment\MyApplication\app\src\main\AndroidManifest.xml:7:9-35
+17-->C:\Users\Xrisa\Desktop\kkkatan\Distributed-Systems-Project\MyApplication\app\src\main\AndroidManifest.xml:7:9-35
 18        android:appComponentFactory="androidx.core.app.CoreComponentFactory"
-18-->[androidx.core:core:1.3.0-alpha02] C:\Users\Xrisa\Desktop\ERGASIA KATANEMHMENA\DistributedSystemsAssignment\caches\transforms-2\files-2.1\e8c796cedb5e90b1658b7d899559457c\core-1.3.0-alpha02\AndroidManifest.xml:24:18-86
+18-->[androidx.core:core:1.3.0-alpha02] C:\Users\Xrisa\Desktop\ERGASIA KATANEMHMENA\DistributedSystemsAssignment\caches\transforms-2\files-2.1\de6f30c762ac645f535a76ff85d2c526\core-1.3.0-alpha02\AndroidManifest.xml:24:18-86
 19        android:debuggable="true"
 20        android:extractNativeLibs="false"
 21        android:icon="@mipmap/ic_launcher"
-21-->C:\Users\Xrisa\Desktop\katan\DistributedSystemsAssignment\MyApplication\app\src\main\AndroidManifest.xml:8:9-43
+21-->C:\Users\Xrisa\Desktop\kkkatan\Distributed-Systems-Project\MyApplication\app\src\main\AndroidManifest.xml:8:9-43
 22        android:label="@string/app_name"
-22-->C:\Users\Xrisa\Desktop\katan\DistributedSystemsAssignment\MyApplication\app\src\main\AndroidManifest.xml:9:9-41
+22-->C:\Users\Xrisa\Desktop\kkkatan\Distributed-Systems-Project\MyApplication\app\src\main\AndroidManifest.xml:9:9-41
 23        android:roundIcon="@mipmap/ic_launcher_round"
-23-->C:\Users\Xrisa\Desktop\katan\DistributedSystemsAssignment\MyApplication\app\src\main\AndroidManifest.xml:10:9-54
+23-->C:\Users\Xrisa\Desktop\kkkatan\Distributed-Systems-Project\MyApplication\app\src\main\AndroidManifest.xml:10:9-54
 24        android:supportsRtl="true"
-24-->C:\Users\Xrisa\Desktop\katan\DistributedSystemsAssignment\MyApplication\app\src\main\AndroidManifest.xml:11:9-35
+24-->C:\Users\Xrisa\Desktop\kkkatan\Distributed-Systems-Project\MyApplication\app\src\main\AndroidManifest.xml:11:9-35
 25        android:testOnly="true"
 26        android:theme="@style/AppTheme" >
-26-->C:\Users\Xrisa\Desktop\katan\DistributedSystemsAssignment\MyApplication\app\src\main\AndroidManifest.xml:12:9-40
+26-->C:\Users\Xrisa\Desktop\kkkatan\Distributed-Systems-Project\MyApplication\app\src\main\AndroidManifest.xml:12:9-40
 27        <activity
-27-->C:\Users\Xrisa\Desktop\katan\DistributedSystemsAssignment\MyApplication\app\src\main\AndroidManifest.xml:16:9-23:20
+27-->C:\Users\Xrisa\Desktop\kkkatan\Distributed-Systems-Project\MyApplication\app\src\main\AndroidManifest.xml:16:9-23:20
 28            android:name="com.world.myapplication.MainActivity"
-28-->C:\Users\Xrisa\Desktop\katan\DistributedSystemsAssignment\MyApplication\app\src\main\AndroidManifest.xml:16:19-47
+28-->C:\Users\Xrisa\Desktop\kkkatan\Distributed-Systems-Project\MyApplication\app\src\main\AndroidManifest.xml:16:19-47
 29            android:label="@string/app_name"
-29-->C:\Users\Xrisa\Desktop\katan\DistributedSystemsAssignment\MyApplication\app\src\main\AndroidManifest.xml:17:13-45
+29-->C:\Users\Xrisa\Desktop\kkkatan\Distributed-Systems-Project\MyApplication\app\src\main\AndroidManifest.xml:17:13-45
 30            android:theme="@style/AppTheme.NoActionBar" >
-30-->C:\Users\Xrisa\Desktop\katan\DistributedSystemsAssignment\MyApplication\app\src\main\AndroidManifest.xml:18:13-56
+30-->C:\Users\Xrisa\Desktop\kkkatan\Distributed-Systems-Project\MyApplication\app\src\main\AndroidManifest.xml:18:13-56
 31            <intent-filter>
-31-->C:\Users\Xrisa\Desktop\katan\DistributedSystemsAssignment\MyApplication\app\src\main\AndroidManifest.xml:19:13-22:29
+31-->C:\Users\Xrisa\Desktop\kkkatan\Distributed-Systems-Project\MyApplication\app\src\main\AndroidManifest.xml:19:13-22:29
 32                <action android:name="android.intent.action.MAIN" />
-32-->C:\Users\Xrisa\Desktop\katan\DistributedSystemsAssignment\MyApplication\app\src\main\AndroidManifest.xml:20:17-69
-32-->C:\Users\Xrisa\Desktop\katan\DistributedSystemsAssignment\MyApplication\app\src\main\AndroidManifest.xml:20:25-66
+32-->C:\Users\Xrisa\Desktop\kkkatan\Distributed-Systems-Project\MyApplication\app\src\main\AndroidManifest.xml:20:17-69
+32-->C:\Users\Xrisa\Desktop\kkkatan\Distributed-Systems-Project\MyApplication\app\src\main\AndroidManifest.xml:20:25-66
 33
 34                <category android:name="android.intent.category.LAUNCHER" />
-34-->C:\Users\Xrisa\Desktop\katan\DistributedSystemsAssignment\MyApplication\app\src\main\AndroidManifest.xml:21:17-77
-34-->C:\Users\Xrisa\Desktop\katan\DistributedSystemsAssignment\MyApplication\app\src\main\AndroidManifest.xml:21:27-74
+34-->C:\Users\Xrisa\Desktop\kkkatan\Distributed-Systems-Project\MyApplication\app\src\main\AndroidManifest.xml:21:17-77
+34-->C:\Users\Xrisa\Desktop\kkkatan\Distributed-Systems-Project\MyApplication\app\src\main\AndroidManifest.xml:21:27-74
 35            </intent-filter>
 36        </activity>
 37
 38        <!-- The activity will be merged into the manifest of the hosting app. -->
 39        <activity
-39-->[com.google.android.play:core:1.6.5] C:\Users\Xrisa\Desktop\ERGASIA KATANEMHMENA\DistributedSystemsAssignment\caches\transforms-2\files-2.1\c9c497020e99fcc9f4c88dfa40760756\jetified-core-1.6.5\AndroidManifest.xml:8:5-271
+39-->[com.google.android.play:core:1.6.5] C:\Users\Xrisa\Desktop\ERGASIA KATANEMHMENA\DistributedSystemsAssignment\caches\transforms-2\files-2.1\8d1d76c34bc8187497097ec4cc7f9128\jetified-core-1.6.5\AndroidManifest.xml:8:5-271
 40            android:name="com.google.android.play.core.missingsplits.PlayCoreMissingSplitsActivity"
-40-->[com.google.android.play:core:1.6.5] C:\Users\Xrisa\Desktop\ERGASIA KATANEMHMENA\DistributedSystemsAssignment\caches\transforms-2\files-2.1\c9c497020e99fcc9f4c88dfa40760756\jetified-core-1.6.5\AndroidManifest.xml:8:15-102
+40-->[com.google.android.play:core:1.6.5] C:\Users\Xrisa\Desktop\ERGASIA KATANEMHMENA\DistributedSystemsAssignment\caches\transforms-2\files-2.1\8d1d76c34bc8187497097ec4cc7f9128\jetified-core-1.6.5\AndroidManifest.xml:8:15-102
 41            android:enabled="false"
-41-->[com.google.android.play:core:1.6.5] C:\Users\Xrisa\Desktop\ERGASIA KATANEMHMENA\DistributedSystemsAssignment\caches\transforms-2\files-2.1\c9c497020e99fcc9f4c88dfa40760756\jetified-core-1.6.5\AndroidManifest.xml:8:103-126
+41-->[com.google.android.play:core:1.6.5] C:\Users\Xrisa\Desktop\ERGASIA KATANEMHMENA\DistributedSystemsAssignment\caches\transforms-2\files-2.1\8d1d76c34bc8187497097ec4cc7f9128\jetified-core-1.6.5\AndroidManifest.xml:8:103-126
 42            android:exported="false"
-42-->[com.google.android.play:core:1.6.5] C:\Users\Xrisa\Desktop\ERGASIA KATANEMHMENA\DistributedSystemsAssignment\caches\transforms-2\files-2.1\c9c497020e99fcc9f4c88dfa40760756\jetified-core-1.6.5\AndroidManifest.xml:8:127-151
+42-->[com.google.android.play:core:1.6.5] C:\Users\Xrisa\Desktop\ERGASIA KATANEMHMENA\DistributedSystemsAssignment\caches\transforms-2\files-2.1\8d1d76c34bc8187497097ec4cc7f9128\jetified-core-1.6.5\AndroidManifest.xml:8:127-151
 43            android:launchMode="singleInstance"
-43-->[com.google.android.play:core:1.6.5] C:\Users\Xrisa\Desktop\ERGASIA KATANEMHMENA\DistributedSystemsAssignment\caches\transforms-2\files-2.1\c9c497020e99fcc9f4c88dfa40760756\jetified-core-1.6.5\AndroidManifest.xml:8:204-239
+43-->[com.google.android.play:core:1.6.5] C:\Users\Xrisa\Desktop\ERGASIA KATANEMHMENA\DistributedSystemsAssignment\caches\transforms-2\files-2.1\8d1d76c34bc8187497097ec4cc7f9128\jetified-core-1.6.5\AndroidManifest.xml:8:204-239
 44            android:process=":playcore_missing_splits_activity"
-44-->[com.google.android.play:core:1.6.5] C:\Users\Xrisa\Desktop\ERGASIA KATANEMHMENA\DistributedSystemsAssignment\caches\transforms-2\files-2.1\c9c497020e99fcc9f4c88dfa40760756\jetified-core-1.6.5\AndroidManifest.xml:8:152-203
+44-->[com.google.android.play:core:1.6.5] C:\Users\Xrisa\Desktop\ERGASIA KATANEMHMENA\DistributedSystemsAssignment\caches\transforms-2\files-2.1\8d1d76c34bc8187497097ec4cc7f9128\jetified-core-1.6.5\AndroidManifest.xml:8:152-203
 45            android:stateNotNeeded="true" />
-45-->[com.google.android.play:core:1.6.5] C:\Users\Xrisa\Desktop\ERGASIA KATANEMHMENA\DistributedSystemsAssignment\caches\transforms-2\files-2.1\c9c497020e99fcc9f4c88dfa40760756\jetified-core-1.6.5\AndroidManifest.xml:8:240-269
+45-->[com.google.android.play:core:1.6.5] C:\Users\Xrisa\Desktop\ERGASIA KATANEMHMENA\DistributedSystemsAssignment\caches\transforms-2\files-2.1\8d1d76c34bc8187497097ec4cc7f9128\jetified-core-1.6.5\AndroidManifest.xml:8:240-269
 46        <activity
-46-->[com.google.android.play:core:1.6.5] C:\Users\Xrisa\Desktop\ERGASIA KATANEMHMENA\DistributedSystemsAssignment\caches\transforms-2\files-2.1\c9c497020e99fcc9f4c88dfa40760756\jetified-core-1.6.5\AndroidManifest.xml:9:5-278
+46-->[com.google.android.play:core:1.6.5] C:\Users\Xrisa\Desktop\ERGASIA KATANEMHMENA\DistributedSystemsAssignment\caches\transforms-2\files-2.1\8d1d76c34bc8187497097ec4cc7f9128\jetified-core-1.6.5\AndroidManifest.xml:9:5-278
 47            android:name="com.google.android.play.core.common.PlayCoreDialogWrapperActivity"
-47-->[com.google.android.play:core:1.6.5] C:\Users\Xrisa\Desktop\ERGASIA KATANEMHMENA\DistributedSystemsAssignment\caches\transforms-2\files-2.1\c9c497020e99fcc9f4c88dfa40760756\jetified-core-1.6.5\AndroidManifest.xml:9:15-95
+47-->[com.google.android.play:core:1.6.5] C:\Users\Xrisa\Desktop\ERGASIA KATANEMHMENA\DistributedSystemsAssignment\caches\transforms-2\files-2.1\8d1d76c34bc8187497097ec4cc7f9128\jetified-core-1.6.5\AndroidManifest.xml:9:15-95
 48            android:enabled="false"
-48-->[com.google.android.play:core:1.6.5] C:\Users\Xrisa\Desktop\ERGASIA KATANEMHMENA\DistributedSystemsAssignment\caches\transforms-2\files-2.1\c9c497020e99fcc9f4c88dfa40760756\jetified-core-1.6.5\AndroidManifest.xml:9:96-119
+48-->[com.google.android.play:core:1.6.5] C:\Users\Xrisa\Desktop\ERGASIA KATANEMHMENA\DistributedSystemsAssignment\caches\transforms-2\files-2.1\8d1d76c34bc8187497097ec4cc7f9128\jetified-core-1.6.5\AndroidManifest.xml:9:96-119
 49            android:exported="false"
-49-->[com.google.android.play:core:1.6.5] C:\Users\Xrisa\Desktop\ERGASIA KATANEMHMENA\DistributedSystemsAssignment\caches\transforms-2\files-2.1\c9c497020e99fcc9f4c88dfa40760756\jetified-core-1.6.5\AndroidManifest.xml:9:120-144
+49-->[com.google.android.play:core:1.6.5] C:\Users\Xrisa\Desktop\ERGASIA KATANEMHMENA\DistributedSystemsAssignment\caches\transforms-2\files-2.1\8d1d76c34bc8187497097ec4cc7f9128\jetified-core-1.6.5\AndroidManifest.xml:9:120-144
 50            android:process=":playcore_dialog_wrapper_activity"
-50-->[com.google.android.play:core:1.6.5] C:\Users\Xrisa\Desktop\ERGASIA KATANEMHMENA\DistributedSystemsAssignment\caches\transforms-2\files-2.1\c9c497020e99fcc9f4c88dfa40760756\jetified-core-1.6.5\AndroidManifest.xml:9:175-226
+50-->[com.google.android.play:core:1.6.5] C:\Users\Xrisa\Desktop\ERGASIA KATANEMHMENA\DistributedSystemsAssignment\caches\transforms-2\files-2.1\8d1d76c34bc8187497097ec4cc7f9128\jetified-core-1.6.5\AndroidManifest.xml:9:175-226
 51            android:stateNotNeeded="true"
-51-->[com.google.android.play:core:1.6.5] C:\Users\Xrisa\Desktop\ERGASIA KATANEMHMENA\DistributedSystemsAssignment\caches\transforms-2\files-2.1\c9c497020e99fcc9f4c88dfa40760756\jetified-core-1.6.5\AndroidManifest.xml:9:145-174
+51-->[com.google.android.play:core:1.6.5] C:\Users\Xrisa\Desktop\ERGASIA KATANEMHMENA\DistributedSystemsAssignment\caches\transforms-2\files-2.1\8d1d76c34bc8187497097ec4cc7f9128\jetified-core-1.6.5\AndroidManifest.xml:9:145-174
 52            android:theme="@style/Theme.PlayCore.Transparent" />
-52-->[com.google.android.play:core:1.6.5] C:\Users\Xrisa\Desktop\ERGASIA KATANEMHMENA\DistributedSystemsAssignment\caches\transforms-2\files-2.1\c9c497020e99fcc9f4c88dfa40760756\jetified-core-1.6.5\AndroidManifest.xml:9:227-276
+52-->[com.google.android.play:core:1.6.5] C:\Users\Xrisa\Desktop\ERGASIA KATANEMHMENA\DistributedSystemsAssignment\caches\transforms-2\files-2.1\8d1d76c34bc8187497097ec4cc7f9128\jetified-core-1.6.5\AndroidManifest.xml:9:227-276
 53    </application>
 54
 55</manifest>

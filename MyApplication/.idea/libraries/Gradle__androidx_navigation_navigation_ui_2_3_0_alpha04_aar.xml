@@ -1,8 +1,9 @@
 <component name="libraryTable">
   <library name="Gradle: androidx.navigation:navigation-ui:2.3.0-alpha04@aar">
     <CLASSES>
-      <root url="jar://$PROJECT_DIR$/../../../ERGASIA KATANEMHMENA/DistributedSystemsAssignment/caches/transforms-2/files-2.1/bcff1b220a90524365ef402adf7b39f6/navigation-ui-2.3.0-alpha04/jars/classes.jar!/" />
-      <root url="file://$PROJECT_DIR$/../../../ERGASIA KATANEMHMENA/DistributedSystemsAssignment/caches/transforms-2/files-2.1/bcff1b220a90524365ef402adf7b39f6/navigation-ui-2.3.0-alpha04/res" />
+      <root url="file://$PROJECT_DIR$/../../../ERGASIA KATANEMHMENA/DistributedSystemsAssignment/caches/transforms-2/files-2.1/1d61c96ebb85037f1a4880df41815654/navigation-ui-2.3.0-alpha04/AndroidManifest.xml" />
+      <root url="jar://$PROJECT_DIR$/../../../ERGASIA KATANEMHMENA/DistributedSystemsAssignment/caches/transforms-2/files-2.1/1d61c96ebb85037f1a4880df41815654/navigation-ui-2.3.0-alpha04/jars/classes.jar!/" />
+      <root url="file://$PROJECT_DIR$/../../../ERGASIA KATANEMHMENA/DistributedSystemsAssignment/caches/transforms-2/files-2.1/1d61c96ebb85037f1a4880df41815654/navigation-ui-2.3.0-alpha04/res" />
     </CLASSES>
     <JAVADOC />
     <SOURCES>

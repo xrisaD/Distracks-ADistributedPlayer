@@ -1,10 +1,10 @@
 {
     "logs": [
         {
-            "outputFile": "C:\\Users\\Xrisa\\Desktop\\katan\\DistributedSystemsAssignment\\MyApplication\\app\\build\\intermediates\\incremental\\mergeDebugResources\\merged.dir\\values-night-v8\\values-night-v8.xml",
+            "outputFile": "C:\\Users\\Xrisa\\Desktop\\kkkatan\\Distributed-Systems-Project\\MyApplication\\app\\build\\intermediates\\incremental\\mergeDebugResources\\merged.dir\\values-night-v8\\values-night-v8.xml",
             "map": [
                 {
-                    "source": "C:\\Users\\Xrisa\\Desktop\\ERGASIA KATANEMHMENA\\DistributedSystemsAssignment\\caches\\transforms-2\\files-2.1\\ea88890b09526096266c9c16859169ae\\appcompat-1.1.0\\res\\values-night-v8\\values-night-v8.xml",
+                    "source": "C:\\Users\\Xrisa\\Desktop\\ERGASIA KATANEMHMENA\\DistributedSystemsAssignment\\caches\\transforms-2\\files-2.1\\c2c5fa787d66aaf40578b3071f4d283f\\appcompat-1.1.0\\res\\values-night-v8\\values-night-v8.xml",
                     "from": {
                         "startLines": "2,3,4,5,6,7,8,9",
                         "startColumns": "4,4,4,4,4,4,4,4",
@@ -21,7 +21,7 @@
                     }
                 },
                 {
-                    "source": "C:\\Users\\Xrisa\\Desktop\\ERGASIA KATANEMHMENA\\DistributedSystemsAssignment\\caches\\transforms-2\\files-2.1\\4d0636b72ff0b4d34e0e621b6e6c137f\\material-1.2.0-alpha05\\res\\values-night-v8\\values-night-v8.xml",
+                    "source": "C:\\Users\\Xrisa\\Desktop\\ERGASIA KATANEMHMENA\\DistributedSystemsAssignment\\caches\\transforms-2\\files-2.1\\8cd05cce97d79b0b8d0cf511d329dc6e\\material-1.2.0-alpha05\\res\\values-night-v8\\values-night-v8.xml",
                     "from": {
                         "startLines": "2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24",
                         "startColumns": "4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4",

@@ -1,11 +1,12 @@
 <component name="libraryTable">
   <library name="Gradle: androidx.drawerlayout:drawerlayout:1.1.0-alpha04@aar">
     <ANNOTATIONS>
-      <root url="jar://$PROJECT_DIR$/../../../ERGASIA KATANEMHMENA/DistributedSystemsAssignment/caches/transforms-2/files-2.1/ee2f6aa2e76409b2c6c2a2369eb79018/drawerlayout-1.1.0-alpha04/annotations.zip!/" />
+      <root url="jar://$PROJECT_DIR$/../../../ERGASIA KATANEMHMENA/DistributedSystemsAssignment/caches/transforms-2/files-2.1/90ded9be65b829fb7ef060a74cf9906c/drawerlayout-1.1.0-alpha04/annotations.zip!/" />
     </ANNOTATIONS>
     <CLASSES>
-      <root url="jar://$PROJECT_DIR$/../../../ERGASIA KATANEMHMENA/DistributedSystemsAssignment/caches/transforms-2/files-2.1/ee2f6aa2e76409b2c6c2a2369eb79018/drawerlayout-1.1.0-alpha04/jars/classes.jar!/" />
-      <root url="file://$PROJECT_DIR$/../../../ERGASIA KATANEMHMENA/DistributedSystemsAssignment/caches/transforms-2/files-2.1/ee2f6aa2e76409b2c6c2a2369eb79018/drawerlayout-1.1.0-alpha04/res" />
+      <root url="file://$PROJECT_DIR$/../../../ERGASIA KATANEMHMENA/DistributedSystemsAssignment/caches/transforms-2/files-2.1/90ded9be65b829fb7ef060a74cf9906c/drawerlayout-1.1.0-alpha04/AndroidManifest.xml" />
+      <root url="jar://$PROJECT_DIR$/../../../ERGASIA KATANEMHMENA/DistributedSystemsAssignment/caches/transforms-2/files-2.1/90ded9be65b829fb7ef060a74cf9906c/drawerlayout-1.1.0-alpha04/jars/classes.jar!/" />
+      <root url="file://$PROJECT_DIR$/../../../ERGASIA KATANEMHMENA/DistributedSystemsAssignment/caches/transforms-2/files-2.1/90ded9be65b829fb7ef060a74cf9906c/drawerlayout-1.1.0-alpha04/res" />
     </CLASSES>
     <JAVADOC />
     <SOURCES>

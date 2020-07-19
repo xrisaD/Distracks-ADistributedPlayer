@@ -13,7 +13,6 @@ public class FirstPage extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        Log.e("FIRST","PAGEEEEEEEEEEEEE");
         rootView = inflater.inflate(R.layout.search_result, container, false);
         return rootView;
     }

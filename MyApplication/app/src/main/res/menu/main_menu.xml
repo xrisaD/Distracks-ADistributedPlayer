@@ -14,7 +14,7 @@
             android:id="@id/saved_songs"
             android:title="Downloaded Songs"/>
         <item
-            android:id="@id/first_page"
+            android:id="@id/about_us"
             android:title="About Us"/>
     </group>
 </menu>

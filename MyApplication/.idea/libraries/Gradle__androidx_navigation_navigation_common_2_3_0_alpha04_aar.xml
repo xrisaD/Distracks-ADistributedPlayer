@@ -1,8 +1,9 @@
 <component name="libraryTable">
   <library name="Gradle: androidx.navigation:navigation-common:2.3.0-alpha04@aar">
     <CLASSES>
-      <root url="jar://$PROJECT_DIR$/../../../ERGASIA KATANEMHMENA/DistributedSystemsAssignment/caches/transforms-2/files-2.1/8e3e8ea51e24cd8a8703b251330e5abb/navigation-common-2.3.0-alpha04/jars/classes.jar!/" />
-      <root url="file://$PROJECT_DIR$/../../../ERGASIA KATANEMHMENA/DistributedSystemsAssignment/caches/transforms-2/files-2.1/8e3e8ea51e24cd8a8703b251330e5abb/navigation-common-2.3.0-alpha04/res" />
+      <root url="file://$PROJECT_DIR$/../../../ERGASIA KATANEMHMENA/DistributedSystemsAssignment/caches/transforms-2/files-2.1/bc10e2debf01959cf4ed96d08497d4a2/navigation-common-2.3.0-alpha04/AndroidManifest.xml" />
+      <root url="jar://$PROJECT_DIR$/../../../ERGASIA KATANEMHMENA/DistributedSystemsAssignment/caches/transforms-2/files-2.1/bc10e2debf01959cf4ed96d08497d4a2/navigation-common-2.3.0-alpha04/jars/classes.jar!/" />
+      <root url="file://$PROJECT_DIR$/../../../ERGASIA KATANEMHMENA/DistributedSystemsAssignment/caches/transforms-2/files-2.1/bc10e2debf01959cf4ed96d08497d4a2/navigation-common-2.3.0-alpha04/res" />
     </CLASSES>
     <JAVADOC />
     <SOURCES>

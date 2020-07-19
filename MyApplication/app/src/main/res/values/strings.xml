@@ -5,4 +5,17 @@
     <string name="play">play</string>
     <string name="pause">pause</string>
     <string name="textview">00:00</string>
+
+    <string name="smyrnioudis">Nikos Smyrnioudis</string>
+    <string name="lapakis">Jerry Lapakis</string>
+    <string name="konstantopoulos">Konstantinos Konstantopoulos</string>
+    <string name="dikonimaki">Chrysa Dikonimaki</string>
+
+    <string name="programmer">Programmer</string>
+
+    <string name="hyperlink_smyrnioudis"><a href="https://github.com/NickSmyr">NickSmyr</a></string>
+    <string name="hyperlink_lapakis"><a href="https://github.com/GerasimosLap">GerasimosLap</a></string>
+    <string name="hyperlink_konstantopoulos"><a href="https://github.com/ntinouldinho">ntinouldinho</a></string>
+    <string name="hyperlink_dikonimaki"><a href="https://github.com/xrisaD">xrisaD</a></string>
+
 </resources>

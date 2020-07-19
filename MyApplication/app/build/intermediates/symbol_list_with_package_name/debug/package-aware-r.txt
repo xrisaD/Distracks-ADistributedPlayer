@@ -1494,6 +1494,7 @@ drawable design_ic_visibility
 drawable design_ic_visibility_off
 drawable design_password_eye
 drawable design_snackbar_background
+drawable dikonimaki
 drawable ic_audiotrack_dark
 drawable ic_audiotrack_light
 drawable ic_calendar_black_24dp
@@ -1690,6 +1691,8 @@ drawable ic_vol_type_speaker_light
 drawable ic_vol_type_tv_dark
 drawable ic_vol_type_tv_light
 drawable ic_vol_unmute
+drawable konstantopoulos
+drawable lapakis
 drawable logo
 drawable mr_button_connected_dark
 drawable mr_button_connected_light
@@ -1743,6 +1746,7 @@ drawable notification_tile_bg
 drawable notify_panel_notification_icon_bg
 drawable pause
 drawable play
+drawable smyrnioudis
 drawable test_custom_background
 drawable tooltip_frame_dark
 drawable tooltip_frame_light
@@ -1756,6 +1760,7 @@ id SHIFT
 id SYM
 id TOP_END
 id TOP_START
+id about_us
 id accessibility_action_clickable_span
 id accessibility_custom_action_0
 id accessibility_custom_action_1
@@ -1860,6 +1865,7 @@ id design_menu_item_text
 id design_navigation_view
 id dfn_progress_fragment
 id dialog_button
+id dikonimaki
 id dimensions
 id direct
 id disableHome
@@ -1903,7 +1909,9 @@ id installation_progress
 id invisible
 id italic
 id item_touch_helper_previous_elevation
+id konstantopolous
 id labeled
+id lapakis
 id largeLabel
 id left
 id line1
@@ -2071,6 +2079,7 @@ id showTitle
 id skipCollapsed
 id slide
 id smallLabel
+id smyrnioudis
 id snackbar_action
 id snackbar_text
 id snap
@@ -2211,6 +2220,7 @@ layout abc_search_dropdown_item_icons_2line
 layout abc_search_view
 layout abc_select_dialog_material
 layout abc_tooltip
+layout about_us_page
 layout activity_main
 layout activity_player
 layout app_bar_main
@@ -2354,6 +2364,7 @@ string character_counter_overflowed_content_description
 string character_counter_pattern
 string chip_text
 string clear_text_end_icon_content_description
+string dikonimaki
 string drawer_close
 string drawer_open
 string error_icon_content_description
@@ -2361,10 +2372,16 @@ string exposed_dropdown_menu_content_description
 string fab_transformation_scrim_behavior
 string fab_transformation_sheet_behavior
 string hide_bottom_view_on_scroll_behavior
+string hyperlink_dikonimaki
+string hyperlink_konstantopoulos
+string hyperlink_lapakis
+string hyperlink_smyrnioudis
 string icon_content_description
 string installation_cancelled
 string installation_failed
 string installing_module
+string konstantopoulos
+string lapakis
 string mr_button_content_description
 string mr_cast_button_connected
 string mr_cast_button_connecting
@@ -2434,9 +2451,11 @@ string path_password_eye_mask_visible
 string path_password_strike_through
 string pause
 string play
+string programmer
 string progress
 string retry
 string search_menu_title
+string smyrnioudis
 string status_bar_notification_info_overflow
 string textview
 style AlertDialog_AppCompat

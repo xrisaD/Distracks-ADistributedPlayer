@@ -1,8 +1,9 @@
 <component name="libraryTable">
   <library name="Gradle: androidx.palette:palette:1.0.0@aar">
     <CLASSES>
-      <root url="jar://$PROJECT_DIR$/../../../ERGASIA KATANEMHMENA/DistributedSystemsAssignment/caches/transforms-2/files-2.1/3bd0824af0cdbb95e7db1f61e2ea73b5/palette-1.0.0/jars/classes.jar!/" />
-      <root url="file://$PROJECT_DIR$/../../../ERGASIA KATANEMHMENA/DistributedSystemsAssignment/caches/transforms-2/files-2.1/3bd0824af0cdbb95e7db1f61e2ea73b5/palette-1.0.0/res" />
+      <root url="file://$PROJECT_DIR$/../../../ERGASIA KATANEMHMENA/DistributedSystemsAssignment/caches/transforms-2/files-2.1/a1b22b0a6a4a3e30d861840b3f2c0a3f/palette-1.0.0/AndroidManifest.xml" />
+      <root url="jar://$PROJECT_DIR$/../../../ERGASIA KATANEMHMENA/DistributedSystemsAssignment/caches/transforms-2/files-2.1/a1b22b0a6a4a3e30d861840b3f2c0a3f/palette-1.0.0/jars/classes.jar!/" />
+      <root url="file://$PROJECT_DIR$/../../../ERGASIA KATANEMHMENA/DistributedSystemsAssignment/caches/transforms-2/files-2.1/a1b22b0a6a4a3e30d861840b3f2c0a3f/palette-1.0.0/res" />
     </CLASSES>
     <JAVADOC />
     <SOURCES>

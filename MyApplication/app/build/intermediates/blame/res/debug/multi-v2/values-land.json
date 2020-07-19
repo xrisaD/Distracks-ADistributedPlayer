@@ -1,10 +1,20 @@
 {
     "logs": [
         {
-            "outputFile": "C:\\Users\\Xrisa\\Desktop\\katan\\DistributedSystemsAssignment\\MyApplication\\app\\build\\intermediates\\incremental\\mergeDebugResources\\merged.dir\\values-land\\values-land.xml",
+            "outputFile": "C:\\Users\\Xrisa\\Desktop\\kkkatan\\Distributed-Systems-Project\\MyApplication\\app\\build\\intermediates\\incremental\\mergeDebugResources\\merged.dir\\values-land\\values-land.xml",
             "map": [
                 {
-                    "source": "C:\\Users\\Xrisa\\Desktop\\ERGASIA KATANEMHMENA\\DistributedSystemsAssignment\\caches\\transforms-2\\files-2.1\\4d0636b72ff0b4d34e0e621b6e6c137f\\material-1.2.0-alpha05\\res\\values-land\\values-land.xml",
+                    "source": "C:\\Users\\Xrisa\\Desktop\\ERGASIA KATANEMHMENA\\DistributedSystemsAssignment\\caches\\transforms-2\\files-2.1\\c2c5fa787d66aaf40578b3071f4d283f\\appcompat-1.1.0\\res\\values-land\\values-land.xml",
+                    "from": {
+                        "startLines": "2,3,4",
+                        "startColumns": "4,4,4",
+                        "startOffsets": "55,125,196",
+                        "endColumns": "69,70,67",
+                        "endOffsets": "120,191,259"
+                    }
+                },
+                {
+                    "source": "C:\\Users\\Xrisa\\Desktop\\ERGASIA KATANEMHMENA\\DistributedSystemsAssignment\\caches\\transforms-2\\files-2.1\\8cd05cce97d79b0b8d0cf511d329dc6e\\material-1.2.0-alpha05\\res\\values-land\\values-land.xml",
                     "from": {
                         "startLines": "2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,24,30",
                         "startColumns": "4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4",
@@ -23,7 +33,7 @@
                     }
                 },
                 {
-                    "source": "C:\\Users\\Xrisa\\Desktop\\ERGASIA KATANEMHMENA\\DistributedSystemsAssignment\\caches\\transforms-2\\files-2.1\\e39c40433607a8e9bbd21da8c129b490\\mediarouter-1.1.0\\res\\values-land\\values-land.xml",
+                    "source": "C:\\Users\\Xrisa\\Desktop\\ERGASIA KATANEMHMENA\\DistributedSystemsAssignment\\caches\\transforms-2\\files-2.1\\55646a04366f8882e28d8bfd2b0f79c6\\mediarouter-1.1.0\\res\\values-land\\values-land.xml",
                     "from": {
                         "startLines": "2,3,4",
                         "startColumns": "4,4,4",
@@ -37,16 +47,6 @@
                         "startOffsets": "264,339,417",
                         "endColumns": "74,77,74",
                         "endOffsets": "334,412,487"
-                    }
-                },
-                {
-                    "source": "C:\\Users\\Xrisa\\Desktop\\ERGASIA KATANEMHMENA\\DistributedSystemsAssignment\\caches\\transforms-2\\files-2.1\\ea88890b09526096266c9c16859169ae\\appcompat-1.1.0\\res\\values-land\\values-land.xml",
-                    "from": {
-                        "startLines": "2,3,4",
-                        "startColumns": "4,4,4",
-                        "startOffsets": "55,125,196",
-                        "endColumns": "69,70,67",
-                        "endOffsets": "120,191,259"
                     }
                 }
             ]

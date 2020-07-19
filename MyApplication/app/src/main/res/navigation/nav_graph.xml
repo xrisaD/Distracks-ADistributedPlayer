@@ -85,4 +85,8 @@
                 android:defaultValue="1" />
         </action>
     </fragment>
+    <fragment
+        android:name="com.world.myapplication.AboutUsPage"
+        android:id="@+id/about_us"
+        tools:layout="@layout/about_us_page" />
 </navigation>

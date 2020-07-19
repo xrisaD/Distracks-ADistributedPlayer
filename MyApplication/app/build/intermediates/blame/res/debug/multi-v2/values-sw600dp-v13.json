@@ -1,10 +1,27 @@
 {
     "logs": [
         {
-            "outputFile": "C:\\Users\\Xrisa\\Desktop\\katan\\DistributedSystemsAssignment\\MyApplication\\app\\build\\intermediates\\incremental\\mergeDebugResources\\merged.dir\\values-sw600dp-v13\\values-sw600dp-v13.xml",
+            "outputFile": "C:\\Users\\Xrisa\\Desktop\\kkkatan\\Distributed-Systems-Project\\MyApplication\\app\\build\\intermediates\\incremental\\mergeDebugResources\\merged.dir\\values-sw600dp-v13\\values-sw600dp-v13.xml",
             "map": [
                 {
-                    "source": "C:\\Users\\Xrisa\\Desktop\\ERGASIA KATANEMHMENA\\DistributedSystemsAssignment\\caches\\transforms-2\\files-2.1\\ea88890b09526096266c9c16859169ae\\appcompat-1.1.0\\res\\values-sw600dp-v13\\values-sw600dp-v13.xml",
+                    "source": "C:\\Users\\Xrisa\\Desktop\\ERGASIA KATANEMHMENA\\DistributedSystemsAssignment\\caches\\transforms-2\\files-2.1\\55646a04366f8882e28d8bfd2b0f79c6\\mediarouter-1.1.0\\res\\values-sw600dp-v13\\values-sw600dp-v13.xml",
+                    "from": {
+                        "startLines": "2,3,4",
+                        "startColumns": "4,4,4",
+                        "startOffsets": "55,94,163",
+                        "endColumns": "38,68,68",
+                        "endOffsets": "89,158,227"
+                    },
+                    "to": {
+                        "startLines": "2,20,21",
+                        "startColumns": "4,4,4",
+                        "startOffsets": "55,1212,1281",
+                        "endColumns": "38,68,68",
+                        "endOffsets": "89,1276,1345"
+                    }
+                },
+                {
+                    "source": "C:\\Users\\Xrisa\\Desktop\\ERGASIA KATANEMHMENA\\DistributedSystemsAssignment\\caches\\transforms-2\\files-2.1\\c2c5fa787d66aaf40578b3071f4d283f\\appcompat-1.1.0\\res\\values-sw600dp-v13\\values-sw600dp-v13.xml",
                     "from": {
                         "startLines": "2,3,4,5,6,7,8,9",
                         "startColumns": "4,4,4,4,4,4,4,4",
@@ -21,7 +38,7 @@
                     }
                 },
                 {
-                    "source": "C:\\Users\\Xrisa\\Desktop\\ERGASIA KATANEMHMENA\\DistributedSystemsAssignment\\caches\\transforms-2\\files-2.1\\4d0636b72ff0b4d34e0e621b6e6c137f\\material-1.2.0-alpha05\\res\\values-sw600dp-v13\\values-sw600dp-v13.xml",
+                    "source": "C:\\Users\\Xrisa\\Desktop\\ERGASIA KATANEMHMENA\\DistributedSystemsAssignment\\caches\\transforms-2\\files-2.1\\8cd05cce97d79b0b8d0cf511d329dc6e\\material-1.2.0-alpha05\\res\\values-sw600dp-v13\\values-sw600dp-v13.xml",
                     "from": {
                         "startLines": "2,3,4,5,6,7,8,10,11,12,13,14",
                         "startColumns": "4,4,4,4,4,4,4,4,4,4,4,4",
@@ -37,23 +54,6 @@
                         "endLines": "11,12,13,14,15,16,18,19,22,23,24,28",
                         "endColumns": "59,69,70,71,57,57,10,63,55,58,62,10",
                         "endOffsets": "705,775,846,918,976,1034,1143,1207,1401,1460,1523,1695"
-                    }
-                },
-                {
-                    "source": "C:\\Users\\Xrisa\\Desktop\\ERGASIA KATANEMHMENA\\DistributedSystemsAssignment\\caches\\transforms-2\\files-2.1\\e39c40433607a8e9bbd21da8c129b490\\mediarouter-1.1.0\\res\\values-sw600dp-v13\\values-sw600dp-v13.xml",
-                    "from": {
-                        "startLines": "2,3,4",
-                        "startColumns": "4,4,4",
-                        "startOffsets": "55,94,163",
-                        "endColumns": "38,68,68",
-                        "endOffsets": "89,158,227"
-                    },
-                    "to": {
-                        "startLines": "2,20,21",
-                        "startColumns": "4,4,4",
-                        "startOffsets": "55,1212,1281",
-                        "endColumns": "38,68,68",
-                        "endOffsets": "89,1276,1345"
                     }
                 }
             ]
