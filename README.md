@@ -1,4 +1,8 @@
 # Distracks - Distributed Player 
+### Architecture:
+![alt text](architecture.PNG)
+***
+### Android Application:
 ![alt text](imgs/Distracks.jpg)
 ***
 ![alt text](imgs/search.jpg)
